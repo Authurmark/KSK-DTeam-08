@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Project>
+  <Desktop>
+    <Static>
+      <Debug-Log>
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1307</ColumnWidth1></Debug-Log>
+      <Build>
+        <ColumnWidth0>20</ColumnWidth0>
+        <ColumnWidth1>980</ColumnWidth1>
+        <ColumnWidth2>261</ColumnWidth2>
+        <ColumnWidth3>65</ColumnWidth3>
+      </Build>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>237</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Disassembly>
+        <col-names>
+          <item>Disassembly</item>
+          <item>_I0</item>
+        </col-names>
+        <col-widths>
+          <item>500</item>
+          <item>20</item>
+        </col-widths>
+        <DisasmHistory/>
+        <PreferedWindows>
+          <Position>2</Position>
+          <ScreenPosX>0</ScreenPosX>
+          <ScreenPosY>0</ScreenPosY>
+          <Windows/>
+        </PreferedWindows>
+        <ShowCodeCoverage>1</ShowCodeCoverage>
+        <ShowInstrProfiling>1</ShowInstrProfiling>
+      </Disassembly>
+      <WATCH_1>
+        <expressions>
+          
+          
+          
+          
+        <item>SI4432_App_Manage</item><item>lSystemClock</item><item>SI4432_App_FrameRXData.RFApp_Frame_ID_Package</item><item>Test_Last_ID_Package</item><item>SI4432_App_FrameTXData.RFApp_Frame_ID_Package</item><item>ValueItStatus1</item><item>ValueItStatus2</item><item>strIO_Button_Value</item><item/></expressions>
+        <col-names>
+          
+          
+          
+          
+        <item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names>
+        <col-widths>
+          
+          
+          
+          
+        <item>227</item><item>150</item><item>100</item><item>188</item></col-widths>
+      </WATCH_1>
+      <Find-in-Files>
+        
+        
+        
+        
+      <ColumnWidth0>403</ColumnWidth0><ColumnWidth1>67</ColumnWidth1><ColumnWidth2>604</ColumnWidth2><ColumnWidth3>268</ColumnWidth3></Find-in-Files>
+    <Breakpoints><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints><Memory><FindDirection>1</FindDirection><FindAsHex>0</FindAsHex></Memory></Static>
+    <Windows>
+      
+      
+      
+    <Wnd0>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-21108-13871</Identity>
+            <TabName>Debug Log</TabName>
+            <Factory>Debug-Log</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-20585-13881</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-12622-6029</Identity>
+            <TabName>Find in Files</TabName>
+            <Factory>Find-in-Files</Factory>
+            <Session/>
+          </Tab>
+        <Tab><Identity>TabID-29458-15906</Identity><TabName>Breakpoints</TabName><Factory>Breakpoints</Factory></Tab><Tab><Identity>TabID-24900-18652</Identity><TabName>Memory</TabName><Factory>Memory</Factory><Session><ZoneNumber>0</ZoneNumber><SelectionAnchor>536875684</SelectionAnchor><SelectionEnd>536875737</SelectionEnd><UnitsPerGroup>1</UnitsPerGroup><EndianMode>0</EndianMode><DataCovEnabled>0</DataCovEnabled><DataCovShown>0</DataCovShown><AutoRefresh>0</AutoRefresh><HScroll>0</HScroll><VScroll>33554724</VScroll></Session></Tab></Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-31857-13874</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>ElecDoor_Power</ExpandedNode><ExpandedNode>ElecDoor_Power/2.MainSource</ExpandedNode><ExpandedNode>ElecDoor_Power/2.MainSource/2.2.Application_Task</ExpandedNode><ExpandedNode>ElecDoor_Power/3.Kernel</ExpandedNode><ExpandedNode>ElecDoor_Power/3.Kernel/3.2.Timer_Kernel</ExpandedNode><ExpandedNode>ElecDoor_Power/4.Libs</ExpandedNode><ExpandedNode>ElecDoor_Power/4.Libs/4.3.Hardware_Driver_Lib</ExpandedNode><ExpandedNode>ElecDoor_Power/4.Libs/4.4.Network_Layer</ExpandedNode><ExpandedNode>ElecDoor_Power/4.Libs/4.4.Network_Layer/4.4.1.RF_MeshNet</ExpandedNode><ExpandedNode>ElecDoor_Power/5.OS</ExpandedNode><ExpandedNode>ElecDoor_Power/5.OS/5.1.FreeRTOS</ExpandedNode><ExpandedNode>ElecDoor_Power/5.OS/5.1.FreeRTOS/5.1.1.Port_ST_M3</ExpandedNode><ExpandedNode>ElecDoor_Power/5.OS/5.1.FreeRTOS/5.1.1.Port_ST_M3/port.c</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd1><Wnd3>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-7979-1408</Identity>
+            <TabName>Watch 1</TabName>
+            <Factory>WATCH_1</Factory>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_Test\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task\IO_Kernel_Task.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>137</YPos2><SelStart2>5992</SelStart2><SelEnd2>5992</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function\IO_Function_Profile.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>58</YPos2><SelStart2>2932</SelStart2><SelEnd2>2932</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV8.0.1\Source\tasks.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>2570</YPos2><SelStart2>87115</SelStart2><SelEnd2>87115</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_Test\1.Config_kernel\Hardware_Function_Profile.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>78</YPos2><SelStart2>3713</SelStart2><SelEnd2>3726</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function\Timer_Function.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>77</YPos2><SelStart2>3774</SelStart2><SelEnd2>3774</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432\SI4432.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>462</YPos2><SelStart2>21971</SelStart2><SelEnd2>21971</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_Test\3.ProjectTask\2.Application_Task\2.RF_Task\RF_Task.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>74</YPos2><SelStart2>4897</SelStart2><SelEnd2>4897</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_Test\3.ProjectTask\2.Application_Task\1.User\UserTask.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>84</YPos2><SelStart2>4128</SelStart2><SelEnd2>4128</SelEnd2></Tab><ActiveTab>7</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function\Time_Manage_Function.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>42</YPos2><SelStart2>2139</SelStart2><SelEnd2>2151</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet\RF_AppLayer.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>102</YPos2><SelStart2>1016</SelStart2><SelEnd2>1016</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet\RF_AppLayer.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>66</YPos2><SelStart2>2638</SelStart2><SelEnd2>2638</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet\RF_LinkLayer.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>59</YPos2><SelStart2>2073</SelStart2><SelEnd2>2073</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_Test\2.MainSource\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>50</YPos2><SelStart2>2248</SelStart2><SelEnd2>2248</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-010FFA28><key>iaridepm.enu1</key></Toolbar-010FFA28></Sizes></Row0><Row1><Sizes><Toolbar-0F19E1C8><key>debuggergui.enu1</key></Toolbar-0F19E1C8><Toolbar-12313FB0><key>armstlink.enu1</key></Toolbar-12313FB0></Sizes></Row1></Top><Left><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>468</Bottom><Right>328</Right><x>-2</x><y>-2</y><xscreen>197</xscreen><yscreen>195</yscreen><sizeHorzCX>144217</sizeHorzCX><sizeHorzCY>284257</sizeHorzCY><sizeVertCX>241581</sizeVertCX><sizeVertCY>685131</sizeVertCY></Rect></Wnd1></Sizes></Row0></Left><Right><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>468</Bottom><Right>196</Right><x>-2</x><y>-2</y><xscreen>197</xscreen><yscreen>195</yscreen><sizeHorzCX>144217</sizeHorzCX><sizeHorzCY>284257</sizeHorzCY><sizeVertCX>144949</sizeVertCX><sizeVertCY>685131</sizeVertCY></Rect></Wnd3></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>149</Bottom><Right>1368</Right><x>-2</x><y>-2</y><xscreen>1370</xscreen><yscreen>151</yscreen><sizeHorzCX>1002928</sizeHorzCX><sizeHorzCY>220117</sizeHorzCY><sizeVertCX>144217</sizeVertCX><sizeVertCY>284257</sizeVertCY></Rect></Wnd0></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Project>
+
+

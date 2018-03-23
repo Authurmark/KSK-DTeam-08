@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Project>
+  <Desktop>
+    <Static>
+      <Debug-Log>
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1307</ColumnWidth1></Debug-Log>
+      <Build>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>980</ColumnWidth1><ColumnWidth2>261</ColumnWidth2><ColumnWidth3>65</ColumnWidth3></Build>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>206</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      <PreferedWindows><Position>1</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows></Workspace>
+      <Disassembly>
+        <col-names>
+          
+          
+        <item>Disassembly</item><item>_I0</item></col-names>
+        <col-widths>
+          
+          
+        <item>500</item><item>20</item></col-widths>
+        <DisasmHistory/>
+        <PreferedWindows>
+          
+          
+          
+          
+        <Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>WATCH_1</Factory></Window><Window><Factory>WATCH_2</Factory></Window><Window><Factory>WATCH_3</Factory></Window></Windows></PreferedWindows>
+        
+        
+      <ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
+      <WATCH_1>
+        <expressions>
+          
+          
+          
+          
+        <item>bTAGNearSignal</item><item>bCountLEDCycle</item><item>strLED_1</item><item>bTAGNearSignal</item><item>strRELAY_3</item><item>bTime_Tag_Lost</item><item>bCountTimeTagLostCycle</item><item>strTRUNK</item><item>pOutput</item><item>StrSystemInfo</item><item>bFlag_1st_Case_Mode2</item><item>eRunMode2State</item><item>pRFAPP_RXPayload</item><item>StrUserInfo</item><item>test_byte</item><item>eState_User_Task</item><item>bCountCheckEmergencyEvent</item><item>strEmergencyCode</item><item>StrSystemInfo.MAIN_Key</item><item>uTimeCheck</item><item>bClickCount</item><item>UART4_RXRingBuff</item><item>UART4_RXBuff</item><item>cRS485ReceiveChar</item><item>eDebug_RS485_State</item><item>UART4_TXBuff</item><item>bFlag_1st_Case_Debug_Task</item><item>bFlag_1st_Case_Debug_Task</item><item>nRF24_Link_Manage.RFLink_fifoStatus</item><item>nRF24_Link_Manage.RFLink_rfStatus</item><item>strInstantAcceData</item><item>strLastInstantAcceData</item><item>pAcceData</item><item>bReturn</item><item>StrSystemInfo.MAIN_Bike_State</item><item>pAcceData</item><item>pAcceLastData</item><item>eCheckStartState</item><item>DMA_Analog_Buffer</item><item>StrDMAAnalogBufferSum</item><item>StrAnalogBufferSum</item><item>StrSystemInfo.MAIN_VACCU</item><item>RFTagContent</item><item/></expressions>
+        <col-names>
+          
+          
+          
+          
+        <item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names>
+        <col-widths>
+          
+          
+          
+          
+        <item>265</item><item>150</item><item>100</item><item>283</item></col-widths>
+      <PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>WATCH_2</Factory></Window><Window><Factory>WATCH_3</Factory></Window><Window><Factory>Disassembly</Factory></Window></Windows></PreferedWindows></WATCH_1>
+      <Find-in-Files>
+        
+        
+        
+        
+      <ColumnWidth0>403</ColumnWidth0><ColumnWidth1>67</ColumnWidth1><ColumnWidth2>604</ColumnWidth2><ColumnWidth3>268</ColumnWidth3></Find-in-Files>
+    <Select-Ambiguous-Definitions><ColumnWidth0>470</ColumnWidth0><ColumnWidth1>67</ColumnWidth1><ColumnWidth2>806</ColumnWidth2></Select-Ambiguous-Definitions><Breakpoints><col-names><item>Breakpoint</item><item>_I0</item></col-names><col-widths><item>500</item><item>35</item></col-widths></Breakpoints><Memory><FindAsHex>0</FindAsHex></Memory><TASKVIEW><Column0>200</Column0><Column1>100</Column1><Column2>100</Column2><Column3>100</Column3><Column4>100</Column4><Column5>100</Column5><Column6>100</Column6><Column7>150</Column7></TASKVIEW><QUEUEVIEW/><Register><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows></Register><WATCH_2><expressions><item>tReal_time</item><item>RFTagContent</item><item>RFTagConfigContent</item><item>pRFAppFrameData</item><item>StrUserInfo</item><item>StrConfigPara</item><item>uRTCValue</item><item>StrConfig</item><item>bFlagRFTagAddressAuthen</item><item>StrRF_Current_SW_TAG_ADDR</item><item>RFTagContent.TAG_Command_Index</item><item>bLastCommandIndex</item><item>RFTagContent.TAG_RF_Command</item><item>pRFAppFrameData-&gt;RFApp_Frame_Content</item><item>pApp_LayerStrRFFrameConfig</item><item>RFTagContent</item><item>eState_User_Task</item><item>StrSystemInfo.bEmergencyCurrentCode</item><item>bCountCheckEmergencyEvent</item><item>eEmerCheckStep</item><item>strEmergencyCode</item><item>StrSystemInfo.bEmergencyCurrentCode</item><item>StrConfig</item><item>StrUserInfo</item><item>test_byte</item><item>StrSystemInfo.MAIN_Leg_Bike</item><item>strInstantAcceData</item><item>StrSystemInfo.MAIN_Key_Active</item><item>StrSystemInfo.MAIN_Key</item><item>res</item><item>strCalibAcce</item><item>strInstantAcceData</item><item>uTimeOut</item><item>bFlagCutboardActive</item><item>bFlagSetConfigACCEDone</item><item>data[0]</item><item>StrConfigPara</item><item>pStrConfig</item><item>pStrRFConfig</item><item>RFTagConfigContent</item><item/></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>300</item><item>150</item><item>100</item><item>222</item></col-widths><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>WATCH_1</Factory></Window><Window><Factory>WATCH_3</Factory></Window><Window><Factory>Disassembly</Factory></Window></Windows></PreferedWindows></WATCH_2><WATCH_3><expressions><item>StrConfigPara</item><item>StrConfig</item><item>RFTagConfigContent</item><item>StrConfigPara.StrConfig</item><item>nRF24_App_Manage</item><item>nRF24_Link_Manage</item><item>bFlag_RFModule_OK</item><item>StrConfig</item><item>StrConfigPara</item><item>StrSystemInfo.MAIN_Leg_Active</item><item>strInstantAcceData</item><item>test_byte</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>311</item><item>150</item><item>100</item><item>379</item></col-widths><PreferedWindows><Position>2</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>WATCH_1</Factory></Window><Window><Factory>WATCH_2</Factory></Window><Window><Factory>Disassembly</Factory></Window></Windows></PreferedWindows></WATCH_3></Static>
+    <Windows>
+      
+      
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-5737-21082</Identity>
+            <TabName>Debug Log</TabName>
+            <Factory>Debug-Log</Factory>
+            <Session/>
+          </Tab>
+          <Tab>
+            <Identity>TabID-5214-21092</Identity>
+            <TabName>Build</TabName>
+            <Factory>Build</Factory>
+            <Session/>
+          </Tab>
+          
+        <Tab><Identity>TabID-20115-1168</Identity><TabName>Ambiguous Definitions</TabName><Factory>Select-Ambiguous-Definitions</Factory><Session/></Tab><Tab><Identity>TabID-17712-14518</Identity><TabName>Breakpoints</TabName><Factory>Breakpoints</Factory></Tab><Tab><Identity>TabID-18902-791</Identity><TabName>Memory</TabName><Factory>Memory</Factory><Session><ZoneNumber>0</ZoneNumber><SelectionAnchor>536876752</SelectionAnchor><SelectionEnd>536876784</SelectionEnd><UnitsPerGroup>1</UnitsPerGroup><EndianMode>0</EndianMode><DataCovEnabled>0</DataCovEnabled><DataCovShown>0</DataCovShown><AutoRefresh>0</AutoRefresh><HScroll>0</HScroll><VScroll>33554792</VScroll></Session></Tab><Tab>
+            <Identity>TabID-30654-30608</Identity>
+            <TabName>Find in Files</TabName>
+            <Factory>Find-in-Files</Factory>
+            <Session/>
+          </Tab></Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3><Tabs><Tab><Identity>TabID-31241-19625</Identity><TabName>Workspace</TabName><Factory>Workspace</Factory><Session><NodeDict><ExpandedNode>RFID_Mainboard</ExpandedNode><ExpandedNode>RFID_Mainboard/1.ProjectConfigFile</ExpandedNode><ExpandedNode>RFID_Mainboard/2.MainSource</ExpandedNode><ExpandedNode>RFID_Mainboard/2.MainSource/2.1.Kernel_Task</ExpandedNode><ExpandedNode>RFID_Mainboard/2.MainSource/2.1.Kernel_Task/2.1.1.IO_Kernel_Task</ExpandedNode><ExpandedNode>RFID_Mainboard/2.MainSource/2.2.Application_Task</ExpandedNode><ExpandedNode>RFID_Mainboard/3.Kernel</ExpandedNode><ExpandedNode>RFID_Mainboard/3.Kernel/3.1.IO_Kernel</ExpandedNode><ExpandedNode>RFID_Mainboard/3.Kernel/3.2.Timer_Kernel</ExpandedNode><ExpandedNode>RFID_Mainboard/3.Kernel/3.3.USART_Kernel</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.2.H3ElTeam_Libs</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.3.Hardware_Driver_Lib</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.3.Hardware_Driver_Lib/4.3.2.Accelometer</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.3.Hardware_Driver_Lib/4.3.3.RF_nRF24L01+</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.4.Network_Layer</ExpandedNode><ExpandedNode>RFID_Mainboard/4.Libs/4.4.Network_Layer/4.4.1.RF_MeshNet</ExpandedNode><ExpandedNode>RFID_Mainboard/Output</ExpandedNode></NodeDict></Session></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd3><Wnd4><Tabs><Tab><Identity>TabID-11685-32055</Identity><TabName>Watch 3</TabName><Factory>WATCH_3</Factory></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd4></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_RFID_Mainboard\2.MainSource\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>64</YPos2><SelStart2>3977</SelStart2><SelEnd2>3977</SelEnd2></Tab><ActiveTab>0</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_RFID_Mainboard\3.ProjectTask\2.Application_Task\1.User\UserTask.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>470</YPos2><SelStart2>24672</SelStart2><SelEnd2>24672</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\3.Project_RFID_Mainboard\2.MainSource\Project_Function.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>26</YPos2><SelStart2>2655</SelStart2><SelEnd2>2669</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-0785A938><key>iaridepm.enu1</key></Toolbar-0785A938></Sizes></Row0><Row1><Sizes><Toolbar-1A240D08><key>debuggergui.enu1</key></Toolbar-1A240D08></Sizes></Row1><Row2><Sizes><Toolbar-1A241F00><key>armstlink.enu1</key></Toolbar-1A241F00></Sizes></Row2></Top><Left><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>570</Bottom><Right>297</Right><x>-2</x><y>-2</y><xscreen>132</xscreen><yscreen>127</yscreen><sizeHorzCX>68750</sizeHorzCX><sizeHorzCY>128024</sizeHorzCY><sizeVertCX>155729</sizeVertCX><sizeVertCY>576613</sizeVertCY></Rect></Wnd3></Sizes></Row0></Left><Right><Row0><Sizes><Wnd4><Rect><Top>-2</Top><Left>-2</Left><Bottom>570</Bottom><Right>795</Right><x>-2</x><y>-2</y><xscreen>201</xscreen><yscreen>199</yscreen><sizeHorzCX>104688</sizeHorzCX><sizeHorzCY>200605</sizeHorzCY><sizeVertCX>415104</sizeVertCX><sizeVertCY>576613</sizeVertCY></Rect></Wnd4></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>327</Bottom><Right>1922</Right><x>-2</x><y>-2</y><xscreen>1924</xscreen><yscreen>329</yscreen><sizeHorzCX>1002083</sizeHorzCX><sizeHorzCY>331653</sizeHorzCY><sizeVertCX>7292</sizeVertCX><sizeVertCY>22177</sizeVertCY></Rect></Wnd2></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Project>
+
+
