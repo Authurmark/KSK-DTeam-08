@@ -1,0 +1,15 @@
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armstlink.dll" 
+
+"C:\Mr.Kokono\2.HDCompany_Dev\40.ShipGPS_APhi\2.FirmwareApplication\1.1.FW_Mainboard_RTOS_HW3.3.0\3.Project_RFID_Mainboard\4.Project_Build\Debug\Exe\c.out" 
+
+--plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
+
+--device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\config\debugger\ST\STM32F1xx_XL.dmac" 
+
+--flash_loader "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\config\flashloader\ST\FlashSTM32F10xx8.board" 
+
+
+
+
