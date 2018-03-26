@@ -783,7 +783,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>E:\Le Bien\K08_Application_1.0\3.Project_KSK\2.MainSource\stm32f103x8_FWWithBootloader.icf</state>
+                    <state>$PROJ_DIR$\..\..\3.Project_KSK\2.MainSource\stm32f103x8_FWWithBootloader.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
