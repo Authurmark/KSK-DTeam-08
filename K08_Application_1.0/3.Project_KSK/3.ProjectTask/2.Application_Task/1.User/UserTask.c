@@ -47,6 +47,7 @@ typedef enum
 	eST_User_Task_CHECKING_EVENT			= 5,
 	eST_User_Task_PC_CONNECT		        = 6,
     eST_User_Task_PWM                       = 7,
+    eST_User_Task_DMA_ADC                   = 8,
 		
 	eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -102,6 +103,12 @@ void vUserTask( void *pvParameters )
       }
 }
 /*********************************************************************/
+
+uint32_t		ixIndex_ADC_Buffer;
+uint32_t	ADC_Buffer[10];
+static uint32_t sum_ADC = 0;
+static uint32_t value_ADC_tb = 0;
+
 void vUserTaskMainProcess(void)
 {
 	switch(eState_User_Task)
@@ -170,7 +177,7 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-        case eST_User_Task_PWM:
+        case eST_User_Task_DMA_ADC:
              if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE;
@@ -190,40 +197,28 @@ void vUserTaskMainProcess(void)
                 }
 				
 				
-                 /*Motor control*/
+				/* Test ADC to PWM function */
+				static uint32_t iIndex;
+				sum_ADC = 0;
+				ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
 
-                /* Local variable */
-    			 static enumbool bFlagSystemRun = eFALSE;
-				if(bFlagSystemRun == eFALSE)
+				if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
+				ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
+				
+				sum_ADC = 0;	
+                for (iIndex=0;iIndex<10;iIndex++)
                 {
-                  vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
-                  
+                  sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
                 }
-				if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
-                //if(EMERGENCY_BUTTON_IO==0)
-                {
-                  bFlagSystemRun = eTRUE;
-                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-             
-                  static uint8_t bDutyMotor;
-				  bDutyMotor =50;
- 			      vMotorControl(bDutyMotor, 1);
-                }
-				if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
-				{
-                  bFlagSystemRun = eTRUE;
-                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-                              
-			      static uint8_t bDutyMotor;
-				  bDutyMotor =50;
- 			      vMotorControl(bDutyMotor, 2);
-				}
-                  
+         
+                value_ADC_tb = sum_ADC/10;
+			    MOTOR_1_DUTY(value_ADC_tb/41);
+                   
                                       
-			}
+	            }
 		break;
 		default:
-			eState_User_Task = eST_User_Task_PWM;
+			eState_User_Task = eST_User_Task_DMA_ADC;
 			bFlag_1st_Case = eTRUE;
 		break;
 	}

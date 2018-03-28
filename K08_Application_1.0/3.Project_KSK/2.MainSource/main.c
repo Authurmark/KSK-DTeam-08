@@ -63,7 +63,7 @@
 
 /*-----------------------------------------------------------*/
 /* Main source */
-void main(void)
+	void main(void)
 {
 	/* Init hardware module for MCU*/
 	vMCU_Init_Hardware();
