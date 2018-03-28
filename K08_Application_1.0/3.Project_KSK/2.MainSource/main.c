@@ -37,9 +37,8 @@
 
     /* The LED1 Task */
 	#define LED1_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-    #define LED2_TASK_STACK_SIZE			( ( unsigned short ) 64 )
     #define LED1_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-    #define LED2_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
+   
 
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );

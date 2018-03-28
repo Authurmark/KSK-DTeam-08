@@ -3,11 +3,11 @@
 /* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
 
 define symbol __FLASH_BASE_ADDR__ = 0x08000000;
-define symbol __FLASH_END_ADDR__  = 0x0803FFFF;                                                                                                                                                                                                                         		/* FLASH SIZE 64 KB */
+define symbol __FLASH_END_ADDR__  = 0x0803FFFF;                                                                                                                                                                                                                                                        		/* FLASH SIZE 64 KB */
 define symbol __FLASH_SIZE        = __FLASH_END_ADDR__ - __FLASH_BASE_ADDR__;
 
 /*-Bootloader Regions-*/
-define symbol __BOOTLOADER_SIZE__       = 0x00005000;                                                                                                                                                                                                                                                                   	/*20KB bootloader*/
+define symbol __BOOTLOADER_SIZE__       = 0x00005000;                                                                                                                                                                                                                                                                                                        	/*20KB bootloader*/
 define symbol __BOOTLOADER_START_ADDR__ = __FLASH_BASE_ADDR__ ;
 define symbol __BOOTLOADER_END_ADDR__   = __FLASH_BASE_ADDR__ + __BOOTLOADER_SIZE__ - 1 ;
 
@@ -21,7 +21,7 @@ define symbol __FIRMWARE_END_ADDR__ = __FLASH_END_ADDR__;
 define symbol __FIRMWARE_SIZE__     = __FIRMWARE_END_ADDR__ - __FIRMWARE_START_ADDR__ + 1;
 
 /*-Firmware Decription Regions-*/
-define symbol __FIRMWARE_DECRIPTION_SIZE__       = 0x800;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            /*Size 256 bytes*/
+define symbol __FIRMWARE_DECRIPTION_SIZE__       = 0x800;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              /*Size 256 bytes*/
 define symbol __FIRMWARE_DECRIPTION_START_ADDR__ = __FLASH_END_ADDR__  - __FIRMWARE_DECRIPTION_SIZE__ + 1;
 define symbol __FIRMWARE_DECRIPTION_END_ADDR__   = __FLASH_END_ADDR__;
 

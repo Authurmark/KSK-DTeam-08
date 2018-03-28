@@ -264,7 +264,7 @@ void vInitPWMFunction(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* Configure PB0 PB1 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);  
@@ -276,7 +276,7 @@ void vChangeDutyCycleOC1(uint8_t bDutyPercent)
 }
 void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 {
-	TIM1->CCR2 = (bDutyPercent*65535)/100;
+	TIM1->CCR4 = (bDutyPercent*65535)/100;
 }
 
 #define MOTOR_FORWARD 	1
@@ -288,16 +288,20 @@ void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection)
 	switch(bDirection)
 	{
 		case MOTOR_FORWARD:
-			vChangeDutyCycleOC1(bDutyMotor);
-			vChangeDutyCycleOC2(0);
+			MOTOR_1_DUTY(bDutyMotor);
+			MOTOR_2_DUTY(0);
 		break;
 		case MOTOR_REVERSE:
-			vChangeDutyCycleOC1(0);
-			vChangeDutyCycleOC2(bDutyMotor);
+			MOTOR_1_DUTY(0);
+			MOTOR_2_DUTY(bDutyMotor);
 		break;
 		case MOTOR_STOP:
+            MOTOR_1_DUTY(0);
+			MOTOR_2_DUTY(0);
 		break;
 		case MOTOR_BRAKE:
+			MOTOR_2_DUTY(bDutyMotor);
+			MOTOR_1_DUTY(bDutyMotor);
 		break;
 		default:
 		break;
@@ -375,7 +379,6 @@ void vInit_DMA_ADC_Function(void)
 
 /* Encoder function */
 // TIMER #3 IRQ
-// Rotary Encoder direction
 typedef enum { FORWARD, BACKWARD } Direction;
 
 // Rotary encoder variables
@@ -387,6 +390,7 @@ void vInit_TIM_ENCODER_Function(void)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	TIM_TimeBaseInitTypeDef TIM;
+	NVIC_InitTypeDef NVIC_InitStructure;
 
 	/* Init IO for Encoder function */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -399,14 +403,25 @@ void vInit_TIM_ENCODER_Function(void)
 	// Enable clock for TIM3
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
 	// Time base configuration
+    TIM.TIM_Prescaler = 0;
 	TIM_TimeBaseStructInit(&TIM);
-	TIM.TIM_Period = 4;
+	TIM.TIM_Period = 10;
+    TIM.TIM_ClockDivision = 0;
 	TIM.TIM_CounterMode = TIM_CounterMode_Up | TIM_CounterMode_Down;
 	TIM_TimeBaseInit(TIM3,&TIM);
 	TIM_EncoderInterfaceConfig(TIM3,TIM_EncoderMode_TI12,TIM_ICPolarity_BothEdge,TIM_ICPolarity_BothEdge);
 	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);
 	// Enable counter for TIM3
-	NVIC_EnableIRQ(TIM3_IRQn); // Enable TIM3 IRQ
+
+
+	
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+  	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+ 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  	NVIC_Init(&NVIC_InitStructure); 
+    NVIC_EnableIRQ(TIM3_IRQn); // Enable TIM3 IRQ 
 	TIM_Cmd(TIM3,ENABLE); // Enable counter on TIM3
 }
 
@@ -415,19 +430,19 @@ uint32_t vGetEncoderValue(void)
 	return rotary_cntr;
 }
 
-void TIM3_IRQHandler(void) {
+void TIM3_IRQHandler(void) 
+{
 	__disable_irq();
-	if (TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) {
+	if (TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) 
+   {
 		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
 
 		rotary_dir = (TIM3->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
-		(rotary_dir == BACKWARD) ? rotary_cntr-- : rotary_cntr++;
+	    (rotary_dir == BACKWARD) ? rotary_cntr-- : rotary_cntr++;
 		rotary_ready = 1;
 	}
 	__enable_irq();
 }
-
-
 
 
 

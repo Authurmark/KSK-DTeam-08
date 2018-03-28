@@ -21,6 +21,7 @@
 #include "Common.h"
 /* Prototype function */
 #define MOTOR_1_DUTY 	vChangeDutyCycleOC1
+#define MOTOR_2_DUTY 	vChangeDutyCycleOC2
 /* Prototype static function main source use */
 void vMCU_Init_Hardware( void );
 void vProject_Init( void );
@@ -31,8 +32,8 @@ void vChangeDutyCycleOC2(uint8_t bDutyPercent);
 /* Motor control */
 void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 /* DMA ADC function */
-void vInit_DMA_ADC_Function(void);
 /* TIM ENCODER function*/
+void vInit_DMA_ADC_Function(void);
 void vInit_TIM_ENCODER_Function(void);
 void TIM3_IRQHandler(void);
 uint32_t vGetEncoderValue(void);
@@ -54,6 +55,25 @@ extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
+
+#define LED_USER_1_ON			pLED1.write(ON);
+#define LED_USER_1_OFF		pLED1.write(OFF);
+#define LED_USER_1_TOGGLE		pLED1.write(1-pLED1.writeSta());
+#define LED_USER_2_ON			pLED2.write(ON);
+#define LED_USER_2_OFF		pLED2.write(OFF);
+#define LED_USER_2_TOGGLE		pLED2.write(1-pLED2.writeSta());
+#define BUTTON_1_STATE		strIO_Button_Value.bButtonState[eButton1]
+#define BUTTON_2_STATE		strIO_Button_Value.bButtonState[eButton2]
+#define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
+
+#define OUT_LED_1		        strLED_1
+#define OUT_LED_2               strLED_2
+
+#define EMERGENCY_BUTTON_1_STATE	BUTTON_1_STATE
+#define EMERGENCY_BUTTON_IO	        pBUT_1.read()
+#define EMERGENCY_BUTTON_2_STATE	BUTTON_2_STATE
+#define EMERGENCY_BUTTON_IO      	pBUT_2.read()
+
 
 /* Define function for all function of RFID Bike project */	
 #define LED_USER_ON			pLED1.write(ON);
