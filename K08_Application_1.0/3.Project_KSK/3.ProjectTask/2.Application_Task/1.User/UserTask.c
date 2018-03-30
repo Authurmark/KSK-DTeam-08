@@ -42,10 +42,10 @@ typedef enum
 {
 	eST_User_Task_INIT						= 1,
 	eST_User_Task_IDLE 						= 2,
-	eST_User_Task_LOGGING					= 3,
+	eST_User_Task_LOGGING					        = 3,
 	eST_User_Task_ERROR						= 4,
-	eST_User_Task_CHECKING_EVENT			= 5,
-	eST_User_Task_PC_CONNECT		        = 6,
+	eST_User_Task_CHECKING_EVENT	                		= 5,
+	eST_User_Task_PC_CONNECT	                	        = 6,
 		
 	eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -123,40 +123,7 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-                /* Check Comport process */
-                vComPortProcess();
-                /* Check config UART LED parameter */
-                if(bFlagGetCommandLEDConfigUART1==eTRUE)
-                {
-                    /* Clear flag */
-                    bFlagGetCommandLEDConfigUART1 = eFALSE;
-                    /* Set parameter to IO task */
-                    vIO_ConfigOutput(&OUT_LED_SIGNAL,bLEDConfigCommand.uFrequency,bLEDConfigCommand.uFrequency*bLEDConfigCommand.uCountToggle,bLEDConfigCommand.uCountToggle,bLEDConfigCommand.bStartState,bLEDConfigCommand.bEndState,bLEDConfigCommand.bFlagStart);
-//                    vIO_ConfigOutput(&OUT_LED_SIGNAL,50,100,2,RELAY_ON,RELAY_OFF,eFALSE);                 
-                }
-				/**/
-				
-//				static uint8 bCountChangeDuty=0, bDutyCycle=0;
-//				if(bCountChangeDuty++>100)
-//				{
-//					bCountChangeDuty = 0;
-//					MOTOR_1_DUTY(bDutyCycle+=10);
-//					if(bDutyCycle>=100)
-//					{
-//						bDutyCycle = 0;
-//					}
-//				}
-				/* Test ADC to PWM function */
-//				vChangeDutyCycleOC1(50);
-//				MOTOR_1_DUTY(ADCConvertedValue/400);
-
-
-				/* Check encoder counter */
-				//static uint32_t bEncoderValue;
-				//bEncoderValue = vGetEncoderValue();
-				//MOTOR_1_DUTY(bEncoderValue%100);
-                MOTOR_1_DUTY(50);
-			}
+                        }
 		break;
 		case eST_User_Task_LOGGING:
 			if(bFlag_1st_Case==eTRUE)

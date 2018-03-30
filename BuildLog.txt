@@ -1,0 +1,15 @@
+﻿3/26/2018 : Chạy xử lý data USART1 ở trong hàm vApplicationIdleHook
++ vComDataProcess 
++ vComDataHandle
++ 
+
+3/27/2018 : Xử lý data frame của USART 1
++ Edit UART Frame
++ Tách code : phản hồi thông tin bằng hàm vFeedBack_info_sys();
+
+3/28/2018
++ Chia tách từng gói data : bằng hàm vComDivideBlockData();
+
+3/30/2018
++ Edit lại hàm chia tách gói data
++ Hoạch địch buffer cho đk spindle, current measure và encoder

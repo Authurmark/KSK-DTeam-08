@@ -27,6 +27,7 @@ hardware function.
 /* Variable */
 uint16 CRCData,cntData;
 uint8 UART_BUFFER_RX[i_MAX_UART];
+uint8 UART_BUFFER_RX_CLEAR[i_MAX_UART];
 uint8 UART_BUFFER_TX[i_MAX_UART];
 uint8 PACKAGE_BUFF[PACKAGE_SIZE];
 uint8_t bLast_Idx_Low = 0, bLast_Idx_High = 0;
@@ -39,6 +40,8 @@ extern enumbool bFlag_USART_RX;
 uint16 FirmwareSize;
 uint16 FirmwareBlockIndex;
 uint16 FirmwareBlock;
+
+
 #ifdef USE_LED_SEGMENT
 extern uint8_t bLED7Value[NUMBER_LED_7_SEGMENT];
 #endif /* NUMBER_LED_7_SEGMENT */
@@ -46,116 +49,56 @@ extern Struct_Flash_Config_Parameter	StrConfigPara;
 enumbool bFlagGetCommandLEDConfigUART1;
 structIO_Manage_Output bLEDConfigCommand;
 /************************************************/
-void UART_Comm(void)
-{
-    uint8_t iIndex;
-	/*Process Command.................*/
-    /*FRAME FORMAT+++++++++++++++++++++++++++++++++++++++++++++
-    Preamble(5B) |Len(2B)     |CMD(1B)        | Indec(2B)   | DATA(len B)   | CS(1B)
-    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-    /*Reset index*/
-    i_UART_RX = 0;    
-    CRCData = 0;
-    /* Check framemable */
-    if((UART_BUFFER_RX[iUART_PRE_1]==PREMABLE_BYTE_1)
-        &&(UART_BUFFER_RX[iUART_PRE_2]==PREMABLE_BYTE_2)
-            &&(UART_BUFFER_RX[iUART_PRE_3]==PREMABLE_BYTE_3)
-               &&(UART_BUFFER_RX[iUART_PRE_4]==PREMABLE_BYTE_4)
-                  &&(UART_BUFFER_RX[iUART_PRE_5]==PREMABLE_BYTE_5))
-    {
-        /* Command Info */
-        if ((cmd_type)UART_BUFFER_RX[iUART_CMD_TYPE]==P2TCMD_INFO)
-        {
-            /* Send Info command */
-            UART_Send_STRING("\r\n\r\nINFO COMMAND: OK\r\n");
-            UART_Send_STRING("PRODUCT: ");
-            UART_Send_BUF(StrConfigPara.ProductName,sizeof(StrConfigPara.ProductName));
-            UART_Send_STRING("\r\n");
-            UART_Send_STRING("PRODUCT ID: ");
-            UART_Send_BUF(StrConfigPara.ProductID,sizeof(StrConfigPara.ProductID));
-            UART_Send_STRING("\r\n");
-            UART_Send_STRING("HARDWARE: ");
-            UART_Send_BUF(StrConfigPara.HW_Version,sizeof(StrConfigPara.HW_Version));
-            UART_Send_STRING("\r\n");
-            UART_Send_STRING("BOOTLOADER: ");
-            UART_Send_BUF(StrConfigPara.BL_Version,sizeof(StrConfigPara.BL_Version));
-            UART_Send_STRING("\r\n");
-            UART_Send_STRING("FIRMWARE: ");
-            UART_Send_BUF(StrConfigPara.FW_Version,sizeof(StrConfigPara.FW_Version));
-            UART_Send_STRING("\r\n");
-        }
-        /* Process command */
-        vComCommandProcess();
-        /* Check enable command */
-        if (!EnableUARTComm)
-              return;
-    }
-    /*Reset index*/
-    i_UART_RX=0;
-}
-/**********************************************************************************/
-void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte)
-{    
-	memset(UART_BUFFER_TX,0,i_MAX_UART);
-	UART_BUFFER_TX[iUART_PRE_1] = PREMABLE_BYTE_1;   /*data size LB*/
-	UART_BUFFER_TX[iUART_PRE_2] = PREMABLE_BYTE_2;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_3] = PREMABLE_BYTE_3;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_4] = PREMABLE_BYTE_4;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_5] = PREMABLE_BYTE_5;   /*data size LB*/
-    UART_BUFFER_TX[iUART_SIZE_LOW] = (uint8)(uLengByte&0x00FF);/*data size HB*/
-    UART_BUFFER_TX[iUART_SIZE_HIGH] = (uint8)(uLengByte>>8);   	/*data size LB*/
-    UART_BUFFER_TX[iUART_CMD] = CMD;/*command*/
-    UART_BUFFER_TX[iUART_IDX_LOW] = bLast_Idx_Low;      /*index frame LB*/
-    UART_BUFFER_TX[iUART_IDX_HIGH] = bLast_Idx_High;      /*index frame HB*/
-    UART_BUFFER_TX[iUART_DATA] 		= CODE;
-    UART_BUFFER_TX[iUART_DATA+1] 	= CODE>>8;
-    UART_BUFFER_TX[iUART_DATA+2] = CRC8Bits(UART_BUFFER_TX,iUART_DATA+2);
-	i_UART_TX = iUART_DATA+3;
-}
-/**********************************************************************************/
-void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend)
-{    
-	uint16_t uLengBytePackage;
-    /* Clear buffer */
-	memset(UART_BUFFER_TX,0,i_MAX_UART);
-	UART_BUFFER_TX[iUART_PRE_1] = PREMABLE_BYTE_1;   /*data size LB*/
-	UART_BUFFER_TX[iUART_PRE_2] = PREMABLE_BYTE_2;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_3] = PREMABLE_BYTE_3;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_4] = PREMABLE_BYTE_4;   /*data size LB*/
-    UART_BUFFER_TX[iUART_PRE_5] = PREMABLE_BYTE_5;   /*data size LB*/
-	/* Increase for CODE */
-	uLengBytePackage=uLengByteContent+2;
-    UART_BUFFER_TX[iUART_SIZE_LOW] = (uint8)(uLengBytePackage&0x00FF);/*data size HB*/
-    UART_BUFFER_TX[iUART_SIZE_HIGH] = (uint8)(uLengBytePackage>>8);   	/*data size LB*/
-    UART_BUFFER_TX[iUART_CMD] = CMD;/*command*/
-    UART_BUFFER_TX[iUART_IDX_LOW] = bLast_Idx_Low;      /*index frame LB*/
-    UART_BUFFER_TX[iUART_IDX_HIGH] = bLast_Idx_High;      /*index frame HB*/
-	UART_BUFFER_TX[iUART_DATA] 		= CODE;
-    UART_BUFFER_TX[iUART_DATA+1] 	= CODE>>8;
-    /* Copy data content */
-    memcpy(&UART_BUFFER_TX[iUART_DATA+2],pSend,uLengByteContent);
-	UART_BUFFER_TX[iUART_DATA+uLengByteContent+2] = CRC8Bits(UART_BUFFER_TX,iUART_DATA+uLengByteContent+2);
-	i_UART_TX = iUART_DATA+uLengByteContent+3;
-}
-/* Feed back command & content */
-void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend)
-{
-	/* Feedback Content */
-	if(uLengByte!=0)
-	{
-		UART_MakeData(CMD,CODE,uLengByte,pSend);
-		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
-	}
-	else
-	{
-		/* Feedback Command */
-		UART_MakeFeedback(CMD,CODE,NORMAL_FEEDBACK_LENGTH);
-		/* Feedback */
-		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
-	}
-}
-/*-----------------------------------------------------------*/
-enumbool vComPortProcess(void)
+//------------------------- USER COMMUNICATION FUNCTION -----------------------
+/* New Variable */
+#define NUMBER_INDEX_CHECK                      25
+#define NUMBER_INDEX_CLEAR                      100
+
+typedef enum {
+    SPINDLE_RORATY = 0x01,
+    SPINDLE_RESET  = 0x02,
+}state_process;
+
+typedef enum {
+    SPINDLE_FORWARD = 0x01,
+    SPINDLE_REVERSE = 0x02,
+    SPINDLE_BREAK   = 0x03,
+    SPINDLE_DISABLE = 0x04,
+}state_DC_Spindle;
+
+typedef struct{
+  state_process         bProcess;
+  uint8                 Speed_DC;
+  state_DC_Spindle      bDC_Driection;
+}BufferRX_Control_DC_Spindle;
+
+BufferRX_Control_DC_Spindle BUFFER_RX_CONTROL_DC_SPINDLE;
+
+#define NUM_MEMBER_ADC_Current_Measure          10
+typedef struct{
+  uint16        Buffer_ADC_Current_Measure[NUM_MEMBER_ADC_Current_Measure];
+  uint16        Current_Value;
+  uint16        Current_Max;
+}Buffer_Current_Measure;
+
+Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
+
+typedef struct{
+  uint16        pulse_encoder;
+  uint16        angle_motor;
+}Buffer_Encoder;
+
+Buffer_Encoder  BUFFER_ENCODER;
+
+//---------RX DATA AND FEEDBACK ----------//
+/** HAM XU LY RX DATA
+  * 1. Lay data tu RXRingBuff (moi lan chay lay 1 byte) de vao UART_BUFFER_RX
+  * 2. Doi sau 1 thoi gian (sau nhieu lan chay, da lay du so byte moi) hoac lay du 1 goi du lieu
+  * 3. Chay ham chia tach du lieu vComDivideBlockData() (kiem tra PREMABLE_BYTE ----> nhan dang cmd_type ---> Xu ly du lieu theo tung kien cmd_type ---> Xoa du lieu trong )
+  * 4. Gui feedback
+**/
+
+enumbool vComDataProcess(void)
 {
     static uint8 bUSARTReceive;
     enumbool bReturn;
@@ -172,54 +115,185 @@ enumbool vComPortProcess(void)
     {
         /*Receive sequence*/
         eUARTDetectEnCMD = eFALSE;
-        UART_Comm();
+        //vComDataHandle();
+        vComDivideBlockData();
         bReturn = eTRUE;
     }
     return bReturn;
 }
-/*************************************************************/
-void vComCommandProcess()
+/** HAM CHIA TACH GOI DU LIEU
+  * Quet tim chuoi ky tu PREMABLE_BYTE 1-6
+  * Kiem tra ky tu ket thuc co dung khong, khong dung thi bo goi du lieu nay
+  * Xu ly data, dua vao cac buffer khac nhau, tuy thuoc vao iUART_CMD_TYPE
+  * Reset value cho UART_BUFFER_RX, nhan gia tri moi
+**/
+void vComDivideBlockData(void)
 {
-    /* Check PC command */
-    switch ((cmd_type)UART_BUFFER_RX[iUART_CMD])
-    {
-        case P2TCMD_SET_RELAY_PARA:
-            /* Send Feedback */
-            UART_Comm_Feedback_Command_Content(P2TCMD_SET_RELAY_PARA,FBCODE_OK,0,PACKAGE_BUFF);
-        break;
-        case P2TCMD_SET_LED_PARA:
-            /* Send Feedback */
-			UART_Comm_Feedback_Command_Content(P2TCMD_SET_LED_PARA,FBCODE_OK,0,PACKAGE_BUFF);
-            /* Set flag eTRUE*/
-            bFlagGetCommandLEDConfigUART1 = eTRUE;
-            /* Update parameter */
-            bLEDConfigCommand.uCountToggle  = UART_BUFFER_RX[iUART_DATA];
-            bLEDConfigCommand.uFrequency    = UART_BUFFER_RX[iUART_DATA+1];
-            bLEDConfigCommand.bStartState 	= UART_BUFFER_RX[iUART_DATA+2];
-            bLEDConfigCommand.bEndState 	= UART_BUFFER_RX[iUART_DATA+3];
-            bLEDConfigCommand.bFlagStart    = UART_BUFFER_RX[iUART_DATA+4];
-        break;
-        /*Check CMD*/
-        case P2TCMD_SET_RELAY_DIRECT:
-            /* Send Feedback */
-			UART_Comm_Feedback_Command_Content(P2TCMD_SET_RELAY_DIRECT,FBCODE_OK,0,PACKAGE_BUFF);
-        break;
-        case P2TCMD_SET_LED_DIRECT:
-            /* Send Feedback */
-			UART_Comm_Feedback_Command_Content(P2TCMD_SET_LED_DIRECT,FBCODE_OK,0,PACKAGE_BUFF);
-            /* Get data and process */
-            if(UART_BUFFER_RX[iUART_DATA]==eTRUE)
-            {
-//                UART_Send_STRING("\r\n TURN ON LED!");
-                LED_USER_ON;
-            }
-            else if(UART_BUFFER_RX[iUART_DATA]==eFALSE)
-            {
-//                UART_Send_STRING("\r\n TURN OFF LED!");
-                LED_USER_OFF;
-            }
-        break;
-        default:
-        break;
-    }
+  for(uint8 iIndex=0; iIndex<NUMBER_INDEX_CHECK; iIndex++)                              
+  {
+      //Quet tim chuoi ky tu PREMABLE_BYTE 1-6
+      if((UART_BUFFER_RX[iIndex+iUART_PRE_1]==PREMABLE_BYTE_1)
+        &&(UART_BUFFER_RX[iIndex+iUART_PRE_2]==PREMABLE_BYTE_2)
+            &&(UART_BUFFER_RX[iIndex+iUART_PRE_3]==PREMABLE_BYTE_3)
+               &&(UART_BUFFER_RX[iIndex+iUART_PRE_4]==PREMABLE_BYTE_4)
+                  &&(UART_BUFFER_RX[iIndex+iUART_PRE_5]==PREMABLE_BYTE_5)
+                    &&(UART_BUFFER_RX[iIndex+iUART_PRE_6]==PREMABLE_BYTE_6)
+                      &&(UART_BUFFER_RX[iIndex+iUART_END_DATA]==END_DATA_BYTE))         //Kiem tra ky tu ket thuc co dung khong, khong dung thi bo goi du lieu nay
+      {
+          //Xu ly data, dua vao cac buffer khac nhau, tuy thuoc vao iUART_CMD_TYPE
+          switch ((cmd_type)UART_BUFFER_RX[iIndex+iUART_CMD_TYPE])
+          {
+          case P2TCMD_INFO :
+              vFeedBack_info_sys();
+            break;
+  
+          case P2TCMD_SPINDLE:
+              BUFFER_RX_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_RX[iUART_CMD];
+              BUFFER_RX_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
+              BUFFER_RX_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
+            break;
+          
+          case P2TCMD_TEST:
+              USART1_AppCall_SendString("[SYSTEM DEBUG]: NHAN LENH CMD P2TCMD!\r\n");
+            break;
+          
+          default :
+          break;
+          }
+            
+        
+        
+        
+//          UART_BUFFER_RX_HEAD[UART_BUFFER_RX_HEAD_INDEX]=iIndex;                        
+//          UART_BUFFER_RX_HEAD_INDEX++;
+          break;
+          
+      }
+  }
+  
+  // Clear value cho UART_BUFFER_RX, nhan gia tri moi
+  memset(UART_BUFFER_RX,0,i_MAX_UART);                                                                 
+
 }
+
+//---------MARE DATA----------//
+/** TAO DATA VOI DATAFRAME DUNG CHUAN
+1. DUNG CHO FEEDBACK DU LIEU VE DOI TUONG NHAN
+2. DUNG DE TAO DATAFRAME CHO DU LIEU CAN TRUYEN
+**/
+
+void UART_MakeData_Head(cmd_type CMD)
+{
+}
+
+void UART_MakeData_8bit(Data)
+{
+}
+
+void UART_MakeData_16bit(Data)
+{
+}
+
+void UART_MakeData_Tail()
+{
+}
+
+void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend)
+{    
+    uint16_t uLengBytePackage;
+    /* Clear buffer */
+    memset(UART_BUFFER_TX,0,i_MAX_UART);
+    UART_BUFFER_TX[iUART_PRE_1] = PREMABLE_BYTE_1;   /*data size LB*/
+    UART_BUFFER_TX[iUART_PRE_2] = PREMABLE_BYTE_2;   /*data size LB*/
+    UART_BUFFER_TX[iUART_PRE_3] = PREMABLE_BYTE_3;   /*data size LB*/
+    UART_BUFFER_TX[iUART_PRE_4] = PREMABLE_BYTE_4;   /*data size LB*/
+    UART_BUFFER_TX[iUART_PRE_5] = PREMABLE_BYTE_5;   /*data size LB*/
+    UART_BUFFER_TX[iUART_PRE_6] = PREMABLE_BYTE_6;   /*data size LB*/
+    
+    /* Increase for CODE */
+    uLengBytePackage=uLengByteContent+2;
+    UART_BUFFER_TX[iUART_SIZE_LOW]  =    (uint8)(uLengBytePackage&0x00FF);      /*data size HB*/
+    UART_BUFFER_TX[iUART_SIZE_HIGH] =   (uint8)(uLengBytePackage>>8);   	/*data size LB*/
+    UART_BUFFER_TX[iUART_CMD] = CMD;                                            /*command*/
+    UART_BUFFER_TX[iUART_IDX_LOW] = bLast_Idx_Low;                              /*index frame LB*/
+    UART_BUFFER_TX[iUART_IDX_HIGH] = bLast_Idx_High;                            /*index frame HB*/
+    
+    UART_BUFFER_TX[iUART_DATA] 		= CODE;
+    UART_BUFFER_TX[iUART_DATA+1] 	= CODE>>8;
+    
+}
+
+//---------FEEDBACK DATA----------//
+/** 
+1. FEEDBACK KHONG CAN NOI DUNG
+2. FEEDBACK CO NOI DUNG
+3. FEEDBACK THONG TIN CAU HINH
+
+UART_Comm_Feedback_Command_Content -> MAKE DATA -> SENDBUFF / SENDSTRING
+**/
+
+void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend)
+{
+	/* Feedback Content */
+	if(uLengByte!=0)
+	{
+		UART_MakeData(CMD,CODE,uLengByte,pSend);
+		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
+	}
+	else
+	{
+		/* Feedback Command */
+		UART_MakeFeedback(CMD,CODE,NORMAL_FEEDBACK_LENGTH);
+		/* Feedback */
+		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
+	}
+}
+
+void vFeedBack_info_sys(void)
+{
+    /* Send Info command */
+    UART_Send_STRING("\r\n\r\nINFO COMMAND: OK\r\n");
+    UART_Send_STRING("PRODUCT: ");
+    UART_Send_BUF(StrConfigPara.ProductName,sizeof(StrConfigPara.ProductName));
+    UART_Send_STRING("\r\n");
+    UART_Send_STRING("PRODUCT ID: ");
+    UART_Send_BUF(StrConfigPara.ProductID,sizeof(StrConfigPara.ProductID));
+    UART_Send_STRING("\r\n");
+    UART_Send_STRING("HARDWARE: ");
+    UART_Send_BUF(StrConfigPara.HW_Version,sizeof(StrConfigPara.HW_Version));
+    UART_Send_STRING("\r\n");
+    UART_Send_STRING("BOOTLOADER: ");
+    UART_Send_BUF(StrConfigPara.BL_Version,sizeof(StrConfigPara.BL_Version));
+    UART_Send_STRING("\r\n");
+    UART_Send_STRING("FIRMWARE: ");
+    UART_Send_BUF(StrConfigPara.FW_Version,sizeof(StrConfigPara.FW_Version));
+    UART_Send_STRING("\r\n");
+}
+
+//---------TX DATA----------//
+/** 
+1. 
+**/
+void UART_Comm_Feedback_Command_Content()
+{}
+
+
+//UART_Comm_Feedback_Command_Content(P2TCMD_SET_RELAY_DIRECT,FBCODE_OK,0,PACKAGE_BUFF);
+//
+//void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend)
+//{
+//	/* Feedback Content */
+//	if(uLengByte!=0)
+//	{
+//		UART_MakeData(CMD,CODE,uLengByte,pSend);
+//		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
+//	}
+//	else
+//	{
+//		/* Feedback Command */
+//		UART_MakeFeedback(CMD,CODE,NORMAL_FEEDBACK_LENGTH);
+//		/* Feedback */
+//		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
+//	}
+//}
+

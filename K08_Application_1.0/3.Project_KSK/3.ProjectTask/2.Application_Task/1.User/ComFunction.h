@@ -30,19 +30,23 @@ hardware function.
 #define iUART_PRE_3         2
 #define iUART_PRE_4         3
 #define iUART_PRE_5         4
-//#define iUART_CMD           5
-//#define iUART_SIZE_LOW      6
-//#define iUART_SIZE_HIGH     7
-//#define iUART_IDX_LOW       8
-//#define iUART_IDX_HIGH      9
-//#define iUART_DATA          10
-#define iUART_CMD_TYPE      5
-#define iUART_CMD           6
-#define iUART_SIZE_LOW      7
-#define iUART_SIZE_HIGH     8
-#define iUART_IDX_LOW       9
-#define iUART_IDX_HIGH      10
-#define iUART_DATA          11
+#define iUART_PRE_6         5
+
+//#define iUART_CMD           6
+//#define iUART_SIZE_LOW      7
+//#define iUART_SIZE_HIGH     8
+//#define iUART_IDX_LOW       9                           
+//#define iUART_IDX_HIGH      10                          
+//#define iUART_DATA          11
+
+#define iUART_CMD_TYPE      6
+#define iUART_CMD           7
+#define iUART_SIZE_LOW      8
+#define iUART_SIZE_HIGH     9
+#define iUART_IDX_LOW       10
+#define iUART_IDX_HIGH      11
+#define iUART_DATA          12
+#define iUART_END_DATA      18
 
 #define i_MAX_UART          500
 #define UART_INTERVAL       10  /*115200kbs=14400Bs~14byte/s*/
@@ -59,6 +63,9 @@ hardware function.
 #define PREMABLE_BYTE_3 'K'
 #define PREMABLE_BYTE_4 'S'
 #define PREMABLE_BYTE_5 'K'
+#define PREMABLE_BYTE_6 '+'
+
+#define END_DATA_BYTE   '~'
 /* Define for prototype */
 #define pUART_CONFIG pUSART1
 #define UART_Send_BUF pUSART1.send_buf
@@ -71,14 +78,18 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
+    P2TCMD_SPINDLE      = 0x10,
+    P2TCMD_TEST         = 0x11,
+
+
     /*Common command*/
     P2TCMD_CLOSE = 0x01,
     P2TCMD_CONNECT = 0x02,
     
     /* COMMAND FOR RELAY */
     P2TCMD_SET_RELAY_PARA = 0xC1,
-	P2TCMD_SET_LED_PARA = 0xC2,
-	P2TCMD_SET_RELAY_DIRECT = 0xC3,
+    P2TCMD_SET_LED_PARA = 0xC2,
+    P2TCMD_SET_RELAY_DIRECT = 0xC3,
     P2TCMD_SET_LED_DIRECT = 0xC4,
     
     /* Info */
@@ -93,6 +104,19 @@ void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSe
 void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte);
 enumbool vComPortProcess(void);
 void vComCommandProcess(void);
+
+enumbool vComDataProcess(void);
+void vComDataHandle(void);
+void vFeedBack_info_sys(void);
+void vComDivideBlockData(void);
+
+void UART_MakeData_Head(cmd_type CMD);
+void UART_MakeData_8bit(Data);
+void UART_MakeData_16bit(Data);
+void UART_MakeData_Tail();
+
+
+
 /* Extern flag */
 extern enumbool bFlagGetCommandLEDConfigUART1;
 extern structIO_Manage_Output bLEDConfigCommand;

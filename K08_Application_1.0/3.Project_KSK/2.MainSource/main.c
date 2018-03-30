@@ -23,6 +23,7 @@
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
 #include "Project_Function.h"
+#include "ComFunction.h"
 
 #ifdef USE_OS
 	/* Kernel Task priorities. */
@@ -35,18 +36,18 @@
 	/* The check task uses the sprintf function so requires a little more stack. */
 	#define USER_TASK_STACK_SIZE			( ( unsigned short ) 128 )
 
-    /* The LED1 Task */
+        /* The LED1 Task */
 	#define LED1_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-    #define LED2_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-    #define LED1_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-    #define LED2_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
+        #define LED2_TASK_STACK_SIZE			( ( unsigned short ) 64 )
+        #define LED1_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
+        #define LED2_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
 
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
     
-    /* Extern LED1 and LED2 Task*/
-    void LED1_Task( void *pvParameters );
+        /* Extern LED1 and LED2 Task*/
+        void LED1_Task( void *pvParameters );
 	void LED2_Task( void *pvParameters );
 	
 	/* Variable for Handler */
@@ -131,4 +132,8 @@ void LED1_Task( void *pvParameters )
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
+  //This hook will do when system is idle
+  //Handle Buffer DATA
+  
+  vComDataProcess();
 }

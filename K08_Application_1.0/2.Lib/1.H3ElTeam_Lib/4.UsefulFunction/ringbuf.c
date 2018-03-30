@@ -20,13 +20,14 @@
 
 #include "ringbuf.h"
 
-/**
+/*
 * \brief init a RINGBUF object
 * \param r pointer to a RINGBUF object
 * \param buf pointer to a byte array
 * \param size size of buf
 * \return 0 if successfull, otherwise failed
 */
+       
 int32_t RINGBUF_Init(RINGBUF *r, uint8_t* buf, uint32_t size)
 {
 	if(r == NULL || buf == NULL || size < 2) return -1;

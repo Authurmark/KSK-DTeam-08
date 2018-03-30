@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\du an R&D1\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --backend -f "D:\du an R&D1\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --backend -f "D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\du an R&D1\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\du an R&D1\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
 
 @echo off 
 :end
