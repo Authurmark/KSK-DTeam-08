@@ -50,7 +50,7 @@ hardware function.
 
 #define i_MAX_UART          500
 #define UART_INTERVAL       10  /*115200kbs=14400Bs~14byte/s*/
-#define FBCODE_OK           0xC7C7/* Bootloader main */
+#define FBCODE_OK           0xC0C7/* Bootloader main */
 //#define FBCODE_OK           0x7C7C/* FW main */
 #define FBCODE_ERR          0xFFFF
 #define FBCODE_RETURN       0x7E7E
@@ -99,8 +99,8 @@ typedef enum Cmd_Type {
 void vUserTaskProcess(void);
 /* Prototype for function */
 void UART_Comm(void);
-void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend);
-void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend);
+//void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend);
+//void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend);
 void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte);
 enumbool vComPortProcess(void);
 void vComCommandProcess(void);
@@ -110,10 +110,12 @@ void vComDataHandle(void);
 void vFeedBack_info_sys(void);
 void vComDivideBlockData(void);
 
+void UART_MakeData(cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+void UART_Comm_Feedback_Command_Content(cmd_type CMD_TYPE, uint16 CODE);
 void UART_MakeData_Head(cmd_type CMD);
-void UART_MakeData_8bit(Data);
-void UART_MakeData_16bit(Data);
-void UART_MakeData_Tail();
+void UART_MakeData_8bit(uint8 iIndex, uint8 DATA);
+void UART_MakeData_16bit(uint8 iIndex, uint16 DATA);
+void UART_MakeData_Tail(void);
 
 
 

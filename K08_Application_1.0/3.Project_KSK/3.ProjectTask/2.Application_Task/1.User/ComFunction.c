@@ -151,10 +151,17 @@ void vComDivideBlockData(void)
               BUFFER_RX_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_RX[iUART_CMD];
               BUFFER_RX_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
               BUFFER_RX_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
+              UART_Comm_Feedback_Command_Content(0,FBCODE_OK);
             break;
           
           case P2TCMD_TEST:
               USART1_AppCall_SendString("[SYSTEM DEBUG]: NHAN LENH CMD P2TCMD!\r\n");
+              uint16 PARA1 = 0xE1A0;
+              //uint8 PARA2 = 0xA1;
+              uint8 PARA5  = 0xB1;
+              uint8 PARA6  = 0xB0;
+              UART_MakeData(0,PARA1,0,0,0,PARA5,PARA6);
+              UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
             break;
           
           default :
@@ -182,26 +189,8 @@ void vComDivideBlockData(void)
 2. DUNG DE TAO DATAFRAME CHO DU LIEU CAN TRUYEN
 **/
 
-void UART_MakeData_Head(cmd_type CMD)
+void UART_MakeData_Head(cmd_type CMD_TYPE)
 {
-}
-
-void UART_MakeData_8bit(Data)
-{
-}
-
-void UART_MakeData_16bit(Data)
-{
-}
-
-void UART_MakeData_Tail()
-{
-}
-
-void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend)
-{    
-    uint16_t uLengBytePackage;
-    /* Clear buffer */
     memset(UART_BUFFER_TX,0,i_MAX_UART);
     UART_BUFFER_TX[iUART_PRE_1] = PREMABLE_BYTE_1;   /*data size LB*/
     UART_BUFFER_TX[iUART_PRE_2] = PREMABLE_BYTE_2;   /*data size LB*/
@@ -210,17 +199,65 @@ void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSe
     UART_BUFFER_TX[iUART_PRE_5] = PREMABLE_BYTE_5;   /*data size LB*/
     UART_BUFFER_TX[iUART_PRE_6] = PREMABLE_BYTE_6;   /*data size LB*/
     
-    /* Increase for CODE */
-    uLengBytePackage=uLengByteContent+2;
-    UART_BUFFER_TX[iUART_SIZE_LOW]  =    (uint8)(uLengBytePackage&0x00FF);      /*data size HB*/
-    UART_BUFFER_TX[iUART_SIZE_HIGH] =   (uint8)(uLengBytePackage>>8);   	/*data size LB*/
-    UART_BUFFER_TX[iUART_CMD] = CMD;                                            /*command*/
-    UART_BUFFER_TX[iUART_IDX_LOW] = bLast_Idx_Low;                              /*index frame LB*/
-    UART_BUFFER_TX[iUART_IDX_HIGH] = bLast_Idx_High;                            /*index frame HB*/
-    
-    UART_BUFFER_TX[iUART_DATA] 		= CODE;
-    UART_BUFFER_TX[iUART_DATA+1] 	= CODE>>8;
-    
+    UART_BUFFER_TX[iUART_CMD_TYPE] = CMD_TYPE;/*command*/
+  
+}
+
+void UART_MakeData_8bit(uint8 iIndex, uint8 DATA)
+{
+  UART_BUFFER_TX[iIndex] 		= DATA;
+}
+
+void UART_MakeData_16bit(uint8 iIndex, uint16 DATA)
+{
+  UART_BUFFER_TX[iIndex] 		= DATA;                 //BYTE LOW
+  UART_BUFFER_TX[iIndex+1] 		= DATA>>8;              //BYTE HIGH
+}
+
+void UART_MakeData_Tail()
+{
+  UART_BUFFER_TX[iUART_END_DATA] = END_DATA_BYTE;
+  i_UART_TX=iUART_END_DATA;
+}
+
+void UART_MakeData(cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6)
+{    
+  UART_MakeData_Head(CMD_TYPE);
+  
+  //PARA 1-2
+  if(PARA2!=0)
+  {
+      UART_MakeData_8bit(12, PARA1);
+      UART_MakeData_8bit(13, PARA2);
+  }
+  else
+  {
+      UART_MakeData_16bit(12, PARA1);
+  }
+  
+  //PARA 3-4
+  if(PARA4!=0)
+  {
+      UART_MakeData_8bit(14, PARA3);
+      UART_MakeData_8bit(15, PARA4);
+  }
+  else
+  {
+      UART_MakeData_16bit(14, PARA3);
+  }
+  
+  //PARA 5-6
+    if(PARA6!=0)
+  {
+      UART_MakeData_8bit(16, PARA5);
+      UART_MakeData_8bit(17, PARA6);
+  }
+  else
+  {
+      UART_MakeData_16bit(16, PARA5);
+  }
+  
+  UART_MakeData_Tail();
 }
 
 //---------FEEDBACK DATA----------//
@@ -232,21 +269,14 @@ void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSe
 UART_Comm_Feedback_Command_Content -> MAKE DATA -> SENDBUFF / SENDSTRING
 **/
 
-void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend)
+void UART_Comm_Feedback_Command_Content(cmd_type CMD_TYPE, uint16 CODE)
 {
 	/* Feedback Content */
-	if(uLengByte!=0)
-	{
-		UART_MakeData(CMD,CODE,uLengByte,pSend);
-		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
-	}
-	else
-	{
-		/* Feedback Command */
-		UART_MakeFeedback(CMD,CODE,NORMAL_FEEDBACK_LENGTH);
-		/* Feedback */
-		UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
-	}
+        UART_MakeData_Head(CMD_TYPE);
+        UART_MakeData_16bit(12,CODE);
+        UART_MakeData_Tail();
+        
+        UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
 }
 
 void vFeedBack_info_sys(void)
@@ -274,8 +304,8 @@ void vFeedBack_info_sys(void)
 /** 
 1. 
 **/
-void UART_Comm_Feedback_Command_Content()
-{}
+//void UART_Comm_Feedback_Command_Content()
+//{}
 
 
 //UART_Comm_Feedback_Command_Content(P2TCMD_SET_RELAY_DIRECT,FBCODE_OK,0,PACKAGE_BUFF);
