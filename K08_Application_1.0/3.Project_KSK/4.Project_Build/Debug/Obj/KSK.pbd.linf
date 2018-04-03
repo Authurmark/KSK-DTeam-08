@@ -1,50 +1,52 @@
-﻿H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
-H:\Programming - Working\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi
+﻿D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_AppCall_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_Function.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
+D:\Slave2\KSK-DTeam-08\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi

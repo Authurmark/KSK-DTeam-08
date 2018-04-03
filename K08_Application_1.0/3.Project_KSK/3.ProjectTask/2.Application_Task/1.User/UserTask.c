@@ -78,7 +78,7 @@ void vUserTask( void *pvParameters )
 {
 	/* Delay before begin task */
 	OS_vTaskDelay(50);
-    /* Set flag */
+        /* Set flag */
 	bFlag_1st_Case = eTRUE;
 	/* Set prequency */
 	portTickType xLastWakeTime;
@@ -87,6 +87,7 @@ void vUserTask( void *pvParameters )
 	
 	/* Init ok */
 	xFlag_User_Task_Init_Done= eTRUE;
+        
 	
       /* Task process */
       for(;;)

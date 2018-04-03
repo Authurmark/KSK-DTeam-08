@@ -1,6 +1,6 @@
 ﻿3/26/2018 : Chạy xử lý data USART1 ở trong hàm vApplicationIdleHook
 + vComDataProcess 
-+ vComDataHandle
++ vComDataHandle (bỏ không dùng nữa)
 + 
 
 3/27/2018 : Xử lý data frame của USART 1
@@ -13,3 +13,14 @@
 3/30/2018
 + Edit lại hàm chia tách gói data
 + Hoạch địch buffer cho đk spindle, current measure và encoder
+
+4/1/2018
++ Tạo hàm make data (khong co bo dich ma CRC)
+
+4/2/2018
++ Tạo hàm xử lý tuần tự buffer cần truyền, theo chu kỳ 1 tick slice ~ 1ms
+
+4/3/2018
++ Edit lại các hàm xử lý Communication cho TX, để linh hoạt sử dụng made data, send data cho cac USART khác
++ Edit lại các hàm xử lý Communication cho RX, để linh hoạt sử dụng vComDivideBlockData cho cac USART khác
++ Edit cấu hình, tạo Buffer USART2

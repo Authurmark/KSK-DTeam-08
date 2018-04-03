@@ -72,6 +72,11 @@ void vMCU_Init_Hardware( void )
 	USART1_AppCall_Init(&pUSART1);
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: USART1 Init Success!\r\n");
+        
+        /* Init usart2 */
+	USART2_AppCall_Init(&pUSART2);
+	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
 	/* Config Clock AFIO, use for antenate function  */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 }

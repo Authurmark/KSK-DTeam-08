@@ -67,9 +67,14 @@ hardware function.
 
 #define END_DATA_BYTE   '~'
 /* Define for prototype */
-#define pUART_CONFIG pUSART1
-#define UART_Send_BUF pUSART1.send_buf
-#define UART_Send_STRING pUSART1.send_str
+#define pUART1_CONFIG           pUSART1
+#define UART1_Send_BUF          pUSART1.send_buf
+#define UART1_Send_STRING       pUSART1.send_str
+
+#define pUART2_CONFIG           pUSART2
+#define UART2_Send_BUF          pUSART2.send_buf
+#define UART2_Send_STRING       pUSART2.send_str
+
 #define T1Us_Tick1Ms vGetCurrentCounterTimeBaseMs()
 
 /* Define TYPE COMMAND*/
@@ -105,19 +110,22 @@ void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte);
 enumbool vComPortProcess(void);
 void vComCommandProcess(void);
 
-enumbool vComDataProcess(void);
+enumbool vComDataProcess_USART1(void);
+enumbool vComDataProcess_USART2(void);
 void vComDataHandle(void);
 void vFeedBack_info_sys(void);
-void vComDivideBlockData(void);
+void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struct pUART );
 
-void UART_MakeData(cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
-void UART_Comm_Feedback_Command_Content(cmd_type CMD_TYPE, uint16 CODE);
-void UART_MakeData_Head(cmd_type CMD);
-void UART_MakeData_8bit(uint8 iIndex, uint8 DATA);
-void UART_MakeData_16bit(uint8 iIndex, uint16 DATA);
-void UART_MakeData_Tail(void);
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE);
+void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
+void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
+void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);
+void UART_MakeData_Tail(uint8 *UART_BUFFER_TX);
 
-
+extern uint8 CntUartBufferTx;
+void vMake_UART_BUFFER_TX(void);
+void vMakeBufferTXTask( void *pvParameters );
 
 /* Extern flag */
 extern enumbool bFlagGetCommandLEDConfigUART1;

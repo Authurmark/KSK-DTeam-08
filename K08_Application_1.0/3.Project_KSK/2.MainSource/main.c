@@ -22,6 +22,7 @@
 #include "IO_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
+#include "USART2_AppCall_Function.h"
 #include "Project_Function.h"
 #include "ComFunction.h"
 
@@ -29,12 +30,16 @@
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
 	/* Application Task priorities. */
-	#define USER_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )//20-08: 3
+	#define USER_TASK_PRIORITY			( tskIDLE_PRIORITY + 2 )//20-08: 3
+        /* Send buffer task prorities*/
+        #define MAKE_BUFFER_TX_TASK_PRORITY                ( tskIDLE_PRIORITY + 1 )
 
 	/* Kernel Task Stack size */
 	#define IO_KERNEL_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 	/* The check task uses the sprintf function so requires a little more stack. */
 	#define USER_TASK_STACK_SIZE			( ( unsigned short ) 128 )
+        /* Kernel Task Stack size */
+	#define MAKE_BUFFER_TX_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 
         /* The LED1 Task */
 	#define LED1_TASK_STACK_SIZE			( ( unsigned short ) 64 )
@@ -45,6 +50,7 @@
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
+        extern void vMakeBufferTXTask (void *pvParameters);
     
         /* Extern LED1 and LED2 Task*/
         void LED1_Task( void *pvParameters );
@@ -55,10 +61,11 @@
 	enumbool xFlag_IO_Task_Still_Running = eTRUE, xFlag_IO_Task_Init_Done = eFALSE, xFlag_IO_Task_Process_Check = eTRUE;
 	xTaskHandle xSensor_Task_Handle;
 	xTaskHandle xUser_Task_Handle;
+        xTaskHandle xMakeBufferTXTask_Handle;
 	enumbool xFlag_User_Task_Still_Running = eTRUE, xFlag_User_Task_Init_Done = eFALSE, xFlag_User_Task_Process_Check = eTRUE;
     
-    /* Variable for Handler LED1 LED2 Task */
-    xTaskHandle xLED1_Task_Handle, xLED2_Task_Handle;
+      /* Variable for Handler LED1 LED2 Task */
+      xTaskHandle xLED1_Task_Handle, xLED2_Task_Handle;
 	/* Application for free time MCU */
 	void vApplicationIdleHook( void );
 #endif
@@ -81,6 +88,8 @@ void main(void)
 	OS_xTaskCreate(vIO_Kernel_Task, "IO_KERNEL_TASK", IO_KERNEL_TASK_STACK_SIZE, NULL, IO_KERNEL_TASK_PRIORITY, &xIO_Task_Handle );
 	/* Create Application Task */
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
+        /* Create MakeBufferTX Task */
+	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
 	
     /* Create LED1 Task */
 	//OS_xTaskCreate(LED1_Task, "LED1_Task", LED1_TASK_STACK_SIZE, NULL, LED1_TASK_PRIORITY, &xLED1_Task_Handle);
@@ -135,5 +144,10 @@ void vApplicationIdleHook(void)
   //This hook will do when system is idle
   //Handle Buffer DATA
   
-  vComDataProcess();
+  vComDataProcess_USART1();
+  vComDataProcess_USART2();
+  
+  //vMake_UART_BUFFER_TX();
 }
+
+
