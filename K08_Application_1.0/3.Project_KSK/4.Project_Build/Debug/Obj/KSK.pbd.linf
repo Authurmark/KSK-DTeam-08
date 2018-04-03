@@ -1,50 +1,50 @@
-﻿\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi
+﻿E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi

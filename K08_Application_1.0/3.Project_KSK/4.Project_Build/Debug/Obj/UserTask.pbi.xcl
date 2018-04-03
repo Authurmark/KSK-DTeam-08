@@ -1,110 +1,114 @@
-"\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c"
+"E:\Le Bien\K08_Application_1.0\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c"
 -std=c11
 -ferror-limit=0
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\1.Config_kernel
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\1.Config_kernel
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\2.MainSource
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\2.MainSource
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\IAR
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\IAR
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\3.Utilities
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\3.Utilities
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+-I
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\4.Project_Build
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\4.Project_Build
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\1.Config_kernel
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\1.Config_kernel
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\2.MainSource
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\2.MainSource
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
+E:\Le Bien\K08_Application_1.0\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
+E:\Le Bien\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
+E:\Le Bien\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\IAR
+E:\Le Bien\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\IAR
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\3.Utilities
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\3.Utilities
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
+E:\Le Bien\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS
+E:\Le Bien\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
+E:\Le Bien\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
 -I
-\\MINHTRAN\4_Tai lieu\LIBRARY LAP TRINH\FREERTOS\TUT2_DMA_ADC_DEVELOP\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+E:\Le Bien\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+-I
+C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\CMSIS\Include
 -D__CHAR_BITS__=8
 -D__CHAR_MAX__=0xff
 -D__CHAR_MIN__=0
@@ -366,6 +370,8 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -D__EDG_CPP11_IL_EXTENSIONS_SUPPORTED=1
 -D__EDG_FLOAT80_ENABLING_POSSIBLE=0
 -D__EDG_FLOAT128_ENABLING_POSSIBLE=0
+-DSTM32F10X_MD=1
+-DUSE_STDPERIPH_DRIVER=1
 -D_DLIB_CONFIG_FILE_HEADER_NAME="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.0\\arm\\INC\\c\\DLib_Config_Full.h"
 -D_DLIB_CONFIG_FILE_STRING="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 8.0\\arm\\INC\\c\\DLib_Config_Full.h"
 -D__VERSION__="IAR ANSI C/C++ Compiler V8.20.2.14835/W32 for ARM"

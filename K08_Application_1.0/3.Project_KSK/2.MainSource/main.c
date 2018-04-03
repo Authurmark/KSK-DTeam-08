@@ -24,6 +24,7 @@
 #include "USART1_AppCall_Function.h"
 #include "Project_Function.h"
 
+
 #ifdef USE_OS
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
@@ -130,4 +131,5 @@ void LED1_Task( void *pvParameters )
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
+
 }

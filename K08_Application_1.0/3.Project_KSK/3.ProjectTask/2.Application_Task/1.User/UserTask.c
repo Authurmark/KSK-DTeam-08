@@ -25,6 +25,7 @@ hardware function.
 #include "Time_Manage_Function.h"
 #include "IO_Kernel_Function.h"
 #include "ComFunction.h"
+#include "Timer_Function.h"		
 
 /* Define */
 #define USER_TASK_FREQUENCY 10
@@ -36,6 +37,7 @@ extern enumbool xFlag_User_Task_Still_Running;
 extern Struct_System_Information 		StrSystemInfo;
 extern xTaskHandle xRF_Task_Handle, xSensor_Task_Handle, xIO_Task_Handle, xSensor_IO_Task_Handle;
 extern enumbool xFlag_User_Task_Still_Running, xFlag_User_Task_Init_Done, xFlag_User_Task_Process_Check;
+extern  uint32_t rotary_cntr;
 
 /* State of User Task */
 typedef enum
@@ -48,6 +50,7 @@ typedef enum
 	eST_User_Task_PC_CONNECT		        = 6,
     eST_User_Task_PWM                       = 7,
     eST_User_Task_DMA_ADC                   = 8,
+    eST_User_Task_Encoder                   = 9,
 		
 	eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -104,10 +107,7 @@ void vUserTask( void *pvParameters )
 }
 /*********************************************************************/
 
-uint32_t		ixIndex_ADC_Buffer;
-uint32_t	ADC_Buffer[10];
-static uint32_t sum_ADC = 0;
-static uint32_t value_ADC_tb = 0;
+
 
 void vUserTaskMainProcess(void)
 {
@@ -177,48 +177,25 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-        case eST_User_Task_DMA_ADC:
+        case eST_User_Task_Encoder:
              if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE;
 			}
             else
-			{
-				/* Check Comport process */
-                vComPortProcess();
-                /* Check config UART LED parameter */
-                if(bFlagGetCommandLEDConfigUART1==eTRUE)
+			{			
+				 /* Check encoder counter */
+				
+                vGetEncoderValue();
+                MOTOR_2_DUTY(30);
+                if(rotary_cntr >=2000)
                 {
-                    /* Clear flag */
-                    bFlagGetCommandLEDConfigUART1 = eFALSE;
-                    /* Set parameter to IO task */
-                    vIO_ConfigOutput(&OUT_LED_SIGNAL,bLEDConfigCommand.uFrequency,bLEDConfigCommand.uFrequency*bLEDConfigCommand.uCountToggle,bLEDConfigCommand.uCountToggle,bLEDConfigCommand.bStartState,bLEDConfigCommand.bEndState,bLEDConfigCommand.bFlagStart);
-//                    vIO_ConfigOutput(&OUT_LED_SIGNAL,50,100,2,RELAY_ON,RELAY_OFF,eFALSE);                 
-                }
-				
-				
-				/* Test ADC to PWM function */
-				static uint32_t iIndex;
-				sum_ADC = 0;
-				ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
-
-				if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
-				ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
-				
-				sum_ADC = 0;	
-                for (iIndex=0;iIndex<10;iIndex++)
-                {
-                  sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
-                }
-         
-                value_ADC_tb = sum_ADC/10;
-			    MOTOR_1_DUTY(value_ADC_tb/41);
-                   
-                                      
+				MOTOR_2_DUTY(0);
+                }                   
 	            }
 		break;
 		default:
-			eState_User_Task = eST_User_Task_DMA_ADC;
+			eState_User_Task = eST_User_Task_Encoder;
 			bFlag_1st_Case = eTRUE;
 		break;
 	}

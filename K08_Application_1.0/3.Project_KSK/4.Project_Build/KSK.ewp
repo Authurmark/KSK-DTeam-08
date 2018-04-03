@@ -121,7 +121,7 @@
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGUseCmsisDspLib</name>
@@ -219,7 +219,8 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>STM32F10X_MD</state>
+                    <state>USE_STDPERIPH_DRIVER </state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>

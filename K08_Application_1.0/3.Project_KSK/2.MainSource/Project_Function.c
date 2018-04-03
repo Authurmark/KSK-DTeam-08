@@ -377,78 +377,172 @@ void vInit_DMA_ADC_Function(void)
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 
+
 /* Encoder function */
 // TIMER #3 IRQ
-typedef enum { FORWARD, BACKWARD } Direction;
+//typedef enum { FORWARD, BACKWARD } Direction;
 
 // Rotary encoder variables
 //volatile uint32_t rotary_capture_is_first = 1
-Direction rotary_dir   = FORWARD; // Rotation direction
+/*Direction rotary_dir   = FORWARD; // Rotation direction
 uint32_t  rotary_cntr  = 0;       // Rotation counter
-uint32_t rotary_ready = 1; // Is rotation counter updated?
 void vInit_TIM_ENCODER_Function(void)
 {
-	GPIO_InitTypeDef  GPIO_InitStructure;
-	TIM_TimeBaseInitTypeDef TIM;
-	NVIC_InitTypeDef NVIC_InitStructure;
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 , ENABLE);
 
-	/* Init IO for Encoder function */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-	/* Configure PA6 PA7 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);  
+  RCC_APB1PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
 
-	// Enable clock for TIM3
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE);
-	// Time base configuration
-    TIM.TIM_Prescaler = 0;
-	TIM_TimeBaseStructInit(&TIM);
-	TIM.TIM_Period = 10;
-    TIM.TIM_ClockDivision = 0;
-	TIM.TIM_CounterMode = TIM_CounterMode_Up | TIM_CounterMode_Down;
-	TIM_TimeBaseInit(TIM3,&TIM);
-	TIM_EncoderInterfaceConfig(TIM3,TIM_EncoderMode_TI12,TIM_ICPolarity_BothEdge,TIM_ICPolarity_BothEdge);
-	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);
-	// Enable counter for TIM3
+  
+  NVIC_InitTypeDef NVIC_InitStructure;
+  GPIO_InitTypeDef           GPIO_InitStructure;
+  TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 
+  /*cau hinh chan out cho timer2*/
+  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  
+  /* Time base configuration */
+ /* TIM_TimeBaseStructure.TIM_Prescaler = 0;   
+  TIM_TimeBaseStructure.TIM_Period = 65535;   // 65535
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up | TIM_CounterMode_Down;
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+  TIM_ARRPreloadConfig(TIM3, ENABLE);
+  
+  TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+ 
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);  
 
-	
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-  	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
- 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  	NVIC_Init(&NVIC_InitStructure); 
-    NVIC_EnableIRQ(TIM3_IRQn); // Enable TIM3 IRQ 
-	TIM_Cmd(TIM3,ENABLE); // Enable counter on TIM3
+  TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+  TIM_Cmd(TIM3, ENABLE);
+
 }
 
-uint32_t vGetEncoderValue(void)
+void vGetEncoderValue(void)
 {
-	return rotary_cntr;
-}
+  rotary_cntr = TIM_GetCounter(TIM3); 
+} 
 
 void TIM3_IRQHandler(void) 
 {
-	__disable_irq();
 	if (TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) 
    {
 		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
-
-		rotary_dir = (TIM3->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
+ 		rotary_dir = (TIM3->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
 	    (rotary_dir == BACKWARD) ? rotary_cntr-- : rotary_cntr++;
-		rotary_ready = 1;
-	}
-	__enable_irq();
+   }
+   //TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
+}
+*/
+
+GPIO_InitTypeDef  GPIO_InitStructure;
+NVIC_InitTypeDef  NVIC_InitStructure;
+EXTI_InitTypeDef  EXTI_InitStructure;
+ 
+uint16_t countA = 0, countB = 0 ; 
+uint16_t rotary_cntr = 0;
+uint32_t debug =0;
+
+void EXTILine1_Config(void);
+void EXTILine4_Config(void);
+
+void vGetEncoderValue(void)
+{
+ EXTILine1_Config();
+ EXTILine4_Config();
+ while(1)        
+ {
+  rotary_cntr = countA + countB ;
+  MOTOR_2_DUTY(30);
+  if(rotary_cntr >=2400)
+  {
+   MOTOR_2_DUTY(0);
+  }                               
+ }
 }
 
+void EXTILine4_Config(void)
+{
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; 
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource4);
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line4;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+    
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
 
+void EXTILine1_Config(void)
+{
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
+  GPIO_Init(GPIOB, &GPIO_InitStructure); 
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource1);
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line1;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+    
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+ 
+void EXTI4_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line4) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line4);
+  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
+  countA = (1200+countA+1)%1200;
+  else
+  countA = (1200+countA-1)%1200;
+  
+ }
+}
 
-
-
-
-
+void EXTI1_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line1) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line1);
+ if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
+   countB = (1200+countB-1)%1200;
+  else
+   countB = (1200+countB+1)%1200;
+ }
+}
 
 #endif /* _Project_Function__C */
