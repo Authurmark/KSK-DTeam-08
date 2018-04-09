@@ -42,10 +42,12 @@ typedef enum
 {
 	eST_User_Task_INIT						= 1,
 	eST_User_Task_IDLE 						= 2,
-	eST_User_Task_LOGGING					        = 3,
+	eST_User_Task_LOGGING					= 3,
 	eST_User_Task_ERROR						= 4,
-	eST_User_Task_CHECKING_EVENT	                		= 5,
-	eST_User_Task_PC_CONNECT	                	        = 6,
+	eST_User_Task_CHECKING_EVENT			= 5,
+	eST_User_Task_PC_CONNECT		        = 6,
+    eST_User_Task_PWM                       = 7,
+    eST_User_Task_DMA_ADC                   = 8,
 		
 	eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -102,6 +104,12 @@ void vUserTask( void *pvParameters )
       }
 }
 /*********************************************************************/
+
+uint32_t		ixIndex_ADC_Buffer;
+uint32_t	ADC_Buffer[10];
+static uint32_t sum_ADC = 0;
+static uint32_t value_ADC_tb = 0;
+
 void vUserTaskMainProcess(void)
 {
 	switch(eState_User_Task)
@@ -167,8 +175,47 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
+        case eST_User_Task_DMA_ADC:
+             if(bFlag_1st_Case==eTRUE)
+			{
+				bFlag_1st_Case = eFALSE;
+			}
+            else
+			{
+				/* Check Comport process */
+                /* Check config UART LED parameter */
+                if(bFlagGetCommandLEDConfigUART1==eTRUE)
+                {
+                    /* Clear flag */
+                    bFlagGetCommandLEDConfigUART1 = eFALSE;
+                    /* Set parameter to IO task */
+                    vIO_ConfigOutput(&OUT_LED_SIGNAL,bLEDConfigCommand.uFrequency,bLEDConfigCommand.uFrequency*bLEDConfigCommand.uCountToggle,bLEDConfigCommand.uCountToggle,bLEDConfigCommand.bStartState,bLEDConfigCommand.bEndState,bLEDConfigCommand.bFlagStart);
+//                    vIO_ConfigOutput(&OUT_LED_SIGNAL,50,100,2,RELAY_ON,RELAY_OFF,eFALSE);                 
+                }
+				
+				
+				/* Test ADC to PWM function */
+				static uint32_t iIndex;
+				sum_ADC = 0;
+				ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
+
+				if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
+				ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
+				
+				sum_ADC = 0;	
+                for (iIndex=0;iIndex<10;iIndex++)
+                {
+                  sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
+                }
+         
+                value_ADC_tb = sum_ADC/10;
+			    MOTOR_1_DUTY(value_ADC_tb/41);
+                   
+                                      
+	            }
+		break;
 		default:
-			eState_User_Task = eST_User_Task_IDLE;
+			eState_User_Task = eST_User_Task_DMA_ADC;
 			bFlag_1st_Case = eTRUE;
 		break;
 	}

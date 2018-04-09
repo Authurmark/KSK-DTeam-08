@@ -1,4 +1,6 @@
-﻿3/26/2018 : Chạy xử lý data USART1 ở trong hàm vApplicationIdleHook
+﻿//--------------- USART Build Log --------------------//
+
+3/26/2018 : Chạy xử lý data USART1 ở trong hàm vApplicationIdleHook
 + vComDataProcess 
 + vComDataHandle (bỏ không dùng nữa)
 + 
@@ -24,3 +26,33 @@
 + Edit lại các hàm xử lý Communication cho TX, để linh hoạt sử dụng made data, send data cho cac USART khác
 + Edit lại các hàm xử lý Communication cho RX, để linh hoạt sử dụng vComDivideBlockData cho cac USART khác
 + Edit cấu hình, tạo Buffer USART2
+//--------------- USART Build Log --------------------//
+
+
+
+
+//-------------- DMA - ADC --------------------------//
+3/27:-DONE
+     -Viết và build giá trị ADC qua DMA. Đọc 10 lần lấy giá trị trung bình của ADC.Thay đổi giá trị ADC qua biến trở, đổi giá trị ADC thành xung nộp cho động cơ để test 
+     -Note: ADC trong STM32F103 là bộ ADC có 12 bit tức là giá trị đọc về nằm trong khoảng 0 ->2^12= 4096. 
+            Giá trị điện áp đầu vào bộ ADC được cung cấp trên chân VDDA và thường lấy bằng giá trị cấp nguồn cho vi điều khiển VDD(+3V3). 
+            STM32F103C8 có 2 kênh ADC đó là ADC1 và ADC2, mỗi kênh có tối đa là 9 channel với nhiều mode hoạt động như: single, continuous,
+            scan hoặc discontinuous. Kết quả chuyển đổi được lưu trữ trong thanh ghi 16 bit.
+
+
+
+//-------------- DMA - ADC --------------------------//
+
+
+4/9/2018
++ Tạo nhánh DEV.SLAVE2
++ Gọp thủ công các nhánh S2.ADC, S2.PWM, S2.ENCODER, S2.STEPMOTOR
++ Tạo start point bắt đầu vào lập trình FlowChart
+
+
+
+
+
+
+
+
