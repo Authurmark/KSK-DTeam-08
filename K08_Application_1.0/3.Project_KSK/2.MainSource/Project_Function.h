@@ -19,6 +19,7 @@
 #define _Project_Function__H
 /* Include global header file */
 #include "Common.h"
+#include "Timer_Function.h"
 /* Prototype function */
 #define MOTOR_1_DUTY 	vChangeDutyCycleOC1
 #define MOTOR_2_DUTY 	vChangeDutyCycleOC2
@@ -32,12 +33,15 @@ void vChangeDutyCycleOC2(uint8_t bDutyPercent);
 /* Motor control */
 void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 /* DMA ADC function */
-/* TIM ENCODER function*/
 void vInit_DMA_ADC_Function(void);
-void vInit_TIM_ENCODER_Function(void);
-void TIM3_IRQHandler(void);
-uint32_t vGetEncoderValue(void);
 
+/* TIM ENCODER function*/
+
+//void vInit_TIM_ENCODER_Function(void);
+//void TIM3_IRQHandler(void);
+void vGetEncoderValue(void);
+void EXTI4_IRQHandler(void);
+void EXTI1_IRQHandler(void);
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */
 #define 	USER_INFO_FLASH_ADDR	0x08004800	/* 18KB bootloader */
@@ -55,6 +59,8 @@ extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
+/*extern Encoder Value*/
+//extern uint32_t rotary_cntr;
 
 #define LED_USER_1_ON			pLED1.write(ON);
 #define LED_USER_1_OFF		pLED1.write(OFF);

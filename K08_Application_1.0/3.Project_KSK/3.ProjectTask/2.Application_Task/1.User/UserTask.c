@@ -25,6 +25,7 @@ hardware function.
 #include "Time_Manage_Function.h"
 #include "IO_Kernel_Function.h"
 #include "ComFunction.h"
+#include "Timer_Function.h"		
 
 /* Define */
 #define USER_TASK_FREQUENCY 10
@@ -36,6 +37,7 @@ extern enumbool xFlag_User_Task_Still_Running;
 extern Struct_System_Information 		StrSystemInfo;
 extern xTaskHandle xRF_Task_Handle, xSensor_Task_Handle, xIO_Task_Handle, xSensor_IO_Task_Handle;
 extern enumbool xFlag_User_Task_Still_Running, xFlag_User_Task_Init_Done, xFlag_User_Task_Process_Check;
+extern  uint32_t rotary_cntr;
 
 /* State of User Task */
 typedef enum
@@ -48,6 +50,7 @@ typedef enum
 	eST_User_Task_PC_CONNECT		        = 6,
     eST_User_Task_PWM                       = 7,
     eST_User_Task_DMA_ADC                   = 8,
+    eST_User_Task_Encoder                   = 9,
 		
 	eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -174,6 +177,23 @@ void vUserTaskMainProcess(void)
 			{
 				
 			}
+		break;
+        case eST_User_Task_Encoder:
+             if(bFlag_1st_Case==eTRUE)
+			{
+				bFlag_1st_Case = eFALSE;
+			}
+            else
+			{			
+				 /* Check encoder counter */
+				
+                vGetEncoderValue();
+                MOTOR_2_DUTY(30);
+                if(rotary_cntr >=2000)
+                {
+				MOTOR_2_DUTY(0);
+                }                   
+	            }
 		break;
 case eST_User_Task_PWM:
                         if(bFlag_1st_Case==eTRUE)
