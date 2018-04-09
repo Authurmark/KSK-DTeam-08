@@ -549,4 +549,41 @@ void EXTI1_IRQHandler(void)
  }
 }
 
+/*CONTROL STEPMOTOR*/
+GPIO_InitTypeDef  GPIO_InitStructure;
+timer tP_StepA;
+uint8 cnt_stepmotor; 
+
+void Control_step_motor (void)
+{
+    vInit_STEP_MOTOR_Function();
+    rotary_cntr = countA + countB ;
+    if( rotary_cntr  >= 2000)
+     {
+       GPIO_SetBits(GPIOA ,GPIO_Pin_4 );
+        rotary_cntr =  0;
+     }
+   	
+    if(timer_expired(&tP_StepA))
+	{
+		timer_restart(&tP_StepA);
+		cnt_stepmotor=(cnt_stepmotor+1)%2;
+		if(cnt_stepmotor==0)
+		GPIO_SetBits(GPIOA ,GPIO_Pin_3 );
+		else 
+		GPIO_ResetBits(GPIOA ,GPIO_Pin_3 );
+	}
+}
+ 
+void vInit_STEP_MOTOR_Function (void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure;
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    
+  
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_Write(GPIOA,0x0000);
+}
 #endif /* _Project_Function__C */

@@ -26,6 +26,8 @@
 #include "Project_Function.h"
 #include "ComFunction.h"
 
+extern timer tP_StepA;
+
 #ifdef USE_OS
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
@@ -94,6 +96,10 @@ void main(void)
     /* Create LED1 Task */
 	//OS_xTaskCreate(LED1_Task, "LED1_Task", LED1_TASK_STACK_SIZE, NULL, LED1_TASK_PRIORITY, &xLED1_Task_Handle);
     
+
+	vInit_STEP_MOTOR_Function();
+	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
+
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -109,6 +115,7 @@ void main(void)
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
+	Control_step_motor();
   //This hook will do when system is idle
   //Handle Buffer DATA
   

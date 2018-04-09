@@ -60,10 +60,21 @@
 
 
 
+***************** ENCODER *****************
+Ngày 4/3: - Done
+          - Sử dụng 2 ngắt ngoài LINE 4 và LINE 1  ứng với EXTI4 VÀ EXIT1 để đọc giá trị 2 pha của ENCODER.
+          - Với pha A sử dụng ngắt LINE4 với chân ngắt A4. Pha B sử dụng ngắt LINE 1 với chân ngắt B1.
+          - Sử dụng 2 biến đếm CountA và CountB để đếm số xung của 2 pha ENCODER theo chiều quay.
+          - Xét nếu pha A cùng trạng thái pha B thì quay theo chiều thuận và ngược lại nếu 2 pha không cùng trạng thái thì quay nghịch.
+-----------------------------------------------------
 
 
 
 
+***************** ENCODER *****************
+Ngày 4/9 : - Done
+	   - Xuat xung dk stepmotor voi chu ky 30us, dat trong vApplicationIdleHook
+-----------------------------------------------------
 
 
 

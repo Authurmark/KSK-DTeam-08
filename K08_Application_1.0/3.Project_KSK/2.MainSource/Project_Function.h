@@ -42,6 +42,10 @@ void vInit_DMA_ADC_Function(void);
 void vGetEncoderValue(void);
 void EXTI4_IRQHandler(void);
 void EXTI1_IRQHandler(void);
+/*Control Step_Motor*/
+void vInit_STEP_MOTOR_Function (void);
+void Control_step_motor (void);
+
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */
 #define 	USER_INFO_FLASH_ADDR	0x08004800	/* 18KB bootloader */
