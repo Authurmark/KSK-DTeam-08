@@ -39,8 +39,12 @@ void vInit_DMA_ADC_Function(void);
 //void vInit_TIM_ENCODER_Function(void);
 //void TIM3_IRQHandler(void);
 void vGetEncoderValue(void);
-void EXTI4_IRQHandler(void);
+void EXTI2_IRQHandler(void);
 void EXTI1_IRQHandler(void);
+/*Control Step_Motor*/
+void vInit_STEP_MOTOR_Function (void);
+void Control_step_motor (void);
+
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */
 #define 	USER_INFO_FLASH_ADDR	0x08004800	/* 18KB bootloader */
@@ -58,8 +62,10 @@ extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
-/*extern Encoder Value*/
-//extern uint32_t rotary_cntr;
+/*extern stepmotor*/
+
+
+
 
 #define LED_USER_1_ON			pLED1.write(ON);
 #define LED_USER_1_OFF		pLED1.write(OFF);

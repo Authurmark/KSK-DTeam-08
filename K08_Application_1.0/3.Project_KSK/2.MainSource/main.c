@@ -18,12 +18,14 @@
 * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *******************************************************************************/
 /* Include header file */
+
 #include "Common.h"
 #include "IO_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
 #include "Project_Function.h"
 
+extern timer tP_StepA;
 
 #ifdef USE_OS
 	/* Kernel Task priorities. */
@@ -84,6 +86,10 @@
     /* Create LED1 Task */
 	//OS_xTaskCreate(LED1_Task, "LED1_Task", LED1_TASK_STACK_SIZE, NULL, LED1_TASK_PRIORITY, &xLED1_Task_Handle);
     
+
+	vInit_STEP_MOTOR_Function();
+	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
+
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -128,8 +134,11 @@ void LED1_Task( void *pvParameters )
 }
 #endif /* USE_OS */
 /**********************************************************************************/
+
+
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
-
+	Control_step_motor();
 }
+

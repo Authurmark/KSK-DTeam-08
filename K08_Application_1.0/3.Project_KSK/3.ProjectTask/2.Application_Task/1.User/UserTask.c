@@ -61,6 +61,10 @@ void vUserTaskMainProcess(void);
 enumbool bFlag_1st_Case = eFALSE;
 eST_User_Task eState_User_Task;
 
+
+
+
+
 //#define USER_TASK_DEBUG
 #ifdef USER_TASK_DEBUG 
 	#define DEBUG_USERTASK printf
@@ -78,6 +82,7 @@ eST_User_Task eState_User_Task;
 /* Code for show */
 #define DEMO_CODE
 
+//timer tP_StepA;
 /*-----------------------------------------------------------*/
 void vUserTask( void *pvParameters )
 {
@@ -92,7 +97,8 @@ void vUserTask( void *pvParameters )
 	
 	/* Init ok */
 	xFlag_User_Task_Init_Done= eTRUE;
-	
+
+
       /* Task process */
       for(;;)
       {	
@@ -187,12 +193,8 @@ void vUserTaskMainProcess(void)
 				 /* Check encoder counter */
 				
                 vGetEncoderValue();
-                MOTOR_2_DUTY(30);
-                if(rotary_cntr >=2000)
-                {
-				MOTOR_2_DUTY(0);
-                }                   
-	            }
+               
+            }
 		break;
 		default:
 			eState_User_Task = eST_User_Task_Encoder;
@@ -200,3 +202,12 @@ void vUserTaskMainProcess(void)
 		break;
 	}
 }
+
+
+
+
+
+
+
+
+

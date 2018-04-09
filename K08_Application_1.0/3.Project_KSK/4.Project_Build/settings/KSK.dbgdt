@@ -931,7 +931,7 @@
                     <item>countA</item>
                     <item>countB</item>
                     <item>rotary_cntr</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
