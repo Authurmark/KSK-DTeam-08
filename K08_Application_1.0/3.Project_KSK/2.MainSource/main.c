@@ -105,38 +105,6 @@ void main(void)
 #endif /* USE_OS */
 }
 
-#ifdef USE_OS /* Use OS */
-void LED1_Task( void *pvParameters )
-{
-    #define LED1_TASK_FREQUENCY				10	/* 10 ms */
-    static timer pLED1Test;
-    /* Delay before begin task */
-	OS_vTaskDelay(50);
-    /* Set prequency */
-	portTickType xLastWakeTime;
-	const portTickType xLED1_Task_Frequency = LED1_TASK_FREQUENCY;/* 10 tick slice */
-	xLastWakeTime = xTaskGetTickCount();
-    /* Init timer */
-    timer_set(&pLED1Test,500,CLOCK_TYPE_MS);
-    /* Task process */
-	for(;;)
-	{	
-		/* Delay Exactly Frequency */
-		OS_vTaskDelayUntil(&xLastWakeTime,xLED1_Task_Frequency);
-        
-        /* Check timer expired toggle LED, restart timer and toggle LED */
-        if(timer_expired(&pLED1Test))
-        {
-            timer_restart(&pLED1Test);
-            /* Toggle LED */
-            LED_USER_TOGGLE;
-            /* Print debug via UART1 */
-            USART1_AppCall_SendString("[SYSTEM DEBUG]: Timer1 expired, led 1 toggle \r\n");
-        }
-        
-    }
-}
-#endif /* USE_OS */
 /**********************************************************************************/
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)

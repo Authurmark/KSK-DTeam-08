@@ -175,45 +175,70 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-        case eST_User_Task_DMA_ADC:
-             if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-            else
-			{
-				/* Check Comport process */
-                /* Check config UART LED parameter */
-                if(bFlagGetCommandLEDConfigUART1==eTRUE)
-                {
-                    /* Clear flag */
-                    bFlagGetCommandLEDConfigUART1 = eFALSE;
-                    /* Set parameter to IO task */
-                    vIO_ConfigOutput(&OUT_LED_SIGNAL,bLEDConfigCommand.uFrequency,bLEDConfigCommand.uFrequency*bLEDConfigCommand.uCountToggle,bLEDConfigCommand.uCountToggle,bLEDConfigCommand.bStartState,bLEDConfigCommand.bEndState,bLEDConfigCommand.bFlagStart);
-//                    vIO_ConfigOutput(&OUT_LED_SIGNAL,50,100,2,RELAY_ON,RELAY_OFF,eFALSE);                 
-                }
-				
-				
-				/* Test ADC to PWM function */
-				static uint32_t iIndex;
-				sum_ADC = 0;
-				ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
+case eST_User_Task_PWM:
+                        if(bFlag_1st_Case==eTRUE)
+                        {
+                                bFlag_1st_Case = eFALSE;
+                        }
+                        else
+                        {        
+                                 /*Motor control*/
 
-				if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
-				ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
-				
-				sum_ADC = 0;	
-                for (iIndex=0;iIndex<10;iIndex++)
-                {
-                  sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
-                }
-         
-                value_ADC_tb = sum_ADC/10;
-			    MOTOR_1_DUTY(value_ADC_tb/41);
-                   
-                                      
-	            }
-		break;
+                                /* Local variable */
+                                static enumbool bFlagSystemRun = eFALSE;
+                                if(bFlagSystemRun == eFALSE)
+                                {
+                                  vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
+                                }
+                                
+                                if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
+                                //if(EMERGENCY_BUTTON_IO==0)
+                                {
+                                  bFlagSystemRun = eTRUE;
+                                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
+                             
+                                  static uint8_t bDutyMotor;
+                                  bDutyMotor =50;
+                                  vMotorControl(bDutyMotor, 1);
+                                }
+                                
+                                if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
+                                {
+                                    bFlagSystemRun = eTRUE;
+                                    vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
+
+                                    static uint8_t bDutyMotor;
+                                    bDutyMotor =50;
+                                    vMotorControl(bDutyMotor, 2);
+                                }            
+                        }
+                break;
+                case eST_User_Task_DMA_ADC:
+                                if(bFlag_1st_Case==eTRUE)
+                                {
+                                        bFlag_1st_Case = eFALSE;
+                                }
+                                else
+                                { 
+                                        /* Test ADC to PWM function */
+                                        static uint32_t iIndex;
+                                        sum_ADC = 0;
+                                        ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
+
+                                        if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
+                                        ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
+                                        
+                                        sum_ADC = 0;
+                                        
+                                        for (iIndex=0;iIndex<10;iIndex++)
+                                        {
+                                          sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
+                                        }
+
+                                        value_ADC_tb = sum_ADC/10;
+                                        MOTOR_1_DUTY(value_ADC_tb/41);
+                                }
+                break;
 		default:
 			eState_User_Task = eST_User_Task_DMA_ADC;
 			bFlag_1st_Case = eTRUE;
