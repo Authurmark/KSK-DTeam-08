@@ -170,7 +170,10 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
                &&(UART_BUFFER_RX[iIndex+iUART_PRE_4]==PREMABLE_BYTE_4)
                   &&(UART_BUFFER_RX[iIndex+iUART_PRE_5]==PREMABLE_BYTE_5)
                     &&(UART_BUFFER_RX[iIndex+iUART_PRE_6]==PREMABLE_BYTE_6)
-                      &&(UART_BUFFER_RX[iIndex+iUART_END_DATA]==END_DATA_BYTE))         //Kiem tra ky tu ket thuc co dung khong, khong dung thi bo goi du lieu nay
+                      
+                      //Kiem tra ky tu ket thuc co dung khong, khong dung thi bo goi du lieu nay
+                      &&(UART_BUFFER_RX[iIndex+iUART_END_DATA]==END_DATA_BYTE))         
+      
       {
           //Xu ly data, dua vao cac buffer khac nhau, tuy thuoc vao iUART_CMD_TYPE
           switch ((cmd_type)UART_BUFFER_RX[iIndex+iUART_CMD_TYPE])
@@ -180,12 +183,15 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
             break;
   
           case P2TCMD_SPINDLE:
-              BUFFER_RX_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_TX[iUART_CMD];
-              BUFFER_RX_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_TX[iUART_DATA];
-              BUFFER_RX_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_TX[iUART_DATA+1];
+              /* CODE MAU GHI DU LIEU VAO BUFFER DATA */
+              BUFFER_RX_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_RX[iUART_CMD];
+              BUFFER_RX_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
+              BUFFER_RX_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
               UART_Comm_Feedback_Command_Content(UART_BUFFER_TX,0,FBCODE_OK);
+              /* END CODE MAU GHI DU LIEU VAO BUFFER */
             break;
           
+          /* CODE MAU TAO BUFFER TX GUI */
           case P2TCMD_TEST:
               pUART.send_str("[SYSTEM DEBUG]: NHAN LENH CMD P2TCMD!\r\n");
               uint16 PARA1 = 0xE1A0;
@@ -196,6 +202,8 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
               //UART1_Send_BUF(UART_BUFFER_TX,i_UART_TX);
               pUART.send_buf(UART_BUFFER_TX,i_UART_TX);
             break;
+          /* END CODE MAU TAO BUFFER TX GUI */  
+          
           
           default :
           break;
@@ -208,7 +216,7 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
 //          UART_BUFFER_RX_HEAD_INDEX++;
           break;
           
-      }
+      }/*END IF*/
   }
   
   // Clear value cho UART_BUFFER_RX, nhan gia tri moi
@@ -369,13 +377,15 @@ void vMakeBufferTXTask( void *pvParameters )
           /* Delay Exactly Frequency */
           OS_vTaskDelayUntil(&xLastWakeTime,xUser_Task_Frequency);
 
+          /*TAO DU LIEU TEST */
           uint16 PARA1 ;
           uint16 PARA2 ;
-
+          
           BUFFER_CURRENT_MEASURE.Current_Value          =0xAE00;
           BUFFER_ENCODER.pulse_encoder                  =0xAF00;
           BUFFER_ENCODER.angle_motor                    =0x9D9D;
-
+          /*END TAO DU LIEU TEST */
+          
           CntUartBufferTx = (CntUartBufferTx+1)%2;
 
           switch (CntUartBufferTx)
@@ -396,42 +406,8 @@ void vMakeBufferTXTask( void *pvParameters )
               default :
               break;
           }
+   
       }
 }
-
-//void vMake_UART_BUFFER_TX()
-//{
-//  uint16 PARA1 ;
-//  uint16 PARA2 ;
-//  
-//  BUFFER_CURRENT_MEASURE.Current_Value          =0xC2A1;
-//  BUFFER_ENCODER.pulse_encoder                  =0xC1E1;
-//  BUFFER_ENCODER.angle_motor                    =0x7777;
-//  
-//  if(timer_expired(&tUSART_Make_Buffer))
-//  {
-//      CntUartBufferTx = (CntUartBufferTx+1)%2;
-//    
-//      switch (CntUartBufferTx)
-//      {
-//        case Bf_Current_Measure :
-//            PARA1 = BUFFER_CURRENT_MEASURE.Current_Value;
-//            UART_MakeData(0,PARA1,0,0,0,0,0);
-//            UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);
-//        break;
-//        
-//        case Bf_Encoder :
-//            PARA1 = BUFFER_ENCODER.pulse_encoder;
-//            PARA2 = BUFFER_ENCODER.angle_motor;
-//            UART_MakeData(0,PARA1,0,PARA2,0,0,0);
-//            UART_Send_BUF(UART_BUFFER_TX,i_UART_TX);        
-//        break;
-//
-//        default :
-//        break;
-//      }
-//
-//  }
-//}
 
 

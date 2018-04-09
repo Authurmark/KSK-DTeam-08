@@ -934,7 +934,7 @@
                     <item>BUFFER_RX_CONTROL_DC_SPINDLE</item>
                     <item>UART1_BUFFER_RX</item>
                     <item>UART1_BUFFER_TX</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
