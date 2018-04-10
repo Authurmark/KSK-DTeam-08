@@ -21,7 +21,23 @@ hardware function.
 /* Project includes. */
 #include "Project_Function.h"
 
-/*UART Frame*/
+/*--------------------------------------------------------------------*/
+//----------------------DEFINE FOR PROTOTYPE-------------------------//
+/*------------------------------------------------------------------*/
+#define pUART1_CONFIG           pUSART1
+#define UART1_Send_BUF          pUSART1.send_buf
+#define UART1_Send_STRING       pUSART1.send_str
+
+#define pUART2_CONFIG           pUSART2
+#define UART2_Send_BUF          pUSART2.send_buf
+#define UART2_Send_STRING       pUSART2.send_str
+
+#define T1Us_Tick1Ms vGetCurrentCounterTimeBaseMs()
+
+/*--------------------------------------------------------------------*/
+//-------------------PROTOCOL USART WITH DATA FRAME------------------//
+/*------------------------------------------------------------------*/
+
 #define PACKAGE_SIZE 128
 #define BLOCK_SIZE 0x80
 #define NUMBER_PACKAGE_WRITE_FLASH (FLASH_PAGE_SIZE/PACKAGE_SIZE)
@@ -66,16 +82,6 @@ hardware function.
 #define PREMABLE_BYTE_6 '+'
 
 #define END_DATA_BYTE   '~'
-/* Define for prototype */
-#define pUART1_CONFIG           pUSART1
-#define UART1_Send_BUF          pUSART1.send_buf
-#define UART1_Send_STRING       pUSART1.send_str
-
-#define pUART2_CONFIG           pUSART2
-#define UART2_Send_BUF          pUSART2.send_buf
-#define UART2_Send_STRING       pUSART2.send_str
-
-#define T1Us_Tick1Ms vGetCurrentCounterTimeBaseMs()
 
 /* Define TYPE COMMAND*/
 #define STRING_COMMAND
@@ -100,31 +106,33 @@ typedef enum Cmd_Type {
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
-/* Function Prototype */
-void vUserTaskProcess(void);
-/* Prototype for function */
-void UART_Comm(void);
-//void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend);
-//void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend);
-void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte);
-enumbool vComPortProcess(void);
-void vComCommandProcess(void);
 
+
+
+/*--------------------------------------------------------------------*/
+//-----------------------FUNCTION PROTOTYPE--------------------------//
+/*------------------------------------------------------------------*/
+
+/* RX BUFFER HANDLE */
 enumbool vComDataProcess_USART1(void);
 enumbool vComDataProcess_USART2(void);
-void vComDataHandle(void);
-void vFeedBack_info_sys(void);
+
 void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struct pUART );
 
-void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+/* FEEDBACK HANDLE */
 void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE);
+void vFeedBack_info_sys(void);
+
+/* MAKE DATA*/
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+
 void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
 void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
 void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);
 void UART_MakeData_Tail(uint8 *UART_BUFFER_TX);
 
+/* TX BUFFER HANDLE*/
 extern uint8 CntUartBufferTx;
-void vMake_UART_BUFFER_TX(void);
 void vMakeBufferTXTask( void *pvParameters );
 
 /* Extern flag */

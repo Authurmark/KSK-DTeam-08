@@ -71,7 +71,7 @@ Ngày 4/3: - Done
 
 
 
-***************** ENCODER *****************
+***************** STEPMOTOR *****************
 Ngày 4/9 : - Done
 	   - Xuat xung dk stepmotor voi chu ky 30us, dat trong vApplicationIdleHook
 -----------------------------------------------------
@@ -83,7 +83,10 @@ Ngày 4/9 : - Done
 4/9/2018
 + Tạo nhánh DEV.SLAVE2
 + Gọp thủ công các nhánh S2.ADC, S2.PWM, S2.ENCODER, S2.STEPMOTOR
-+ Tạo start point bắt đầu vào lập trình FlowChart
+
+4/10/2018
++ Optimize code 1st : clean code lại rõ ràng mạch lạc hơn
++ Tạo start point bắt đầu vào lập trình FlowChart ---> nhánh Release ---> nhánh Main : Master, Slave1, Slave2, Dev.master, Dev.slave1, Dev.slave2
 
 
 

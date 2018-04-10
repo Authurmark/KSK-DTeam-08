@@ -42,17 +42,17 @@ extern  uint32_t rotary_cntr;
 /* State of User Task */
 typedef enum
 {
-	eST_User_Task_INIT						= 1,
-	eST_User_Task_IDLE 						= 2,
-	eST_User_Task_LOGGING					= 3,
-	eST_User_Task_ERROR						= 4,
-	eST_User_Task_CHECKING_EVENT			= 5,
-	eST_User_Task_PC_CONNECT		        = 6,
-    eST_User_Task_PWM                       = 7,
-    eST_User_Task_DMA_ADC                   = 8,
-    eST_User_Task_Encoder                   = 9,
+        eST_User_Task_INIT			= 1,
+        eST_User_Task_IDLE 			= 2,
+        eST_User_Task_LOGGING			= 3,
+        eST_User_Task_ERROR			= 4,
+        eST_User_Task_CHECKING_EVENT		= 5,
+        eST_User_Task_PC_CONNECT		= 6,
+        eST_User_Task_PWM                       = 7,
+        eST_User_Task_DMA_ADC                   = 8,
+        eST_User_Task_Encoder                   = 9,
 		
-	eST_User_Task_UN 						= 0xff,
+        eST_User_Task_UN 			= 0xff,
 }eST_User_Task;
 
 
@@ -108,7 +108,7 @@ void vUserTask( void *pvParameters )
 }
 /*********************************************************************/
 
-uint32_t		ixIndex_ADC_Buffer;
+uint32_t	ixIndex_ADC_Buffer;
 uint32_t	ADC_Buffer[10];
 static uint32_t sum_ADC = 0;
 static uint32_t value_ADC_tb = 0;
@@ -178,24 +178,23 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-        case eST_User_Task_Encoder:
-             if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-            else
-			{			
-				 /* Check encoder counter */
-				
-                vGetEncoderValue();
-                MOTOR_2_DUTY(30);
-                if(rotary_cntr >=2000)
-                {
-				MOTOR_2_DUTY(0);
-                }                   
-	            }
-		break;
-case eST_User_Task_PWM:
+                case eST_User_Task_Encoder:
+                        if(bFlag_1st_Case==eTRUE)
+                        {
+                                bFlag_1st_Case = eFALSE;
+                        }
+                        else
+                        {			
+                                /* Check encoder counter */
+                                vGetEncoderValue();
+                                MOTOR_2_DUTY(30);
+                                if(rotary_cntr >=2000)
+                                {
+                                   MOTOR_2_DUTY(0);
+                                }                   
+                        }
+                break;
+                case eST_User_Task_PWM:
                         if(bFlag_1st_Case==eTRUE)
                         {
                                 bFlag_1st_Case = eFALSE;
