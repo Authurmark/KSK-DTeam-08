@@ -30,15 +30,17 @@
 Struct_System_Information 		StrSystemInfo;
 Struct_User_Information			StrUserInfo;
 Struct_Manufactuer_Information	StrManufacturerInfo;
+
 /* Information */
 Struct_Flash_Config_Parameter	StrConfigPara =
 {
-	.ProductID = "FFFF",		/* Default value */
-	.ProductName = "KSK_Machine",	/* Current value */
-	.BL_Version = "BL_V2.5.0.3",	/* Current value */
+    .ProductID = "FFFF",		/* Default value */
+    .ProductName = "KSK_Machine",	/* Current value */
+    .BL_Version = "BL_V2.5.0.3",	/* Current value */
     .FW_Version = "FW_V2.5.2.5",	/* Current value */
-    .HW_Version = "HW_V1.0.0.0",/* Current value */
+    .HW_Version = "HW_V1.0.0.0",        /* Current value */
 };
+
 /* Config RAM Buff */
 char StrConfig[FLASH_PAGE_SIZE];
 Struct_Flash_Config_Parameter* pStrConfig;
@@ -117,10 +119,14 @@ void vProject_Init()
 	/* Init PWM function */
 	vInitPWMFunction();
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: PWM Init success! \r\n");
+        
 	/* Init ADC function */
 	vInit_DMA_ADC_Function();
+        
 	/* Init TIM3 encoder function */
 	//vInit_TIM_ENCODER_Function();
+        
+        
 	/* Update Flash Data */
 	//vFLASH_UpdateData();
 	/* Load config from flash and update */
@@ -169,7 +175,19 @@ void vProject_Init()
 	/* Delay before begin */
 	vTimerBase_DelayMS(1500);
 }
-/* FLASH USER FUNCTION */
+
+
+
+
+
+
+
+
+
+
+/*-----------------------------------------------------------*/
+//-------------------FLASH USER FUNCTION---------------------//
+/*-----------------------------------------------------------*/
 /* Read Flash USER Function */
 void vFLASH_User_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length)
 {
@@ -230,11 +248,37 @@ void vFLASH_UpdateData(void)
     FLASH_Lock();
 }
 
-/* KSK machine */
+
+
+
+
+
+
+
+/*-----------------------------------------------------------*/
+//-------------------KSK CONFIG FUNCTION---------------------//
+/*-----------------------------------------------------------*/
+
+
+//---------PWM FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  26/03/2018
+  Edited :  09/04/2018 
+  1. Config : TIM 1- PWM pins : B13 - B14
+  2. PWM Generate : vChangeDutyCycleOC1 , vChangeDutyCycleOC2
+  3. Control Motor : vMotorControl
+*/
+
+#define MOTOR_FORWARD 	1
+#define MOTOR_REVERSE 	2
+#define MOTOR_STOP 	3
+#define MOTOR_BRAKE 	4
+
 void vInitPWMFunction(void)
 {
-	/* Config timer for PWM function */
-	/* PWM will control DC motor */
+        /* Config timer for PWM function */
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 	TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef          TIM_OCInitStructure;    
@@ -244,21 +288,28 @@ void vInitPWMFunction(void)
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+        
+        /* PWM will control DC motor */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; 
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable; 
 	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
-	//TIM_OCStructInit(&TIM_OCInitStructure);
+        
+        /* Config Thanh ghi tuong ung voi cac chan PWM*/
 	TIM_OC1Init(TIM1, &TIM_OCInitStructure);  
 	TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC2Init(TIM1, &TIM_OCInitStructure);
 	TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC3Init(TIM1, &TIM_OCInitStructure);
 	TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC4Init(TIM1, &TIM_OCInitStructure);
-	TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
+	TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
 	/* TIM1 enable counter */
@@ -266,13 +317,14 @@ void vInitPWMFunction(void)
 	TIM_CtrlPWMOutputs(TIM1, ENABLE);
 
 	/* Init IO for PWM function */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	GPIO_InitTypeDef  GPIO_InitStructure;
+        
 	/* Configure PB0 PB1 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);  
+	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 }
 
 void vChangeDutyCycleOC1(uint8_t bDutyPercent)
@@ -284,38 +336,60 @@ void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 	TIM1->CCR4 = (bDutyPercent*65535)/100;
 }
 
-#define MOTOR_FORWARD 	1
-#define MOTOR_REVERSE 	2
-#define MOTOR_STOP 		3
-#define MOTOR_BRAKE 	4
 void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection)
 {
 	switch(bDirection)
 	{
-		case MOTOR_FORWARD:
-			MOTOR_1_DUTY(bDutyMotor);
-			MOTOR_2_DUTY(0);
-		break;
-		case MOTOR_REVERSE:
-			MOTOR_1_DUTY(0);
-			MOTOR_2_DUTY(bDutyMotor);
-		break;
-		case MOTOR_STOP:
-            MOTOR_1_DUTY(0);
-			MOTOR_2_DUTY(0);
-		break;
-		case MOTOR_BRAKE:
-			MOTOR_2_DUTY(bDutyMotor);
-			MOTOR_1_DUTY(bDutyMotor);
-		break;
-		default:
-		break;
+            case MOTOR_FORWARD:
+                    MOTOR_1_DUTY(bDutyMotor);
+                    MOTOR_2_DUTY(0);
+            break;
+            case MOTOR_REVERSE:
+                    MOTOR_1_DUTY(0);
+                    MOTOR_2_DUTY(bDutyMotor);
+            break;
+            case MOTOR_STOP:
+                    MOTOR_1_DUTY(0);
+                    MOTOR_2_DUTY(0);
+            break;
+            case MOTOR_BRAKE:
+                    MOTOR_2_DUTY(bDutyMotor);
+                    MOTOR_1_DUTY(bDutyMotor);
+            break;
+            default:
+            break;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------DMA - ADC FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  27/03/2018
+  Edited :  09/04/2018 
+  1. Config : ADC 1 - Chanell 4 - ADC pin : A4  | DMA 1 - Chanell 1
+  2. ADC1_DR_Address            0x4001244C
+  3. Valiable ADC :             ADCConvertedValue
+*/
+
+
 
 /* Global variable */
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
 __IO uint16_t ADCConvertedValue;
+
 /* DMA ADC function */
 void vInit_DMA_ADC_Function(void)
 {
@@ -382,70 +456,33 @@ void vInit_DMA_ADC_Function(void)
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 
-/* Encoder function */
-// TIMER #3 IRQ
-//typedef enum { FORWARD, BACKWARD } Direction;
 
-// Rotary encoder variables
-//volatile uint32_t rotary_capture_is_first = 1
-/*Direction rotary_dir   = FORWARD; // Rotation direction
-uint32_t  rotary_cntr  = 0;       // Rotation counter
-void vInit_TIM_ENCODER_Function(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 , ENABLE);
 
-  RCC_APB1PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
 
-  
-  NVIC_InitTypeDef NVIC_InitStructure;
-  GPIO_InitTypeDef           GPIO_InitStructure;
-  TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 
-  /*cau hinh chan out cho timer2*/
-  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  
-  /* Time base configuration */
- /* TIM_TimeBaseStructure.TIM_Prescaler = 0;   
-  TIM_TimeBaseStructure.TIM_Period = 65535;   // 65535
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up | TIM_CounterMode_Down;
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-  TIM_ARRPreloadConfig(TIM3, ENABLE);
-  
-  TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
- 
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);  
 
-  TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM3, ENABLE);
 
-}
 
-void vGetEncoderValue(void)
-{
-  rotary_cntr = TIM_GetCounter(TIM3); 
-} 
 
-void TIM3_IRQHandler(void) 
-{
-	if (TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) 
-   {
-		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
- 		rotary_dir = (TIM3->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
-	    (rotary_dir == BACKWARD) ? rotary_cntr-- : rotary_cntr++;
-   }
-   //TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
-}
+
+
+
+
+
+
+
+
+
+
+//---------ENCODER FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  03/04/2018
+  Edited :  09/04/2018 
+  1. Read Encoder Pulse by EXTERNAL INTERRUPT
+  2. Config : Line 1 - pinA1 | Line 2 - pinA2     by EXTILine1_Config | EXTILine2_Config
+  3. EXTI function : EXTI1_IRQHandler | EXTI2_IRQHandler : define encoder pulse
+  4. Read encoder value by vGetEncoderValue
 */
 
 GPIO_InitTypeDef  GPIO_InitStructure;
@@ -457,42 +494,40 @@ uint16_t rotary_cntr = 0;
 uint32_t debug =0;
 
 void EXTILine1_Config(void);
-void EXTILine4_Config(void);
+void EXTILine2_Config(void);
 
 void vGetEncoderValue(void)
 {
- EXTILine1_Config();
- EXTILine4_Config();
- while(1)        
- {
-  rotary_cntr = countA + countB ;
-  MOTOR_2_DUTY(30);
-  if(rotary_cntr >=2400)
-  {
-   MOTOR_2_DUTY(0);
-  }                               
- }
+    EXTILine1_Config();
+    EXTILine2_Config();
+    
+    rotary_cntr = countA + countB ;
+    MOTOR_2_DUTY(30);
+    if(rotary_cntr >=2400)
+    {
+     MOTOR_2_DUTY(0);
+    }                               
 }
 
-void EXTILine4_Config(void)
+void EXTILine2_Config(void)
 {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; 
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; 
   GPIO_Init(GPIOA, &GPIO_InitStructure); 
   
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource4);
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource2);
   
-  EXTI_InitStructure.EXTI_Line = EXTI_Line4;
+  EXTI_InitStructure.EXTI_Line = EXTI_Line2;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
   EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);
   
     
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -501,14 +536,14 @@ void EXTILine4_Config(void)
 
 void EXTILine1_Config(void)
 {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
-  GPIO_Init(GPIOB, &GPIO_InitStructure); 
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
   
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource1);
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource1);
   
   EXTI_InitStructure.EXTI_Line = EXTI_Line1;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -524,12 +559,12 @@ void EXTILine1_Config(void)
   NVIC_Init(&NVIC_InitStructure);
 }
  
-void EXTI4_IRQHandler(void)
+void EXTI1_IRQHandler(void)
 {
- if(EXTI_GetITStatus(EXTI_Line4) != RESET)
+ if(EXTI_GetITStatus(EXTI_Line1) != RESET)
  {
-  EXTI_ClearITPendingBit(EXTI_Line4);
-  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
+  EXTI_ClearITPendingBit(EXTI_Line1);
+  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) )
   countA = (1200+countA+1)%1200;
   else
   countA = (1200+countA-1)%1200;
@@ -537,19 +572,36 @@ void EXTI4_IRQHandler(void)
  }
 }
 
-void EXTI1_IRQHandler(void)
+void EXTI2_IRQHandler(void)
 {
- if(EXTI_GetITStatus(EXTI_Line1) != RESET)
+ if(EXTI_GetITStatus(EXTI_Line2) != RESET)
  {
-  EXTI_ClearITPendingBit(EXTI_Line1);
- if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
+  EXTI_ClearITPendingBit(EXTI_Line2);
+ if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) )
    countB = (1200+countB-1)%1200;
   else
    countB = (1200+countB+1)%1200;
  }
 }
 
-/*CONTROL STEPMOTOR*/
+
+
+
+
+
+
+
+
+
+//---------CONTROL STEPMOTOR FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  09/04/2018
+  Edited :  09/04/2018 
+  1. Control Stepmotor by Generate Pulse
+  2. Config IO: pinA3 - CCW | pinA4 - DIR | pin A5 - ENABLE     by vInit_STEP_MOTOR_Function
+  3. Control Stepmotor by Control_step_motor
+*/
 GPIO_InitTypeDef  GPIO_InitStructure;
 timer tP_StepA;
 uint8 cnt_stepmotor; 
@@ -586,4 +638,13 @@ void vInit_STEP_MOTOR_Function (void)
   GPIO_Init(GPIOA, &GPIO_InitStructure);
   GPIO_Write(GPIOA,0x0000);
 }
+
+
+
+
+
+
+
+
+
 #endif /* _Project_Function__C */
