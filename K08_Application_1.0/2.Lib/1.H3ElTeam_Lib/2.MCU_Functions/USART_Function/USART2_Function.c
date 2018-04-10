@@ -30,8 +30,8 @@ extern uint8_t USART2_TXBuff[DEFAULT_USART2_NUMBER_BYTES_TX_BUFFER];
 void USART2_Init( void )
 {
 	#ifdef USE_CMCIS_DRIVER
-    NVIC_InitTypeDef NVIC_InitStructure;
-    GPIO_InitTypeDef GPIO_InitStructure;
+        NVIC_InitTypeDef NVIC_InitStructure;
+        GPIO_InitTypeDef GPIO_InitStructure;
 	#ifdef USE_USART2
 		#ifdef USE_DEFAULT_USART2_IO
 		#warning: USART2 function use GPIOA_GPIO_Pin_2 and GPIOA_GPIO_Pin_3

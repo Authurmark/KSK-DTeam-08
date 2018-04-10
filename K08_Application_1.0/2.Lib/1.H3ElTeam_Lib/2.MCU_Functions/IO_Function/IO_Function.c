@@ -78,6 +78,7 @@
 	#ifdef USE_LED_2
 	/* Manage Variable */
 	IO_Struct  pLED2;
+	structIO_Manage_Output strLED_2;
 	/* Init function */
 	void IO_LED2_Init(IO_Struct *pIO)
 	{

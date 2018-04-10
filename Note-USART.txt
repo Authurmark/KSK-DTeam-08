@@ -1,0 +1,50 @@
+Slave2 - USART
+
+#define iUART_PRE_1         0
+#define iUART_PRE_2         1
+#define iUART_PRE_3         2
+#define iUART_PRE_4         3
+#define iUART_PRE_5         4
+
+#define iUART_CMD_TYPE      6
+#define iUART_CMD           7
+#define iUART_SIZE_LOW      8
+#define iUART_SIZE_HIGH     9
+#define iUART_IDX_LOW       10				//???
+#define iUART_IDX_HIGH      11				//???
+#define iUART_DATA          12				DU LIEU BAT DAU
+
+
+
+----note : byte 12-> là data
+----note : chua co byte end_data
+----note PREMABLE_BYTE : cac byte format data, de nhan dang du lieu dung
+
+12 	13 	14 	15    	16 	17	18
+para1	para2	para3	para4	para5	para6	end_data
+
+
+EndData : ~ ------ 126 ------ 7E
+	 ASCII     Dec	      Hec
+
+
+CMD :
+0x01	:
+0x02
+0x03
+0x04
+
+
+
+
+0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18
+A	T	K	S	K	+	$01	$01	$00	$00	$00	$00	$C1	$C2	#C3	$C4	$C5	$C6	$7E						
+
+
+Dataframe : ATKSK+$01$01$00$00$00$00$C1$C2$C3$C4$C5$C6$7E
+
+Test :
+ATKSK+$11$01$00$00$00$00$C1$C2$C3$C4$C5$C6$7E
+
+Spindle:
+ATKSK+$10$01$00$00$00$00	$32$02$00$00$00$00$7E

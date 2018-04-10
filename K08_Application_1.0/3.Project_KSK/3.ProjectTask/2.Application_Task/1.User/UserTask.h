@@ -22,12 +22,12 @@ hardware function.
 /*-----------------------------------------------------------*/
 typedef enum
 { 
-    eUserTask_State_Idle				= 1,
+    eUserTask_State_Idle			= 1,
     eUserTask_State_CheckButton 		= 2,
-	eUserTask_State_CheckPIR 			= 3,
-	eUserTask_State_CheckRelayState 	= 4,
+    eUserTask_State_CheckPIR 			= 3,
+    eUserTask_State_CheckRelayState 	        = 4,
     eMainTask_State_MAIN,
-    eMainNullState=0xff,
+    eMainNullState                              =0xff,
 }eUserState;
 /* Funtion Prototype */
 void vUserTask( void *pvParameters );

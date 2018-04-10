@@ -31,6 +31,7 @@
     volatile uint8_t *pt;
 }RINGBUF;
 
+
 /* Prototype function */
 int32_t RINGBUF_Init(RINGBUF *r, uint8_t* buf, uint32_t size);
 int32_t RINGBUF_Put(RINGBUF *r, uint8_t c);

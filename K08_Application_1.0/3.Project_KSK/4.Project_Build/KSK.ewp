@@ -121,7 +121,7 @@
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGUseCmsisDspLib</name>
@@ -348,6 +348,7 @@
                     <state>$PROJ_DIR$\..\..\3.Project_KSK\1.Config_kernel</state>
                     <state>$PROJ_DIR$\..\..\3.Project_KSK\2.MainSource</state>
                     <state>$PROJ_DIR$\..\..\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task</state>
+                    <state>$PROJ_DIR$\..\..\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User</state>
                     <state>$PROJ_DIR$\..\..\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc</state>
                     <state>$PROJ_DIR$\..\..\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x</state>
                     <state>$PROJ_DIR$\..\..\2.Lib\3.ST_Lib\CM3\IAR</state>
@@ -2148,6 +2149,15 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART1_Function.c</name>
+                </file>
+            </group>
+            <group>
+                <name>3.3.2.USART2_Kernel</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART2_AppCall_Function.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART2_Function.c</name>
                 </file>
             </group>
         </group>

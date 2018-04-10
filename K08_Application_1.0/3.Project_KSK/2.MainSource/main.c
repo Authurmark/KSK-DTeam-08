@@ -8,7 +8,7 @@
 * 20/09/2014: v0.1
 * 07/07/2015: v0.2 Change Monitor task to 500ms frequency
 * 10/08/2015: v0.3 Fix Name of Task
-* 22/12/2017: v1.0 1st build for APhi Navigator project
+* 25/03/2018: v1.0 1st build for Project 08 - KSK Company
 ********************************************************************************
 * THE PRESENT SOFTWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
 * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
@@ -22,45 +22,65 @@
 #include "IO_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
+#include "USART2_AppCall_Function.h"
 #include "Project_Function.h"
+#include "ComFunction.h"
+
+
+/*Valiable For Control StepMotor*/
+extern timer tP_StepA;
+
+/**CREATE A NEW TASK
+  1. Set TASK_PRIORITY
+  2. Khai bao TASK_STACK_SIZE
+  3. Tao Prototype
+  4. Tao Task_Handle
+  5. Khoi tao Task : OS_xTaskCreate
+*/
 
 #ifdef USE_OS
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
 	/* Application Task priorities. */
-	#define USER_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )//20-08: 3
+	#define USER_TASK_PRIORITY			( tskIDLE_PRIORITY + 2 )//20-08: 3
+        /* Send buffer task prorities*/
+        #define MAKE_BUFFER_TX_TASK_PRORITY             ( tskIDLE_PRIORITY + 1 )
 
 	/* Kernel Task Stack size */
 	#define IO_KERNEL_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 	/* The check task uses the sprintf function so requires a little more stack. */
 	#define USER_TASK_STACK_SIZE			( ( unsigned short ) 128 )
-
-    /* The LED1 Task */
-	#define LED1_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-    #define LED2_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-    #define LED1_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-    #define LED2_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
+        /* Kernel Task Stack size */
+	#define MAKE_BUFFER_TX_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
+        extern void vMakeBufferTXTask (void *pvParameters);
     
-    /* Extern LED1 and LED2 Task*/
-    void LED1_Task( void *pvParameters );
-	void LED2_Task( void *pvParameters );
-	
 	/* Variable for Handler */
 	xTaskHandle xIO_Task_Handle;
 	enumbool xFlag_IO_Task_Still_Running = eTRUE, xFlag_IO_Task_Init_Done = eFALSE, xFlag_IO_Task_Process_Check = eTRUE;
+        
 	xTaskHandle xSensor_Task_Handle;
+        
 	xTaskHandle xUser_Task_Handle;
+        
+        xTaskHandle xMakeBufferTXTask_Handle;
+        
 	enumbool xFlag_User_Task_Still_Running = eTRUE, xFlag_User_Task_Init_Done = eFALSE, xFlag_User_Task_Process_Check = eTRUE;
     
-    /* Variable for Handler LED1 LED2 Task */
-    xTaskHandle xLED1_Task_Handle, xLED2_Task_Handle;
 	/* Application for free time MCU */
 	void vApplicationIdleHook( void );
 #endif
+        
+        
+        
+        
+        
+        
+        
+        
 
 /*-----------------------------------------------------------*/
 /* Main source */
@@ -80,10 +100,13 @@ void main(void)
 	OS_xTaskCreate(vIO_Kernel_Task, "IO_KERNEL_TASK", IO_KERNEL_TASK_STACK_SIZE, NULL, IO_KERNEL_TASK_PRIORITY, &xIO_Task_Handle );
 	/* Create Application Task */
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
-	
-    /* Create LED1 Task */
-	//OS_xTaskCreate(LED1_Task, "LED1_Task", LED1_TASK_STACK_SIZE, NULL, LED1_TASK_PRIORITY, &xLED1_Task_Handle);
-    
+        /* Create MakeBufferTX Task */
+	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
+
+        /*Valiable For Control StepMotor*/
+	vInit_STEP_MOTOR_Function();
+	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
+
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -95,40 +118,30 @@ void main(void)
 #endif /* USE_OS */
 }
 
-#ifdef USE_OS /* Use OS */
-void LED1_Task( void *pvParameters )
-{
-    #define LED1_TASK_FREQUENCY				10	/* 10 ms */
-    static timer pLED1Test;
-    /* Delay before begin task */
-	OS_vTaskDelay(50);
-    /* Set prequency */
-	portTickType xLastWakeTime;
-	const portTickType xLED1_Task_Frequency = LED1_TASK_FREQUENCY;/* 10 tick slice */
-	xLastWakeTime = xTaskGetTickCount();
-    /* Init timer */
-    timer_set(&pLED1Test,500,CLOCK_TYPE_MS);
-    /* Task process */
-	for(;;)
-	{	
-		/* Delay Exactly Frequency */
-		OS_vTaskDelayUntil(&xLastWakeTime,xLED1_Task_Frequency);
-        
-        /* Check timer expired toggle LED, restart timer and toggle LED */
-        if(timer_expired(&pLED1Test))
-        {
-            timer_restart(&pLED1Test);
-            /* Toggle LED */
-            LED_USER_TOGGLE;
-            /* Print debug via UART1 */
-            USART1_AppCall_SendString("[SYSTEM DEBUG]: Timer1 expired, led 1 toggle \r\n");
-        }
-        
-    }
-}
-#endif /* USE_OS */
+
+
+
+
+
 /**********************************************************************************/
 void vApplicationIdleHook(void);
+
+/** vApplicationIdleHook
+  1. Thuc thi trong thoi gian ranh (trang thai Idle) cua he thong
+  2. Chuyen xu ly cac ham cong tac, cac ham co tan so xu ly nhanh hon tan so hoat dong cac Task
+
+ ** Noi dung thuc hien
+  1.Ham goi thuc thi Control Step motor
+  2.Ham goi thuc thi xu ly RX Data
+**/
+
 void vApplicationIdleHook(void)
 {
+  Control_step_motor();
+
+  vComDataProcess_USART1();
+  vComDataProcess_USART2();
+  
 }
+
+

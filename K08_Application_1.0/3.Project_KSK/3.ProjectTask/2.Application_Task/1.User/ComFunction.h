@@ -21,7 +21,23 @@ hardware function.
 /* Project includes. */
 #include "Project_Function.h"
 
-/*UART Frame*/
+/*--------------------------------------------------------------------*/
+//----------------------DEFINE FOR PROTOTYPE-------------------------//
+/*------------------------------------------------------------------*/
+#define pUART1_CONFIG           pUSART1
+#define UART1_Send_BUF          pUSART1.send_buf
+#define UART1_Send_STRING       pUSART1.send_str
+
+#define pUART2_CONFIG           pUSART2
+#define UART2_Send_BUF          pUSART2.send_buf
+#define UART2_Send_STRING       pUSART2.send_str
+
+#define T1Us_Tick1Ms vGetCurrentCounterTimeBaseMs()
+
+/*--------------------------------------------------------------------*/
+//-------------------PROTOCOL USART WITH DATA FRAME------------------//
+/*------------------------------------------------------------------*/
+
 #define PACKAGE_SIZE 128
 #define BLOCK_SIZE 0x80
 #define NUMBER_PACKAGE_WRITE_FLASH (FLASH_PAGE_SIZE/PACKAGE_SIZE)
@@ -30,23 +46,27 @@ hardware function.
 #define iUART_PRE_3         2
 #define iUART_PRE_4         3
 #define iUART_PRE_5         4
-//#define iUART_CMD           5
-//#define iUART_SIZE_LOW      6
-//#define iUART_SIZE_HIGH     7
-//#define iUART_IDX_LOW       8
-//#define iUART_IDX_HIGH      9
-//#define iUART_DATA          10
-#define iUART_CMD_TYPE      5
-#define iUART_CMD           6
-#define iUART_SIZE_LOW      7
-#define iUART_SIZE_HIGH     8
-#define iUART_IDX_LOW       9
-#define iUART_IDX_HIGH      10
-#define iUART_DATA          11
+#define iUART_PRE_6         5
+
+//#define iUART_CMD           6
+//#define iUART_SIZE_LOW      7
+//#define iUART_SIZE_HIGH     8
+//#define iUART_IDX_LOW       9                           
+//#define iUART_IDX_HIGH      10                          
+//#define iUART_DATA          11
+
+#define iUART_CMD_TYPE      6
+#define iUART_CMD           7
+#define iUART_SIZE_LOW      8
+#define iUART_SIZE_HIGH     9
+#define iUART_IDX_LOW       10
+#define iUART_IDX_HIGH      11
+#define iUART_DATA          12
+#define iUART_END_DATA      18
 
 #define i_MAX_UART          500
 #define UART_INTERVAL       10  /*115200kbs=14400Bs~14byte/s*/
-#define FBCODE_OK           0xC7C7/* Bootloader main */
+#define FBCODE_OK           0xC0C7/* Bootloader main */
 //#define FBCODE_OK           0x7C7C/* FW main */
 #define FBCODE_ERR          0xFFFF
 #define FBCODE_RETURN       0x7E7E
@@ -59,11 +79,9 @@ hardware function.
 #define PREMABLE_BYTE_3 'K'
 #define PREMABLE_BYTE_4 'S'
 #define PREMABLE_BYTE_5 'K'
-/* Define for prototype */
-#define pUART_CONFIG pUSART1
-#define UART_Send_BUF pUSART1.send_buf
-#define UART_Send_STRING pUSART1.send_str
-#define T1Us_Tick1Ms vGetCurrentCounterTimeBaseMs()
+#define PREMABLE_BYTE_6 '+'
+
+#define END_DATA_BYTE   '~'
 
 /* Define TYPE COMMAND*/
 #define STRING_COMMAND
@@ -71,28 +89,52 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
+    P2TCMD_SPINDLE      = 0x10,
+    P2TCMD_TEST         = 0x11,
+
+
     /*Common command*/
     P2TCMD_CLOSE = 0x01,
     P2TCMD_CONNECT = 0x02,
     
     /* COMMAND FOR RELAY */
     P2TCMD_SET_RELAY_PARA = 0xC1,
-	P2TCMD_SET_LED_PARA = 0xC2,
-	P2TCMD_SET_RELAY_DIRECT = 0xC3,
+    P2TCMD_SET_LED_PARA = 0xC2,
+    P2TCMD_SET_RELAY_DIRECT = 0xC3,
     P2TCMD_SET_LED_DIRECT = 0xC4,
     
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
-/* Function Prototype */
-void vUserTaskProcess(void);
-/* Prototype for function */
-void UART_Comm(void);
-void UART_Comm_Feedback_Command_Content(cmd_type CMD, uint16 CODE, uint16 uLengByte, char* pSend);
-void UART_MakeData(cmd_type CMD, uint16 CODE, uint16 uLengByteContent, char* pSend);
-void UART_MakeFeedback(cmd_type CMD, uint16 CODE, uint16 uLengByte);
-enumbool vComPortProcess(void);
-void vComCommandProcess(void);
+
+
+
+/*--------------------------------------------------------------------*/
+//-----------------------FUNCTION PROTOTYPE--------------------------//
+/*------------------------------------------------------------------*/
+
+/* RX BUFFER HANDLE */
+enumbool vComDataProcess_USART1(void);
+enumbool vComDataProcess_USART2(void);
+
+void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struct pUART );
+
+/* FEEDBACK HANDLE */
+void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE);
+void vFeedBack_info_sys(void);
+
+/* MAKE DATA*/
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+
+void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
+void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
+void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);
+void UART_MakeData_Tail(uint8 *UART_BUFFER_TX);
+
+/* TX BUFFER HANDLE*/
+extern uint8 CntUartBufferTx;
+void vMakeBufferTXTask( void *pvParameters );
+
 /* Extern flag */
 extern enumbool bFlagGetCommandLEDConfigUART1;
 extern structIO_Manage_Output bLEDConfigCommand;
