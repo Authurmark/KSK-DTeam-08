@@ -119,14 +119,18 @@ void vProject_Init()
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: PWM Init success! \r\n");
 	/* Init ADC function */
 	vInit_DMA_ADC_Function();
-	/* Init TIM3 encoder function */
-	//vInit_TIM_ENCODER_Function();
+	/* Init EXTI encoder function */
+	  EXTILine1_Config();
+  	  EXTILine2_Config();
 	/* Update Flash Data */
 	//vFLASH_UpdateData();
 	/* Load config from flash and update */
 	FLASH_Unlock();
 	vFLASH_User_Read(0,USER_INFO_FLASH_ADDR,(uint32_t*)StrConfig,FLASH_PAGE_SIZE);
 	FLASH_Lock();
+	
+	/* Init Stepmotor function */
+	vInit_STEP_MOTOR_Function();
 	/* Check flash config already or not */
 	if((StrConfig[0]!=0xFF)&&(StrConfig[1]!=0xFF)&&(StrConfig[2]!=0xFF)&&(StrConfig[3]!=0xFF))
 	{
@@ -390,15 +394,13 @@ uint16_t countA = 0, countB = 0 ;
 uint16   X_Axis_Encoder = 0;
 int  cnt_rotary = 0;
 
-
-void EXTILine1_Config(void);
-void EXTILine2_Config(void);
+enumbool bFlag_CntRotary =eFALSE;
 
 void vGetEncoderValue(void)
 {
-  EXTILine1_Config();
-  EXTILine2_Config();
-  X_Axis_Encoder = countA  + countB;                       
+
+  if (bFlag_CntRotary==eFALSE)    	X_Axis_Encoder = countA  + countB + 2400*cnt_rotary;         
+  if (bFlag_CntRotary==eTRUE)		X_Axis_Encoder = countA  - 1 + 2400*cnt_rotary;      	              
 }
 
 void EXTILine1_Config(void)
@@ -459,7 +461,12 @@ void EXTI1_IRQHandler(void)
   if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) )
   {  
 	countA = (1200+countA+1)%1200;
-	if(	countA==0)					cnt_rotary++;
+	bFlag_CntRotary=eFALSE;
+	if(	countA==0)
+	{
+		cnt_rotary++;
+		bFlag_CntRotary=eTRUE;
+	}
   }	  
   else
   {
@@ -474,18 +481,29 @@ void EXTI2_IRQHandler(void)
  if(EXTI_GetITStatus(EXTI_Line2) != RESET)
  {
   EXTI_ClearITPendingBit(EXTI_Line2);
- if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) )
-   countB = (1200+countB-1)%1200;
+ if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
+   {
+	countB = (1200+countB-1)%1200;
+
+	}
   else
    countB = (1200+countB+1)%1200;
  }
 }
 
-/*CONTROL STEPMOTOR*/
+/*CONTROL STEP MOTOR OF AXIS X ON SLAVE1
+1. Config Pin A3, Pin A4, Pin A5 corresponding with CCW,DIR,ENABLE.
+2. Calculation Pulse control in void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro).
+3. Control Direction in void Control_Direction (void).
+4. Control Pulse in void vMotorStepControl(void).
+5. Check status of step motor in void vMotorStepControl_Status(uint8_t bDirection).
+6  Calculation excisting position in void Determined_Position(uint8 iIndex_amicro).
+7. Compear Calculation excisting position with Position Control for speed PULSE.
+*/
 GPIO_InitTypeDef  GPIO_InitStructure;
 timer tP_StepA;
 uint8 cnt_stepmotor; 
-uint32 X_Axis_PositionControl = 5;
+uint32 X_Axis_PositionControl = 10;
 uint32 Cnt_Pulse = 0;
 uint32 X_Axis_PulseControl = 0;
 uint32 X_Axis_PositionGet = 0;
@@ -513,93 +531,136 @@ uint8   aValue_vitme[3]={Value_vitmeX , Value_vitmeY , Value_vitmeZ};
 uint8 aValue_micro[6] = {value_micro1,value_micro2,value_micro8,value_micro16,value_micro32,value_micro64};
 
 /* CONTROL DIRECTION MOTOR*/
+#define MOTOR_STEP_ABLE		0
+#define MOTOR_STEP_DISABLE 	1
+#define MOTOR_STEP_BRAKE 	2
+
+/* DATA RECIVE */
+uint8_t X_Axis_bDirection;
+uint8_t Y_Axis_bDirection;
+uint8_t Z_Axis_bDirection;
+
+
+/* STATUS DIRECTION STEPMOTOR*/
 #define MOTOR_STEP_FORWARD 	1
 #define MOTOR_STEP_REVERSE 	2
-#define MOTOR_STEP_DISABLE 	3
-#define MOTOR_STEP_BRAKE 	4
+#define MOTOR_STEP_STOP 	3
 
+/* STATUS DIRECTION STEPMOTOR */
+uint8_t X_Axis_sDirection;
+uint8_t Y_Axis_SDirection;
+uint8_t Z_Axis_SDirection;
+
+#define pin_X_DIR		GPIO_Pin_4
+#define pin_X_CCW		GPIO_Pin_3
+enumbool bFlag_PulseCalculation = eTRUE;
 
 void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) 
 {
     X_Axis_PulseControl = ( X_Axis_PositionControl*200*aValue_micro[iIndex_amicro]/aValue_vitme[iIndex_avitme]);
 }
 
-void Control_Pulse (void)
+void Control_Direction (void)
 {
     if( Cnt_Pulse < X_Axis_PulseControl)
        {
-        Cnt_Pulse += 1;
-       }
+        	X_Axis_sDirection = MOTOR_STEP_FORWARD;
+			GPIO_ResetBits(GPIOA, pin_X_DIR);
+	   }
     if(Cnt_Pulse > X_Axis_PulseControl)
        {
-        Cnt_Pulse -= 1;
+			X_Axis_sDirection = MOTOR_STEP_REVERSE;
+			GPIO_SetBits(GPIOA, pin_X_DIR);
        }
-    Cnt_Pulse = X_Axis_Encoder;
 
-   }
-
-void Generate_Pulse(void)
+	if(Cnt_Pulse == X_Axis_PulseControl)
+	  {
+			X_Axis_sDirection = MOTOR_STEP_STOP;
+	  }
+}
+void vMotorStepControl(void)
 {
-    vInit_STEP_MOTOR_Function();
-    Control_Pulse ();
-    Calculate_Pulse(ScrewShaft_X,2);
-    vMotorStepControl(1);
-    Compare_Position();
-    if(timer_expired(&tP_StepA))
+	if(timer_expired(&tP_StepA))
 	{
 		timer_restart(&tP_StepA);
-		cnt_stepmotor=(cnt_stepmotor+1)%2;
-		if(cnt_stepmotor==0)
-		GPIO_SetBits(GPIOA ,GPIO_Pin_3 );
-		else 
-		GPIO_ResetBits(GPIOA ,GPIO_Pin_3 );
+
+		switch(X_Axis_bDirection)
+		{
+			case MOTOR_STEP_ABLE:
+				Calculate_Pulse(ScrewShaft_X,3);
+				Control_Direction();
+				vMotorStepControl_Status(X_Axis_sDirection);
+            break;
+			case MOTOR_STEP_BRAKE:
+				X_Axis_PulseControl = X_Axis_Encoder;
+			break;
+			case MOTOR_STEP_DISABLE:
+				GPIO_SetBits(GPIOA, GPIO_Pin_5);
+			break;
+			default:
+			break;
+		}
 	}
-    
 }
 
-void vMotorStepControl( uint8_t X_Axis_bDirection)
+void vMotorStepControl_Status(uint8_t bDirection)
 {
- switch(X_Axis_bDirection)
-	{
-		case MOTOR_STEP_FORWARD:
-		     GPIO_ResetBits(GPIOA, GPIO_Pin_4);
-		break;
-		case MOTOR_STEP_REVERSE:
-			GPIO_SetBits(GPIOA, GPIO_Pin_4);
-		break;
-		case MOTOR_STEP_BRAKE:
-            GPIO_SetBits(GPIOA, GPIO_Pin_5);
-            GPIO_SetBits(GPIOA, GPIO_Pin_4);
-		break;
-		case MOTOR_STEP_DISABLE:
-			GPIO_SetBits(GPIOA, GPIO_Pin_5);
-		break;
-		default:
-		break;
-	}
+		switch(bDirection)
+		{
+			case MOTOR_STEP_FORWARD:
+				cnt_stepmotor = (cnt_stepmotor+1)%2;
+                Compare_Position();
+				Generate_Pulse();
+            	if(cnt_stepmotor == 0) 		Cnt_Pulse += 1;
+			break;
+			case MOTOR_STEP_REVERSE:
+				cnt_stepmotor = (cnt_stepmotor+1)%2;
+				Compare_Position();
+				Generate_Pulse();
+           		if(cnt_stepmotor == 0) 		Cnt_Pulse -= 1;
+			break;
+			case MOTOR_STEP_STOP:
+			break;
+			default:
+			break;
+		}
+
+}
+
+void Generate_Pulse(void)
+{   
+ 
+	if(cnt_stepmotor == 0)				GPIO_SetBits(GPIOA ,GPIO_Pin_3 );
+	if(cnt_stepmotor == 1)				GPIO_ResetBits(GPIOA ,GPIO_Pin_3 );
 }
 
 void Determined_Position(uint8 iIndex_amicro)
 { 
  	X_Axis_PositionGet = ((5*X_Axis_Encoder)/(200*aValue_micro[iIndex_amicro]));
 }
+
+//Xu ly toc do khi co bFlag_Setspeed ==1
+//bFlag_setspeed duoc xu ly o tren cac tang cao hon
 void Compare_Position(void)
 { 
-    Determined_Position(2);
-	if( X_Axis_PositionControl >> X_Axis_PositionGet)
+    Determined_Position(3);
+	if( X_Axis_PositionControl >> X_Axis_PositionGet + 100)
 	{
 		timer_set(&tP_StepA,30,CLOCK_TYPE_US);	
     }
     else 
      	timer_set(&tP_StepA,70,CLOCK_TYPE_US);
 }
+
+
+
  
 void vInit_STEP_MOTOR_Function (void)
 {
   GPIO_InitTypeDef  GPIO_InitStructure;
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    
   
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);

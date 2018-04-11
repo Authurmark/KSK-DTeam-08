@@ -98,7 +98,7 @@ void main(void)
     
     extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
-	//timer_set(&tP_StepA,X_Axis_Speed,CLOCK_TYPE_US);
+	timer_set(&tP_StepA,30,CLOCK_TYPE_US);
 
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
@@ -115,7 +115,8 @@ void main(void)
 void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
-	 Generate_Pulse();
+	 //Generate_Pulse();
+     vMotorStepControl();
   //This hook will do when system is idle
   //Handle Buffer DATA
   

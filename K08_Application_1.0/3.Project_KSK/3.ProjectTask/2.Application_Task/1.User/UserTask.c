@@ -108,7 +108,7 @@ void vUserTask( void *pvParameters )
 }
 /*********************************************************************/
 
-uint32_t		ixIndex_ADC_Buffer;
+uint32_t	ixIndex_ADC_Buffer;
 uint32_t	ADC_Buffer[10];
 static uint32_t sum_ADC = 0;
 static uint32_t value_ADC_tb = 0;
@@ -205,7 +205,6 @@ void vUserTaskMainProcess(void)
 				  }
 				  
 				  if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
-				  //if(EMERGENCY_BUTTON_IO==0)
 				  {
 					bFlagSystemRun = eTRUE;
 					vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);

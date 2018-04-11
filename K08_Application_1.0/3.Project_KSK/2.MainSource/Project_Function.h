@@ -39,14 +39,18 @@ void vInit_DMA_ADC_Function(void);
 void vGetEncoderValue(void);
 void EXTI2_IRQHandler(void);
 void EXTI1_IRQHandler(void);
+void EXTILine1_Config(void);
+void EXTILine2_Config(void);
 /*Control Step_Motor*/
 void vInit_STEP_MOTOR_Function (void);
 void Generate_Pulse(void);
 void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) ;
 void Control_Pulse (void);
-void vMotorStepControl( uint8_t bStep_Direction);
+void vMotorStepControl(void);
 void Determined_Position(uint8 iIndex_amicro);
 void Compare_Position(void);
+void Control_Direction(void);
+void vMotorStepControl_Status(uint8_t bDirection);
 
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */
