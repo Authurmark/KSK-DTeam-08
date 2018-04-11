@@ -12,15 +12,15 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <StLinkDriver>
-        <stlinkserialNo>30303031</stlinkserialNo>
+        <stlinkserialNo>20500143</stlinkserialNo>
         <stlinkfoundProbes />
-        <stlinkResetStyle>0</stlinkResetStyle>
-        <stlinkResetStrategy>1</stlinkResetStrategy>
         <CStepIntDis>_ 0</CStepIntDis>
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
+        <stlinkResetStyle>0</stlinkResetStyle>
+        <stlinkResetStrategy>1</stlinkResetStrategy>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>3586667144</Checksum>
+        <Checksum>3975035651</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -30,8 +30,8 @@
         <Enabled>_ 0</Enabled>
     </CodeCoverage>
     <Disassembly>
-        <InstrCount>0</InstrCount>
         <MixedMode>1</MixedMode>
+        <InstrCount>0</InstrCount>
     </Disassembly>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -102,6 +102,14 @@
         <ShowTimeSum>1</ShowTimeSum>
         <SumSortOrder>0</SumSortOrder>
     </EventLog>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.0.1" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\2.MainSource\Project_Function.c}.456.2" 0 0 1 "" 0 "" 0</Bp1>
+        <Count>2</Count>
+    </Breakpoints2>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -111,6 +119,13 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
+    <Aliases>
+        <A0>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\main.c" ""</A0>
+        <A1>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\stm32f10x_it.c" ""</A1>
+        <A2>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c" ""</A2>
+        <Count>3</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>3</Mode>
@@ -124,20 +139,4 @@
     <CallStackStripe>
         <ShowTiming>1</ShowTiming>
     </CallStackStripe>
-    <DisassembleMode>
-        <mode>0</mode>
-    </DisassembleMode>
-    <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART1_Function.c}.38.23" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.415.1" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.127.9" 0 0 1 "" 0 "" 0</Bp2>
-        <Count>3</Count>
-    </Breakpoints2>
-    <Aliases>
-        <A0>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\main.c" ""</A0>
-        <A1>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\stm32f10x_it.c" ""</A1>
-        <A2>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c" ""</A2>
-        <Count>3</Count>
-        <SuppressDialog>0</SuppressDialog>
-    </Aliases>
 </settings>

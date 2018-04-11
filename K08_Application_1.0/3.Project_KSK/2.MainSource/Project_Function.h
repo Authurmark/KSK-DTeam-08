@@ -36,15 +36,17 @@ void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 void vInit_DMA_ADC_Function(void);
 
 /* TIM ENCODER function*/
-
-//void vInit_TIM_ENCODER_Function(void);
-//void TIM3_IRQHandler(void);
 void vGetEncoderValue(void);
-void EXTI4_IRQHandler(void);
+void EXTI2_IRQHandler(void);
 void EXTI1_IRQHandler(void);
 /*Control Step_Motor*/
 void vInit_STEP_MOTOR_Function (void);
-void Control_step_motor (void);
+void Generate_Pulse(void);
+void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) ;
+void Control_Pulse (void);
+void vMotorStepControl( uint8_t bStep_Direction);
+void Determined_Position(uint8 iIndex_amicro);
+void Compare_Position(void);
 
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */
@@ -63,8 +65,7 @@ extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
-/*extern Encoder Value*/
-//extern uint32_t rotary_cntr;
+
 
 #define LED_USER_1_ON			pLED1.write(ON);
 #define LED_USER_1_OFF		pLED1.write(OFF);
@@ -83,6 +84,7 @@ extern __IO uint16_t ADCConvertedValue;
 #define EMERGENCY_BUTTON_IO	        pBUT_1.read()
 #define EMERGENCY_BUTTON_2_STATE	BUTTON_2_STATE
 #define EMERGENCY_BUTTON_IO      	pBUT_2.read()
+
 
 
 /* Define function for all function of RFID Bike project */	

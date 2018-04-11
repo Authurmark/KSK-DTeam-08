@@ -250,7 +250,6 @@ void vInitPWMFunction(void)
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable; 
 	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
-	//TIM_OCStructInit(&TIM_OCInitStructure);
 	TIM_OC1Init(TIM1, &TIM_OCInitStructure);  
 	TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
 	TIM_OC2Init(TIM1, &TIM_OCInitStructure);
@@ -266,13 +265,13 @@ void vInitPWMFunction(void)
 	TIM_CtrlPWMOutputs(TIM1, ENABLE);
 
 	/* Init IO for PWM function */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* Configure PB0 PB1 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);  
+	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 }
 
 void vChangeDutyCycleOC1(uint8_t bDutyPercent)
@@ -281,7 +280,7 @@ void vChangeDutyCycleOC1(uint8_t bDutyPercent)
 }
 void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 {
-	TIM1->CCR4 = (bDutyPercent*65535)/100;
+	TIM1->CCR2 = (bDutyPercent*65535)/100;
 }
 
 #define MOTOR_FORWARD 	1
@@ -383,132 +382,35 @@ void vInit_DMA_ADC_Function(void)
 }
 
 /* Encoder function */
-// TIMER #3 IRQ
-//typedef enum { FORWARD, BACKWARD } Direction;
-
-// Rotary encoder variables
-//volatile uint32_t rotary_capture_is_first = 1
-/*Direction rotary_dir   = FORWARD; // Rotation direction
-uint32_t  rotary_cntr  = 0;       // Rotation counter
-void vInit_TIM_ENCODER_Function(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 , ENABLE);
-
-  RCC_APB1PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
-
-  
-  NVIC_InitTypeDef NVIC_InitStructure;
-  GPIO_InitTypeDef           GPIO_InitStructure;
-  TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
-
-  /*cau hinh chan out cho timer2*/
-  /*GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  
-  /* Time base configuration */
- /* TIM_TimeBaseStructure.TIM_Prescaler = 0;   
-  TIM_TimeBaseStructure.TIM_Period = 65535;   // 65535
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up | TIM_CounterMode_Down;
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-  TIM_ARRPreloadConfig(TIM3, ENABLE);
-  
-  TIM_EncoderInterfaceConfig(TIM3, TIM_EncoderMode_TI12, TIM_ICPolarity_Rising, TIM_ICPolarity_Rising);
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
- 
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);  
-
-  TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM3, ENABLE);
-
-}
-
-void vGetEncoderValue(void)
-{
-  rotary_cntr = TIM_GetCounter(TIM3); 
-} 
-
-void TIM3_IRQHandler(void) 
-{
-	if (TIM_GetITStatus(TIM3,TIM_IT_Update) != RESET) 
-   {
-		TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
- 		rotary_dir = (TIM3->CR1 & TIM_CR1_DIR ? FORWARD : BACKWARD);
-	    (rotary_dir == BACKWARD) ? rotary_cntr-- : rotary_cntr++;
-   }
-   //TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
-}
-*/
-
 GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef  NVIC_InitStructure;
 EXTI_InitTypeDef  EXTI_InitStructure;
  
 uint16_t countA = 0, countB = 0 ; 
-uint16_t rotary_cntr = 0;
-uint32_t debug =0;
+uint16   X_Axis_Encoder = 0;
+int  cnt_rotary = 0;
+
 
 void EXTILine1_Config(void);
-void EXTILine4_Config(void);
+void EXTILine2_Config(void);
 
 void vGetEncoderValue(void)
 {
- EXTILine1_Config();
- EXTILine4_Config();
- while(1)        
- {
-  rotary_cntr = countA + countB ;
-  MOTOR_2_DUTY(30);
-  if(rotary_cntr >=2400)
-  {
-   MOTOR_2_DUTY(0);
-  }                               
- }
+  EXTILine1_Config();
+  EXTILine2_Config();
+  X_Axis_Encoder = countA  + countB;                       
 }
 
-void EXTILine4_Config(void)
+void EXTILine1_Config(void)
 {
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; 
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
   GPIO_Init(GPIOA, &GPIO_InitStructure); 
   
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource4);
-  
-  EXTI_InitStructure.EXTI_Line = EXTI_Line4;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-  
-    
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-}
-
-void EXTILine1_Config(void)
-{
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
-  GPIO_Init(GPIOB, &GPIO_InitStructure); 
-  
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource1);
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource1);
   
   EXTI_InitStructure.EXTI_Line = EXTI_Line1;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -518,23 +420,35 @@ void EXTILine1_Config(void)
   
     
   NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
- 
-void EXTI4_IRQHandler(void)
+
+void EXTILine2_Config(void)
 {
- if(EXTI_GetITStatus(EXTI_Line4) != RESET)
- {
-  EXTI_ClearITPendingBit(EXTI_Line4);
-  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
-  countA = (1200+countA+1)%1200;
-  else
-  countA = (1200+countA-1)%1200;
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   
- }
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; 
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource2);
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line2;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+    
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 }
 
 void EXTI1_IRQHandler(void)
@@ -542,7 +456,25 @@ void EXTI1_IRQHandler(void)
  if(EXTI_GetITStatus(EXTI_Line1) != RESET)
  {
   EXTI_ClearITPendingBit(EXTI_Line1);
- if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) )
+  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) )
+  {  
+	countA = (1200+countA+1)%1200;
+	if(	countA==0)					cnt_rotary++;
+  }	  
+  else
+  {
+  	countA = (1200+countA-1)%1200;
+  	if(	countA==1199)				cnt_rotary--;
+  }
+ }
+}
+
+void EXTI2_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line2) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line2);
+ if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) )
    countB = (1200+countB-1)%1200;
   else
    countB = (1200+countB+1)%1200;
@@ -553,17 +485,66 @@ void EXTI1_IRQHandler(void)
 GPIO_InitTypeDef  GPIO_InitStructure;
 timer tP_StepA;
 uint8 cnt_stepmotor; 
+uint32 X_Axis_PositionControl = 5;
+uint32 Cnt_Pulse = 0;
+uint32 X_Axis_PulseControl = 0;
+uint32 X_Axis_PositionGet = 0;
+uint8 X_Axis_Speed;
 
-void Control_step_motor (void)
+/*value of 3 Axis control*/
+#define  Value_vitmeX  		5
+#define  Value_vitmeY  		10
+#define  Value_vitmeZ  		10
+
+#define ScrewShaft_X		0
+#define ScrewShaft_Y		1
+#define ScrewShaft_Z		2
+
+uint8   aValue_vitme[3]={Value_vitmeX , Value_vitmeY , Value_vitmeZ};
+
+/* value microstepping*/
+#define  value_micro1      1
+#define  value_micro2      2
+#define  value_micro8      8
+#define  value_micro16     16
+#define  value_micro32     32
+#define  value_micro64     64
+
+uint8 aValue_micro[6] = {value_micro1,value_micro2,value_micro8,value_micro16,value_micro32,value_micro64};
+
+/* CONTROL DIRECTION MOTOR*/
+#define MOTOR_STEP_FORWARD 	1
+#define MOTOR_STEP_REVERSE 	2
+#define MOTOR_STEP_DISABLE 	3
+#define MOTOR_STEP_BRAKE 	4
+
+
+void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) 
+{
+    X_Axis_PulseControl = ( X_Axis_PositionControl*200*aValue_micro[iIndex_amicro]/aValue_vitme[iIndex_avitme]);
+}
+
+void Control_Pulse (void)
+{
+    if( Cnt_Pulse < X_Axis_PulseControl)
+       {
+        Cnt_Pulse += 1;
+       }
+    if(Cnt_Pulse > X_Axis_PulseControl)
+       {
+        Cnt_Pulse -= 1;
+       }
+    Cnt_Pulse = X_Axis_Encoder;
+
+   }
+
+void Generate_Pulse(void)
 {
     vInit_STEP_MOTOR_Function();
-    rotary_cntr = countA + countB ;
-    if( rotary_cntr  >= 2000)
-     {
-       GPIO_SetBits(GPIOA ,GPIO_Pin_4 );
-        rotary_cntr =  0;
-     }
-   	
+    Control_Pulse ();
+    Calculate_Pulse(ScrewShaft_X,2);
+    vMotorStepControl(1);
+    Compare_Position();
     if(timer_expired(&tP_StepA))
 	{
 		timer_restart(&tP_StepA);
@@ -573,6 +554,44 @@ void Control_step_motor (void)
 		else 
 		GPIO_ResetBits(GPIOA ,GPIO_Pin_3 );
 	}
+    
+}
+
+void vMotorStepControl( uint8_t X_Axis_bDirection)
+{
+ switch(X_Axis_bDirection)
+	{
+		case MOTOR_STEP_FORWARD:
+		     GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+		break;
+		case MOTOR_STEP_REVERSE:
+			GPIO_SetBits(GPIOA, GPIO_Pin_4);
+		break;
+		case MOTOR_STEP_BRAKE:
+            GPIO_SetBits(GPIOA, GPIO_Pin_5);
+            GPIO_SetBits(GPIOA, GPIO_Pin_4);
+		break;
+		case MOTOR_STEP_DISABLE:
+			GPIO_SetBits(GPIOA, GPIO_Pin_5);
+		break;
+		default:
+		break;
+	}
+}
+
+void Determined_Position(uint8 iIndex_amicro)
+{ 
+ 	X_Axis_PositionGet = ((5*X_Axis_Encoder)/(200*aValue_micro[iIndex_amicro]));
+}
+void Compare_Position(void)
+{ 
+    Determined_Position(2);
+	if( X_Axis_PositionControl >> X_Axis_PositionGet)
+	{
+		timer_set(&tP_StepA,30,CLOCK_TYPE_US);	
+    }
+    else 
+     	timer_set(&tP_StepA,70,CLOCK_TYPE_US);
 }
  
 void vInit_STEP_MOTOR_Function (void)
@@ -586,4 +605,5 @@ void vInit_STEP_MOTOR_Function (void)
   GPIO_Init(GPIOA, &GPIO_InitStructure);
   GPIO_Write(GPIOA,0x0000);
 }
+
 #endif /* _Project_Function__C */
