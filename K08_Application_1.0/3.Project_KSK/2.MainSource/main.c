@@ -28,6 +28,11 @@
 
 extern timer tP_StepA;
 
+//#define USE_DEBUG_TIME_CATCH
+#ifdef	USE_DEBUG_TIME_CATCH
+  extern timer tP_catchtime;
+#endif
+
 #ifdef USE_OS
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
@@ -99,6 +104,10 @@ void main(void)
     extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
 	timer_set(&tP_StepA,30,CLOCK_TYPE_US);
+	#ifdef	USE_DEBUG_TIME_CATCH
+ 		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
+	#endif
+	
 
 	/* Start the scheduler. */
 	OS_vTaskScheduler();

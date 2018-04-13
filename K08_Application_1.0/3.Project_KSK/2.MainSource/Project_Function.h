@@ -35,22 +35,33 @@ void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 /* DMA ADC function */
 void vInit_DMA_ADC_Function(void);
 
-/* TIM ENCODER function*/
-void vGetEncoderValue(void);
-void EXTI2_IRQHandler(void);
+/* EXTI ENCODER function*/
+/*ENCODER OF AXIS X*/
+void vGetEncoderValue_X(void);
 void EXTI1_IRQHandler(void);
+void EXTI2_IRQHandler(void);
 void EXTILine1_Config(void);
 void EXTILine2_Config(void);
+/*ENCODER OF AXIS Y*/
+void EXTI3_IRQHandler(void);
+void EXTI4_IRQHandler(void);
+void EXTILine3_Config(void);
+void EXTILine4_Config(void);
+void vGetEncoderValue_Y(void);
 /*Control Step_Motor*/
 void vInit_STEP_MOTOR_Function (void);
-void Generate_Pulse(void);
+void Generate_Pulse_X(void);
+void Generate_Pulse_Y(void);
+void Generate_Pulse_Z(void);
 void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) ;
 void Control_Pulse (void);
 void vMotorStepControl(void);
 void Determined_Position(uint8 iIndex_amicro);
 void Compare_Position(void);
-void Control_Direction(void);
-void vMotorStepControl_Status(uint8_t bDirection);
+void Control_Direction_X(void);
+void Control_Direction_Y(void);
+void Control_Direction_Z(void);
+void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection);
 
 /* Flash Function prototype */
 #define 	FW_FLASH_ADDR			0x08005000	/* 20KB bootloader */

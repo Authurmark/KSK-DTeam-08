@@ -60,6 +60,7 @@ structIO_Manage_Output bLEDConfigCommand;
 
 
 
+
 typedef enum {
     SPINDLE_RORATY = 0x01,
     SPINDLE_RESET  = 0x02,

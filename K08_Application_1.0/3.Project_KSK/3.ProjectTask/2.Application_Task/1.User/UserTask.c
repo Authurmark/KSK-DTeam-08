@@ -186,7 +186,7 @@ void vUserTaskMainProcess(void)
             else
 			{			
 				 /* Check encoder counter */
-                vGetEncoderValue();
+                vGetEncoderValue_X();
                
 		break;
         case eST_User_Task_PWM:
