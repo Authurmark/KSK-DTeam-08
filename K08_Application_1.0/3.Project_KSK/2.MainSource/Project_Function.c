@@ -30,15 +30,17 @@
 Struct_System_Information 		StrSystemInfo;
 Struct_User_Information			StrUserInfo;
 Struct_Manufactuer_Information	StrManufacturerInfo;
+
 /* Information */
 Struct_Flash_Config_Parameter	StrConfigPara =
 {
-	.ProductID = "FFFF",		/* Default value */
-	.ProductName = "KSK_Machine",	/* Current value */
-	.BL_Version = "BL_V2.5.0.3",	/* Current value */
+    .ProductID = "FFFF",		/* Default value */
+    .ProductName = "KSK_Machine",	/* Current value */
+    .BL_Version = "BL_V2.5.0.3",	/* Current value */
     .FW_Version = "FW_V2.5.2.5",	/* Current value */
-    .HW_Version = "HW_V1.0.0.0",/* Current value */
+    .HW_Version = "HW_V1.0.0.0",        /* Current value */
 };
+
 /* Config RAM Buff */
 char StrConfig[FLASH_PAGE_SIZE];
 Struct_Flash_Config_Parameter* pStrConfig;
@@ -117,22 +119,24 @@ void vProject_Init()
 	/* Init PWM function */
 	vInitPWMFunction();
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: PWM Init success! \r\n");
+        
 	/* Init ADC function */
 	vInit_DMA_ADC_Function();
 	/* Init EXTI encoder function */
 	  EXTILine1_Config();
   	  EXTILine2_Config();
-      EXTILine3_Config();
+          EXTILine3_Config();
 	  EXTILine4_Config();
+
+	/* Init Stepmotor function */
+	vInit_STEP_MOTOR_Function();
+
    	/* Update Flash Data */
 	//vFLASH_UpdateData();
 	/* Load config from flash and update */
 	FLASH_Unlock();
 	vFLASH_User_Read(0,USER_INFO_FLASH_ADDR,(uint32_t*)StrConfig,FLASH_PAGE_SIZE);
 	FLASH_Lock();
-	
-	/* Init Stepmotor function */
-	vInit_STEP_MOTOR_Function();
 	/* Check flash config already or not */
 	if((StrConfig[0]!=0xFF)&&(StrConfig[1]!=0xFF)&&(StrConfig[2]!=0xFF)&&(StrConfig[3]!=0xFF))
 	{
@@ -175,7 +179,19 @@ void vProject_Init()
 	/* Delay before begin */
 	vTimerBase_DelayMS(1500);
 }
-/* FLASH USER FUNCTION */
+
+
+
+
+
+
+
+
+
+
+/*-----------------------------------------------------------*/
+//-------------------FLASH USER FUNCTION---------------------//
+/*-----------------------------------------------------------*/
 /* Read Flash USER Function */
 void vFLASH_User_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length)
 {
@@ -236,11 +252,37 @@ void vFLASH_UpdateData(void)
     FLASH_Lock();
 }
 
-/* KSK machine */
+
+
+
+
+
+
+
+/*-----------------------------------------------------------*/
+//-------------------KSK CONFIG FUNCTION---------------------//
+/*-----------------------------------------------------------*/
+
+
+//---------PWM FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  26/03/2018
+  Edited :  09/04/2018 
+  1. Config : TIM 1- PWM pins : B13 - B14
+  2. PWM Generate : vChangeDutyCycleOC1 , vChangeDutyCycleOC2
+  3. Control Motor : vMotorControl
+*/
+
+#define MOTOR_FORWARD 	1
+#define MOTOR_REVERSE 	2
+#define MOTOR_STOP 	3
+#define MOTOR_BRAKE 	4
+
 void vInitPWMFunction(void)
 {
-	/* Config timer for PWM function */
-	/* PWM will control DC motor */
+        /* Config timer for PWM function */
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 	TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef          TIM_OCInitStructure;    
@@ -250,20 +292,28 @@ void vInitPWMFunction(void)
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+        
+        /* PWM will control DC motor */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; 
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable; 
 	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
+        
+        /* Config Thanh ghi tuong ung voi cac chan PWM*/
 	TIM_OC1Init(TIM1, &TIM_OCInitStructure);  
 	TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC2Init(TIM1, &TIM_OCInitStructure);
 	TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC3Init(TIM1, &TIM_OCInitStructure);
 	TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_OC4Init(TIM1, &TIM_OCInitStructure);
-	TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
+	TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        
 	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
 	/* TIM1 enable counter */
@@ -273,6 +323,7 @@ void vInitPWMFunction(void)
 	/* Init IO for PWM function */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	GPIO_InitTypeDef  GPIO_InitStructure;
+        
 	/* Configure PB0 PB1 in output pushpull mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -289,38 +340,60 @@ void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 	TIM1->CCR2 = (bDutyPercent*65535)/100;
 }
 
-#define MOTOR_FORWARD 	1
-#define MOTOR_REVERSE 	2
-#define MOTOR_STOP 		3
-#define MOTOR_BRAKE 	4
 void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection)
 {
 	switch(bDirection)
 	{
-		case MOTOR_FORWARD:
-			MOTOR_1_DUTY(bDutyMotor);
-			MOTOR_2_DUTY(0);
-		break;
-		case MOTOR_REVERSE:
-			MOTOR_1_DUTY(0);
-			MOTOR_2_DUTY(bDutyMotor);
-		break;
-		case MOTOR_STOP:
-            MOTOR_1_DUTY(0);
-			MOTOR_2_DUTY(0);
-		break;
-		case MOTOR_BRAKE:
-			MOTOR_2_DUTY(bDutyMotor);
-			MOTOR_1_DUTY(bDutyMotor);
-		break;
-		default:
-		break;
+            case MOTOR_FORWARD:
+                    MOTOR_1_DUTY(bDutyMotor);
+                    MOTOR_2_DUTY(0);
+            break;
+            case MOTOR_REVERSE:
+                    MOTOR_1_DUTY(0);
+                    MOTOR_2_DUTY(bDutyMotor);
+            break;
+            case MOTOR_STOP:
+                    MOTOR_1_DUTY(0);
+                    MOTOR_2_DUTY(0);
+            break;
+            case MOTOR_BRAKE:
+                    MOTOR_2_DUTY(bDutyMotor);
+                    MOTOR_1_DUTY(bDutyMotor);
+            break;
+            default:
+            break;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------DMA - ADC FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  27/03/2018
+  Edited :  09/04/2018 
+  1. Config : ADC 1 - Chanell 4 - ADC pin : A4  | DMA 1 - Chanell 1
+  2. ADC1_DR_Address            0x4001244C
+  3. Valiable ADC :             ADCConvertedValue
+*/
+
+
 
 /* Global variable */
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
 __IO uint16_t ADCConvertedValue;
+
 /* DMA ADC function */
 void vInit_DMA_ADC_Function(void)
 {
@@ -386,6 +459,17 @@ void vInit_DMA_ADC_Function(void)
   /* Start ADC1 Software Conversion */ 
   ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
+
+//---------ENCODER FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  03/04/2018
+  Edited :  09/04/2018 
+  1. Read Encoder Pulse by EXTERNAL INTERRUPT
+  2. Config : Line 1 - pinA1 | Line 2 - pinA2     by EXTILine1_Config | EXTILine2_Config
+  3. EXTI function : EXTI1_IRQHandler | EXTI2_IRQHandler : define encoder pulse
+  4. Read encoder value by vGetEncoderValue
+*/
 
 /* Encoder function for Axis X*/
 GPIO_InitTypeDef  GPIO_InitStructure;
@@ -596,6 +680,15 @@ void EXTI4_IRQHandler(void)
  }
 }
 
+//---------CONTROL STEPMOTOR FUNCTION----------//
+/*
+  Author :  Le Bien
+  Date   :  09/04/2018
+  Edited :  09/04/2018 
+  1. Control Stepmotor by Generate Pulse
+  2. Config IO: pinA3 - CCW | pinA4 - DIR | pin A5 - ENABLE     by vInit_STEP_MOTOR_Function
+  3. Control Stepmotor by Control_step_motor
+*/
 /*CONTROL STEP MOTOR OF AXIS X ON SLAVE1
 1. Config Pin A3, Pin A4, Pin A5 corresponding with CCW,DIR,ENABLE.
 2. Calculation Pulse control in void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro).

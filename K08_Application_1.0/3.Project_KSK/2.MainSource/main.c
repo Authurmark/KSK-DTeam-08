@@ -8,7 +8,7 @@
 * 20/09/2014: v0.1
 * 07/07/2015: v0.2 Change Monitor task to 500ms frequency
 * 10/08/2015: v0.3 Fix Name of Task
-* 22/12/2017: v1.0 1st build for APhi Navigator project
+* 25/03/2018: v1.0 1st build for Project 08 - KSK Company
 ********************************************************************************
 * THE PRESENT SOFTWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
 * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
@@ -26,6 +26,8 @@
 #include "Project_Function.h"
 #include "ComFunction.h"
 
+
+/*Valiable For Control StepMotor*/
 extern timer tP_StepA;
 
 //#define USE_DEBUG_TIME_CATCH
@@ -33,13 +35,21 @@ extern timer tP_StepA;
   extern timer tP_catchtime;
 #endif
 
+/**CREATE A NEW TASK
+  1. Set TASK_PRIORITY
+  2. Khai bao TASK_STACK_SIZE
+  3. Tao Prototype
+  4. Tao Task_Handle
+  5. Khoi tao Task : OS_xTaskCreate
+*/
+
 #ifdef USE_OS
 	/* Kernel Task priorities. */
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
 	/* Application Task priorities. */
 	#define USER_TASK_PRIORITY			( tskIDLE_PRIORITY + 2 )//20-08: 3
         /* Send buffer task prorities*/
-        #define MAKE_BUFFER_TX_TASK_PRORITY                ( tskIDLE_PRIORITY + 1 )
+        #define MAKE_BUFFER_TX_TASK_PRORITY             ( tskIDLE_PRIORITY + 1 )
 
 	/* Kernel Task Stack size */
 	#define IO_KERNEL_TASK_STACK_SIZE		( ( unsigned short ) 64 )
@@ -48,34 +58,34 @@ extern timer tP_StepA;
         /* Kernel Task Stack size */
 	#define MAKE_BUFFER_TX_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 
-        /* The LED1 Task */
-	#define LED1_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-        #define LED2_TASK_STACK_SIZE			( ( unsigned short ) 64 )
-        #define LED1_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-        #define LED2_TASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
-
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
         extern void vMakeBufferTXTask (void *pvParameters);
     
-        /* Extern LED1 and LED2 Task*/
-        void LED1_Task( void *pvParameters );
-	void LED2_Task( void *pvParameters );
-	
 	/* Variable for Handler */
 	xTaskHandle xIO_Task_Handle;
 	enumbool xFlag_IO_Task_Still_Running = eTRUE, xFlag_IO_Task_Init_Done = eFALSE, xFlag_IO_Task_Process_Check = eTRUE;
+        
 	xTaskHandle xSensor_Task_Handle;
+        
 	xTaskHandle xUser_Task_Handle;
+        
         xTaskHandle xMakeBufferTXTask_Handle;
+        
 	enumbool xFlag_User_Task_Still_Running = eTRUE, xFlag_User_Task_Init_Done = eFALSE, xFlag_User_Task_Process_Check = eTRUE;
     
-      /* Variable for Handler LED1 LED2 Task */
-      xTaskHandle xLED1_Task_Handle, xLED2_Task_Handle;
 	/* Application for free time MCU */
 	void vApplicationIdleHook( void );
 #endif
+        
+        
+        
+        
+        
+        
+        
+        
 
 /*-----------------------------------------------------------*/
 /* Main source */
@@ -97,18 +107,15 @@ void main(void)
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
         /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
-	
-    /* Create LED1 Task */
-	//OS_xTaskCreate(LED1_Task, "LED1_Task", LED1_TASK_STACK_SIZE, NULL, LED1_TASK_PRIORITY, &xLED1_Task_Handle);
-    
-    extern uint8 X_Axis_Speed;
+
+        /*Valiable For Control StepMotor*/
+	extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
-	timer_set(&tP_StepA,30,CLOCK_TYPE_US);
+	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
+
 	#ifdef	USE_DEBUG_TIME_CATCH
  		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
 	#endif
-	
-
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -120,19 +127,30 @@ void main(void)
 #endif /* USE_OS */
 }
 
+
+
+
+
+
 /**********************************************************************************/
 void vApplicationIdleHook(void);
+
+/** vApplicationIdleHook
+  1. Thuc thi trong thoi gian ranh (trang thai Idle) cua he thong
+  2. Chuyen xu ly cac ham cong tac, cac ham co tan so xu ly nhanh hon tan so hoat dong cac Task
+
+ ** Noi dung thuc hien
+  1.Ham goi thuc thi Control Step motor
+  2.Ham goi thuc thi xu ly RX Data
+**/
+
 void vApplicationIdleHook(void)
 {
-	 //Generate_Pulse();
-     vMotorStepControl();
-  //This hook will do when system is idle
-  //Handle Buffer DATA
-  
+  vMotorStepControl();
+
   vComDataProcess_USART1();
   vComDataProcess_USART2();
   
-  //vMake_UART_BUFFER_TX();
 }
 
 

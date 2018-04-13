@@ -17,6 +17,17 @@ hardware function.
 * CONTENT OF SUCH SOFTWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
 * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *******************************************************************************/
+/*
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
+  1. Define Protocol USART with Data Frame                      in ComFunction.h
+  2. Define Buffer Data
+  3. Handle RX RingBuff by devide block data for Buffer Data    in Task vApplicationIdleHook        :   vComDivideBlockData
+  4. Make Data Function by                                                                          :   UART_MakeData
+  5. Feedback Function by                                                                           :   UART_Comm_Feedback_Command_Content       vFeedBack_info_sys
+  6. Make TX Buff      in Task vMakeBufferTXTask    with frequency                                  :   1 tick slice ~ 1ms                                                
+*/
 
 /* Project includes. */
 #include "ComFunction.h"
@@ -24,26 +35,34 @@ hardware function.
 #include "Time_Manage_Function.h"
 #include "IO_Kernel_Function.h"
 
-/* Variable */
+/*--------------------------------------------------------------------*/
+//-------------------Variable For RX and TX Buffer-------------------//
+/*------------------------------------------------------------------*/
 uint16 CRCData,cntData;
+
 uint8 UART1_BUFFER_RX[i_MAX_UART];
 uint8 UART1_BUFFER_TX[i_MAX_UART];
 uint8 UART2_BUFFER_RX[i_MAX_UART];
 uint8 UART2_BUFFER_TX[i_MAX_UART];
+
 uint8 PACKAGE_BUFF[PACKAGE_SIZE];
 uint8_t bLast_Idx_Low = 0, bLast_Idx_High = 0;
 uint16   i_UART_TX=0, i_UART_RX=0;
 uint16   uPackageLeng=0;
+
 uint32   UART1_Tick;
 uint32   UART2_Tick;
 enumbool eUART1DetectEnCMD=eFALSE;
 enumbool eUART2DetectEnCMD=eFALSE;
 enumbool EnableUARTComm=eFALSE;
 extern enumbool bFlag_USART_RX;
+
 uint16 FirmwareSize;
 uint16 FirmwareBlockIndex;
 uint16 FirmwareBlock;
 
+#define NUMBER_INDEX_CHECK                      25
+#define NUMBER_INDEX_CLEAR                      100
 
 #ifdef USE_LED_SEGMENT
 extern uint8_t bLED7Value[NUMBER_LED_7_SEGMENT];
@@ -51,16 +70,12 @@ extern uint8_t bLED7Value[NUMBER_LED_7_SEGMENT];
 extern Struct_Flash_Config_Parameter	StrConfigPara;
 enumbool bFlagGetCommandLEDConfigUART1;
 structIO_Manage_Output bLEDConfigCommand;
-/************************************************/
-//------------------------- USER COMMUNICATION FUNCTION -----------------------
-/* New Variable */
-#define NUMBER_INDEX_CHECK                      25
-#define NUMBER_INDEX_CLEAR                      100
 
+/*--------------------------------------------------------------------*/
+//--------------------------BUFFER DATA------------------------------//
+/*------------------------------------------------------------------*/
 
-
-
-
+/* Control DC Spindle */
 typedef enum {
     SPINDLE_RORATY = 0x01,
     SPINDLE_RESET  = 0x02,
@@ -81,6 +96,8 @@ typedef struct{
 
 BufferRX_Control_DC_Spindle BUFFER_RX_CONTROL_DC_SPINDLE;
 
+
+/* Current Measure Value */
 #define NUM_MEMBER_ADC_Current_Measure          10
 typedef struct{
   uint16        Buffer_ADC_Current_Measure[NUM_MEMBER_ADC_Current_Measure];
@@ -91,6 +108,9 @@ typedef struct{
 
 Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
 
+
+
+/* Encoder Home Value */
 typedef struct{
   uint16        pulse_encoder;
   uint16        angle_motor;
@@ -99,12 +119,28 @@ typedef struct{
 
 Buffer_Encoder  BUFFER_ENCODER;
 
+
+
+
+
+
+/*--------------------------------------------------------------------*/
+//-------------------USER COMMUNICATION FUNCTION---------------------//
+/*------------------------------------------------------------------*/
+
+
 //---------RX DATA AND FEEDBACK ----------//
-/** HAM XU LY RX DATA
-  * 1. Lay data tu RXRingBuff (moi lan chay lay 1 byte) de vao UART1_BUFFER_RX
-  * 2. Doi sau 1 thoi gian (sau nhieu lan chay, da lay du so byte moi) hoac lay du 1 goi du lieu
-  * 3. Chay ham chia tach du lieu vComDivideBlockData() (kiem tra PREMABLE_BYTE ----> nhan dang cmd_type ---> Xu ly du lieu theo tung kien cmd_type ---> Xoa du lieu trong )
-  * 4. Gui feedback
+/**
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
+  * 1. Get data from RXRingBuff (each time run get one byte) to UART1_BUFFER_RX
+  * 2. Wait for a time (sau nhieu lan chay, da lay du so byte moi) hoac lay du 1 goi du lieu
+  * 3. Run vComDivideBlockData() to devide a block data         
+        + Check PREMABLE_BYTE and Detect END_DATA_BYTE
+        + Detect cmd_type to handle
+        + Clear - reset UART1_BUFFER_RX after handle
+  * 4. Send feedback for detect error OverTime
 **/
 
 enumbool vComDataProcess_USART1(void)
@@ -124,7 +160,6 @@ enumbool vComDataProcess_USART1(void)
     {
         /*Receive sequence*/
         eUART1DetectEnCMD = eFALSE;
-        //vComDataHandle();
         vComDivideBlockData(UART1_BUFFER_RX,UART1_BUFFER_TX,pUSART1);
         bReturn = eTRUE;
     }
@@ -148,13 +183,19 @@ enumbool vComDataProcess_USART2(void)
     {
         /*Receive sequence*/
         eUART2DetectEnCMD = eFALSE;
-        //vComDataHandle();
         vComDivideBlockData(UART2_BUFFER_RX,UART2_BUFFER_TX,pUSART2);
         bReturn = eTRUE;
     }
     return bReturn;
 }
+
+
+
+
 /** HAM CHIA TACH GOI DU LIEU
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
   * Quet tim chuoi ky tu PREMABLE_BYTE 1-6
   * Kiem tra ky tu ket thuc co dung khong, khong dung thi bo goi du lieu nay
   * Xu ly data, dua vao cac buffer khac nhau, tuy thuoc vao iUART_CMD_TYPE
@@ -225,8 +266,93 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------FEEDBACK DATA----------//
+/** 
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
+  1. FEEDBACK KHONG CAN NOI DUNG
+  2. FEEDBACK CO NOI DUNG
+  3. FEEDBACK THONG TIN CAU HINH
+
+  UART_Comm_Feedback_Command_Content -> MAKE DATA -> SENDBUFF / SENDSTRING
+**/
+
+void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE)
+{
+	/* Feedback Content */
+        UART_MakeData_Head(UART_BUFFER_TX,CMD_TYPE);
+        UART_MakeData_16bit(UART_BUFFER_TX,12,CODE);
+        UART_MakeData_Tail(UART_BUFFER_TX);
+        
+        UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
+}
+
+void vFeedBack_info_sys(void)
+{
+    /* Send Info command */
+    UART1_Send_STRING("\r\n\r\nINFO COMMAND: OK\r\n");
+    UART1_Send_STRING("PRODUCT: ");
+    UART1_Send_BUF(StrConfigPara.ProductName,sizeof(StrConfigPara.ProductName));
+    UART1_Send_STRING("\r\n");
+    UART1_Send_STRING("PRODUCT ID: ");
+    UART1_Send_BUF(StrConfigPara.ProductID,sizeof(StrConfigPara.ProductID));
+    UART1_Send_STRING("\r\n");
+    UART1_Send_STRING("HARDWARE: ");
+    UART1_Send_BUF(StrConfigPara.HW_Version,sizeof(StrConfigPara.HW_Version));
+    UART1_Send_STRING("\r\n");
+    UART1_Send_STRING("BOOTLOADER: ");
+    UART1_Send_BUF(StrConfigPara.BL_Version,sizeof(StrConfigPara.BL_Version));
+    UART1_Send_STRING("\r\n");
+    UART1_Send_STRING("FIRMWARE: ");
+    UART1_Send_BUF(StrConfigPara.FW_Version,sizeof(StrConfigPara.FW_Version));
+    UART1_Send_STRING("\r\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //---------MARE DATA----------//
 /** TAO DATA VOI DATAFRAME DUNG CHUAN
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
 1. DUNG CHO FEEDBACK DU LIEU VE DOI TUONG NHAN
 2. DUNG DE TAO DATAFRAME CHO DU LIEU CAN TRUYEN
 **/
@@ -303,48 +429,38 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16
   UART_MakeData_Tail(UART_BUFFER_TX);
 }
 
-//---------FEEDBACK DATA----------//
-/** 
-1. FEEDBACK KHONG CAN NOI DUNG
-2. FEEDBACK CO NOI DUNG
-3. FEEDBACK THONG TIN CAU HINH
 
-UART_Comm_Feedback_Command_Content -> MAKE DATA -> SENDBUFF / SENDSTRING
-**/
 
-void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE)
-{
-	/* Feedback Content */
-        UART_MakeData_Head(UART_BUFFER_TX,CMD_TYPE);
-        UART_MakeData_16bit(UART_BUFFER_TX,12,CODE);
-        UART_MakeData_Tail(UART_BUFFER_TX);
-        
-        UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
-}
 
-void vFeedBack_info_sys(void)
-{
-    /* Send Info command */
-    UART1_Send_STRING("\r\n\r\nINFO COMMAND: OK\r\n");
-    UART1_Send_STRING("PRODUCT: ");
-    UART1_Send_BUF(StrConfigPara.ProductName,sizeof(StrConfigPara.ProductName));
-    UART1_Send_STRING("\r\n");
-    UART1_Send_STRING("PRODUCT ID: ");
-    UART1_Send_BUF(StrConfigPara.ProductID,sizeof(StrConfigPara.ProductID));
-    UART1_Send_STRING("\r\n");
-    UART1_Send_STRING("HARDWARE: ");
-    UART1_Send_BUF(StrConfigPara.HW_Version,sizeof(StrConfigPara.HW_Version));
-    UART1_Send_STRING("\r\n");
-    UART1_Send_STRING("BOOTLOADER: ");
-    UART1_Send_BUF(StrConfigPara.BL_Version,sizeof(StrConfigPara.BL_Version));
-    UART1_Send_STRING("\r\n");
-    UART1_Send_STRING("FIRMWARE: ");
-    UART1_Send_BUF(StrConfigPara.FW_Version,sizeof(StrConfigPara.FW_Version));
-    UART1_Send_STRING("\r\n");
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //---------Make UART_BUFFER_TX----------//
 /** 
+  Author :  Authur
+  Date   :  26/03/2018
+  Edited :  03/04/2018 
   1. Ham tuan tu tao UART_BUFFER_TX cho moi buffer can truyen
   2. Chu ky hoat dong 1 tick slice he thong ~ 1ms
   3. Nhuong quyen uu tien chay cho IO Task va User Task

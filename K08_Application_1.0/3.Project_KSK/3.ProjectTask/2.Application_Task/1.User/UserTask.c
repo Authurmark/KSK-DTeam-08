@@ -42,17 +42,17 @@ extern  uint32_t rotary_cntr;
 /* State of User Task */
 typedef enum
 {
-	eST_User_Task_INIT						= 1,
-	eST_User_Task_IDLE 						= 2,
-	eST_User_Task_LOGGING					= 3,
-	eST_User_Task_ERROR						= 4,
-	eST_User_Task_CHECKING_EVENT			= 5,
-	eST_User_Task_PC_CONNECT		        = 6,
-    eST_User_Task_PWM                       = 7,
-    eST_User_Task_DMA_ADC                   = 8,
-    eST_User_Task_Encoder                   = 9,
+        eST_User_Task_INIT			= 1,
+        eST_User_Task_IDLE 			= 2,
+        eST_User_Task_LOGGING			= 3,
+        eST_User_Task_ERROR			= 4,
+        eST_User_Task_CHECKING_EVENT		= 5,
+        eST_User_Task_PC_CONNECT		= 6,
+        eST_User_Task_PWM                       = 7,
+        eST_User_Task_DMA_ADC                   = 8,
+        eST_User_Task_Encoder                   = 9,
 		
-	eST_User_Task_UN 						= 0xff,
+        eST_User_Task_UN 			= 0xff,
 }eST_User_Task;
 
 
@@ -178,83 +178,85 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-        case eST_User_Task_Encoder:
-             if(bFlag_1st_Case==eTRUE)
-			{
-								bFlag_1st_Case = eFALSE;
-			}
-            else
-			{			
-				 /* Check encoder counter */
-                vGetEncoderValue_X();
-               
-		break;
-        case eST_User_Task_PWM:
-		  if(bFlag_1st_Case==eTRUE)
-		  {
-				  bFlag_1st_Case = eFALSE;
-		  }
-		  else
-		  {        
-				   /*Motor control*/
-				  /* Local variable */
-				  static enumbool bFlagSystemRun = eFALSE;
-				  if(bFlagSystemRun == eFALSE)
-				  {
-					vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
-				  }
-				  
-				  if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
-				  {
-					bFlagSystemRun = eTRUE;
-					vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-			   
-					static uint8_t bDutyMotor;
-					bDutyMotor =50;
-					vMotorControl(bDutyMotor, 1);
-				  }
-				  
-				  if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
-				  {
-					  bFlagSystemRun = eTRUE;
-					  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
+                case eST_User_Task_Encoder:
+                        if(bFlag_1st_Case==eTRUE)
+                        {
+                                bFlag_1st_Case = eFALSE;
+                        }
+                        else
+                        {			
+                                /* Check encoder counter */
+                                vGetEncoderValue_X();
+                 
+                        }
+                break;
+                case eST_User_Task_PWM:
+                        if(bFlag_1st_Case==eTRUE)
+                        {
+                                bFlag_1st_Case = eFALSE;
+                        }
+                        else
+                        {        
+                                 /*Motor control*/
 
-					  static uint8_t bDutyMotor;
-					  bDutyMotor =50;
-					  vMotorControl(bDutyMotor, 2);
-				  }            
-		  }
-       break;
-       case eST_User_Task_DMA_ADC:
-				  if(bFlag_1st_Case==eTRUE)
-				  {
-						  bFlag_1st_Case = eFALSE;
-				  }
-				  else
-				  { 
-						  /* Test ADC to PWM function */
-						  static uint32_t iIndex;
-						  sum_ADC = 0;
-						  ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
+                                /* Local variable */
+                                static enumbool bFlagSystemRun = eFALSE;
+                                if(bFlagSystemRun == eFALSE)
+                                {
+                                  vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
+                                }
+                                
+                                if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
+                                //if(EMERGENCY_BUTTON_IO==0)
+                                {
+                                  bFlagSystemRun = eTRUE;
+                                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
+                             
+                                  static uint8_t bDutyMotor;
+                                  bDutyMotor =50;
+                                  vMotorControl(bDutyMotor, 1);
+                                }
+                                
+                                if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
+                                {
+                                    bFlagSystemRun = eTRUE;
+                                    vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
 
-						  if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
-						  ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
-						  
-						  sum_ADC = 0;
-						  
-						  for (iIndex=0;iIndex<10;iIndex++)
-						  {
-							sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
-						  }
+                                    static uint8_t bDutyMotor;
+                                    bDutyMotor =50;
+                                    vMotorControl(bDutyMotor, 2);
+                                }            
+                        }
+                break;
+                case eST_User_Task_DMA_ADC:
+                                if(bFlag_1st_Case==eTRUE)
+                                {
+                                        bFlag_1st_Case = eFALSE;
+                                }
+                                else
+                                { 
+                                        /* Test ADC to PWM function */
+                                        static uint32_t iIndex;
+                                        sum_ADC = 0;
+                                        ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
 
-						  value_ADC_tb = sum_ADC/10;
-						  MOTOR_1_DUTY(value_ADC_tb/41);
-				  }
-        break;
+                                        if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
+                                        ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
+                                        
+                                        sum_ADC = 0;
+                                        
+                                        for (iIndex=0;iIndex<10;iIndex++)
+                                        {
+                                          sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
+                                        }
+
+                                        value_ADC_tb = sum_ADC/10;
+                                        MOTOR_1_DUTY(value_ADC_tb/41);
+                                }
+                break;
 		default:
-			eState_User_Task = eST_User_Task_Encoder;
+			eState_User_Task = eST_User_Task_DMA_ADC;
 			bFlag_1st_Case = eTRUE;
 		break;
 	}
-}
 }
