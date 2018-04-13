@@ -30,6 +30,11 @@
 /*Valiable For Control StepMotor*/
 extern timer tP_StepA;
 
+//#define USE_DEBUG_TIME_CATCH
+#ifdef	USE_DEBUG_TIME_CATCH
+  extern timer tP_catchtime;
+#endif
+
 /**CREATE A NEW TASK
   1. Set TASK_PRIORITY
   2. Khai bao TASK_STACK_SIZE
@@ -104,9 +109,13 @@ void main(void)
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
 
         /*Valiable For Control StepMotor*/
+	extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
 	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
 
+	#ifdef	USE_DEBUG_TIME_CATCH
+ 		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
+	#endif
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -137,7 +146,7 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
-  Control_step_motor();
+  vMotorStepControl();
 
   vComDataProcess_USART1();
   vComDataProcess_USART2();

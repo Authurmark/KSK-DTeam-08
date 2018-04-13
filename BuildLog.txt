@@ -71,9 +71,11 @@ Ngày 4/3: - Done
 
 
 
-***************** ENCODER *****************
+***************** STEPMOTOR *****************
 Ngày 4/9 : - Done
 	   - Xuat xung dk stepmotor voi chu ky 30us, dat trong vApplicationIdleHook
+Ngày 13/4 :- Điều khiển 3 trục X,Y,Z
+	   - Tạo phần debug catch time cho module Stepmotor, T chạy hàm ~ 28us
 -----------------------------------------------------
 
 
