@@ -88,7 +88,10 @@ Ngày 13/4 :- Điều khiển 3 trục X,Y,Z
 + Tạo start point bắt đầu vào lập trình FlowChart
 
 
-
+4/16/2018
++ Edit lại code DEV.SLAVE2, bỏ đi module ngắt đọc encoder và stepmotor
++ Tạo lại các nhánh DEV.MASTER từ MASTER, SLAVE1, DEV.SLAVE1 từ DEV.SLAVE2 (có module stepmotor và encoder)
++ Tạo lại nhánh SLAVE2, từ DEV.SLAVE2 (đã bỏ stepmotor, encoder, và qua chỉnh sửa Release) 
 
 
 

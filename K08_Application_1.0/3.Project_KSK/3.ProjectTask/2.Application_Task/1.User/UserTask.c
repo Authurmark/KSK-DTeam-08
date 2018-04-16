@@ -186,7 +186,7 @@ void vUserTaskMainProcess(void)
                         else
                         {			
                                 /* Check encoder counter */
-                                vGetEncoderValue_X();
+                                
                  
                         }
                 break;
