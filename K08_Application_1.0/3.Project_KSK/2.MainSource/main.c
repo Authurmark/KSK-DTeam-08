@@ -27,9 +27,6 @@
 #include "ComFunction.h"
 
 
-/*Valiable For Control StepMotor*/
-extern timer tP_StepA;
-
 /**CREATE A NEW TASK
   1. Set TASK_PRIORITY
   2. Khai bao TASK_STACK_SIZE
@@ -103,10 +100,6 @@ void main(void)
         /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
 
-        /*Valiable For Control StepMotor*/
-	vInit_STEP_MOTOR_Function();
-	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
-
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -137,8 +130,6 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
-  Control_step_motor();
-
   vComDataProcess_USART1();
   vComDataProcess_USART2();
   

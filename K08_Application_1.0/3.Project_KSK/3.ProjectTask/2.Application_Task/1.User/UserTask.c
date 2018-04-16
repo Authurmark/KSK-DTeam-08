@@ -186,12 +186,8 @@ void vUserTaskMainProcess(void)
                         else
                         {			
                                 /* Check encoder counter */
-                                vGetEncoderValue();
-                                MOTOR_2_DUTY(30);
-                                if(rotary_cntr >=2000)
-                                {
-                                   MOTOR_2_DUTY(0);
-                                }                   
+                                
+                 
                         }
                 break;
                 case eST_User_Task_PWM:

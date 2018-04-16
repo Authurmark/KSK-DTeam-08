@@ -61,21 +61,6 @@ void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 void vInit_DMA_ADC_Function(void);
 
 /*-----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
-/*---------------------------------------------------------------------------*/
-
-void vGetEncoderValue(void);
-void EXTI2_IRQHandler(void);
-void EXTI1_IRQHandler(void);
-
-/*-----------------------------------------------------------------------------*/
-//------------DEFINE FOR PROTOTYPE & STEPMOTOR FUNCTION PROTOTYPE-------------//
-/*---------------------------------------------------------------------------*/
-
-void vInit_STEP_MOTOR_Function (void);
-void Control_step_motor (void);
-
-/*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & IO FUNCTION PROTOTYPE------------------//
 /*---------------------------------------------------------------------------*/
 

@@ -91,6 +91,7 @@ hardware function.
 typedef enum Cmd_Type {
     P2TCMD_SPINDLE      = 0x10,
     P2TCMD_TEST         = 0x11,
+	P2TCMD_FEEDBACK		= 0x21,
 
 
     /*Common command*/
