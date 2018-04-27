@@ -42,24 +42,6 @@ void vFLASH_User_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, u
 void vFLASH_User_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length);
 void vFLASH_UpdateData(void);
 
-/*----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & PWM FUNCTION PROTOTYPE----------------//
-/*--------------------------------------------------------------------------*/
-#define MOTOR_1_DUTY 	vChangeDutyCycleOC1
-#define MOTOR_2_DUTY 	vChangeDutyCycleOC2
-
-void vInitPWMFunction(void);
-void vChangeDutyCycleOC1(uint8_t bDutyPercent);
-void vChangeDutyCycleOC2(uint8_t bDutyPercent);
-
-void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
-
-/*----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & ADC FUNCTION PROTOTYPE----------------//
-/*--------------------------------------------------------------------------*/
-
-void vInit_DMA_ADC_Function(void);
-
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
 /*---------------------------------------------------------------------------*/
@@ -94,6 +76,35 @@ void Control_Direction_X(void);
 void Control_Direction_Y(void);
 void Control_Direction_Z(void);
 void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection);
+/*------------------------------------------------------------------------------*/
+//-------------------------------RESET HOME-------------------------------------//
+/*-----------------------------------------------------------------------------*/
+void X_HOME(void);
+void Y_HOME(void);
+void Z_HOME(void);
+extern enumbool bFlag_GoHOME_X ;
+extern enumbool bFlag_GoHOME_Y ;
+extern enumbool bFlag_GoHOME_Z ;
+
+extern uint32 bFlag_ReleaseCutter;
+extern uint32 bFlag_GetCutter ;
+
+/*-----------------------------------------------------------------------------*/
+//---------------------------------RESET CUTTER---------------------------------//
+/*---------------------------------------------------------------------------*/
+void vInitReleaseCutter(void);
+void vInitGetCutter(void);
+/*-----------------------------------------------------------------------------*/
+//---------------------------------RUN TO POINT--------------------------------//
+/*---------------------------------------------------------------------------*/
+void Run_To_Point(void);
+extern uint32 bFlag_RunToPoint ;
+/*-----------------------------------------------------------------------------*/
+//---------------------------------SCANHOLE--------------------------------//
+/*---------------------------------------------------------------------------*/
+void ScanHole (void);
+extern uint32 bFlag_ScanHole_Y;
+extern uint32 bFlag_ScanHole_X;
 
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & IO FUNCTION PROTOTYPE------------------//
@@ -109,6 +120,60 @@ extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
 
+
+
+
+
+
+
+/*status step motor*/
+#define MOTOR_STEP_FORWARD 		1
+#define MOTOR_STEP_REVERSE 		2
+#define MOTOR_STEP_STOP 		3
+
+#define MOTOR_STEP_GOFORWARD	4
+#define MOTOR_STEP_GOREVERSE	5
+/* CONTROL DIRECTION MOTOR*/
+#define MOTOR_STEP_ABLE		6
+#define MOTOR_STEP_DISABLE 	7
+#define MOTOR_STEP_BRAKE 	8
+/*************Detect EndStop****************/
+typedef enum sStepMotor 
+{
+	StepMotorX        = 0x00,
+	StepMotorY        = 0x01,
+	StepMotorZ		  = 0x02,
+}sStepMotor;
+
+extern uint8 Pin_Endstop [6];
+extern uint8 Cnt_TimeHold_EndStop_X [6];
+extern enumbool State_EndStop_X [6];
+
+extern uint8 Cnt_TimeHold_EndStop_Y [6];
+extern enumbool State_EndStop_Y [6];
+
+extern uint8 Cnt_TimeHold_EndStop_Z [6];
+extern enumbool State_EndStop_Z [6];
+
+#define EndStopX_1		0
+#define EndStopX_2		0
+#define EndStopY_1		0
+#define EndStopY_2		0
+#define EndStopZ_1		0
+#define EndStopZ_2		0
+/******************Detect proximity sensor***********************/
+extern uint8 Cnt_TimeHold_Proximity_Sensor[6];
+extern enumbool State_Proximity_Sensor[6];
+extern uint32 bFlag_Status_Sensor ;
+
+
+
+
+
+
+
+
+/****************************************/
 #define LED_USER_1_ON		pLED1.write(ON);
 #define LED_USER_1_OFF		pLED1.write(OFF);
 #define LED_USER_1_TOGGLE	pLED1.write(1-pLED1.writeSta());
@@ -119,8 +184,8 @@ extern __IO uint16_t ADCConvertedValue;
 #define BUTTON_2_STATE		strIO_Button_Value.bButtonState[eButton2]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 
-#define OUT_LED_1		strLED_1
-#define OUT_LED_2               strLED_2
+#define OUT_LED_1			strLED_1
+#define OUT_LED_2           strLED_2
 
 #define EMERGENCY_BUTTON_1_STATE	BUTTON_1_STATE
 #define EMERGENCY_BUTTON_IO	        pBUT_1.read()
@@ -128,18 +193,19 @@ extern __IO uint16_t ADCConvertedValue;
 #define EMERGENCY_BUTTON_IO      	pBUT_2.read()
 
 
+
 /* Define function for all function of RFID Bike project */	
-#define LED_USER_ON		pLED1.write(ON);
+#define LED_USER_ON		    pLED1.write(ON);
 #define LED_USER_OFF		pLED1.write(OFF);
 #define LED_USER_TOGGLE		pLED1.write(1-pLED1.writeSta());
 #define KEY_IN_STATE		strIO_Button_Value.bButtonState[eButton1]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 #define OUT_IC_FIRE_STR		strRELAY_1
-#define OUT_KEY_STR		strRELAY_2
+#define OUT_KEY_STR			strRELAY_2
 #define OUT_XINHAN_STR		strRELAY_3
-#define OUT_BELL		strBELL
+#define OUT_BELL			strBELL
 #define OUT_LED_SIGNAL		strLED_1
-#define OUT_TRUNK		strTRUNK
+#define OUT_TRUNK			strTRUNK
 #define RS_485_MODE_RECIEVE 	pRS485_DIR.write(eFALSE)
 #define RS_485_MODE_TRANSMIT 	pRS485_DIR.write(eTRUE)
 #define TURNOFFBOARD 		pCutOffCircuit.write(eFALSE)

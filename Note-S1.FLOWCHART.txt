@@ -1,0 +1,17 @@
+vMotorStepControl(); chay trong vApplicationIdleHook
+
+vMotorStepControl_Status(StepMotorX,MOTOR_STEP_GOFORWARD);	khi resethome           <------- X_HOME  <-------- UserTask
+
+vMotorStepControl_Status(StepMotorX,X_Axis_sDirection);		khi bt
+
+void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection)
+
+
+
+generate_pulse();  --->Generate_Pulse_X.
+
+
+Quá trình ResetHome: Z ve Home------> X ve Home --------> Y ve Home.
+
+Khi may da ve Home se bat co cho dong co chay trong hàm tính toán toa do .
+

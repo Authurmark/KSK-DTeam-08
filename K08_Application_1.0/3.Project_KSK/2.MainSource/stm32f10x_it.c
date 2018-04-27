@@ -179,23 +179,25 @@ extern IO_Struct pNRF24L01_IO_IRQ;
 * Output         : None
 * Return         : None
 *******************************************************************************/
+#ifdef  USE_BUTTON_IO_1_EXT
 extern volatile enumbool bFlag_Key_Bike_Int;
-void EXT_BUTTON_1_EXT_HANDLER(void)
-{
-#ifdef USE_FREERTOS
-  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    void EXT_BUTTON_1_EXT_HANDLER(void)
+    {
+    #ifdef USE_FREERTOS
+      portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    #endif
+      if(EXTI_GetITStatus(EXT_BUTTON_1_LINE) != RESET)
+      {  
+        /* Clear the EXTI line 3 pending bit */
+        EXTI_ClearITPendingBit(EXT_BUTTON_1_LINE);
+        /* Set flag EXT line key */
+        bFlag_Key_Bike_Int = eTRUE;
+      }
+    #ifdef USE_FREERTOS
+      portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+    #endif
+    }
 #endif
-  if(EXTI_GetITStatus(EXT_BUTTON_1_LINE) != RESET)
-  {  
-    /* Clear the EXTI line 3 pending bit */
-    EXTI_ClearITPendingBit(EXT_BUTTON_1_LINE);
-    /* Set flag EXT line key */
-    bFlag_Key_Bike_Int = eTRUE;
-  }
-#ifdef USE_FREERTOS
-  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
-#endif
-}
 
 /*******************************************************************************
 * Function Name  : BUTTON 2 Handler
@@ -204,23 +206,25 @@ void EXT_BUTTON_1_EXT_HANDLER(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-extern volatile enumbool bFlag_Leg_Bike_Int;
-void EXT_BUTTON_2_EXT_HANDLER(void)
-{
-#ifdef USE_FREERTOS
-  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+#ifdef  USE_BUTTON_IO_2_EXT
+    extern volatile enumbool bFlag_Leg_Bike_Int;
+    void EXT_BUTTON_2_EXT_HANDLER(void)
+    {
+    #ifdef USE_FREERTOS
+      portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    #endif
+      if(EXTI_GetITStatus(EXT_BUTTON_2_LINE) != RESET)
+      {  
+        /* Clear the EXTI line 7 pending bit */
+        EXTI_ClearITPendingBit(EXT_BUTTON_2_LINE);
+        /* Set flag EXT line Leg */
+        bFlag_Leg_Bike_Int = eTRUE;
+      }
+    #ifdef USE_FREERTOS
+      portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+    #endif
+    }
 #endif
-  if(EXTI_GetITStatus(EXT_BUTTON_2_LINE) != RESET)
-  {  
-    /* Clear the EXTI line 7 pending bit */
-    EXTI_ClearITPendingBit(EXT_BUTTON_2_LINE);
-    /* Set flag EXT line Leg */
-    bFlag_Leg_Bike_Int = eTRUE;
-  }
-#ifdef USE_FREERTOS
-  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
-#endif
-}
 
 /*******************************************************************************
 * Function Name  : BUTTON 1&2 Handler
@@ -229,40 +233,44 @@ void EXT_BUTTON_2_EXT_HANDLER(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void EXT_BUTTON_1_2_EXT_HANDLER(void)
-{
-extern IO_Struct pBUT_1, pBUT_2;
-#ifdef USE_FREERTOS
-  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+#ifdef  USE_BUTTON_IO_1_EXT
+   #ifdef  USE_BUTTON_IO_2_EXT
+        void EXT_BUTTON_1_2_EXT_HANDLER(void)
+        {
+        extern IO_Struct pBUT_1, pBUT_2;
+        #ifdef USE_FREERTOS
+          portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+        #endif
+          /* Check button 1*/
+          if(EXTI_GetITStatus(EXT_BUTTON_1_LINE) != RESET)
+          {  
+            /* Clear the EXTI line 3 pending bit */
+            EXTI_ClearITPendingBit(EXT_BUTTON_1_LINE);
+            /* Check IO signal Low Logic */
+            if(GPIO_ReadInputDataBit(BUTTON_1_PORT, BUTTON_1_PIN)==eFALSE)
+            {
+              /* Set flag EXT line key */
+              bFlag_Key_Bike_Int = eTRUE;
+            }
+          }
+          /* Check button 2*/
+          if(EXTI_GetITStatus(EXT_BUTTON_2_LINE) != RESET)
+          {  
+            /* Clear the EXTI line 7 pending bit */
+            EXTI_ClearITPendingBit(EXT_BUTTON_2_LINE);
+            /* Check IO signal Low Logic */
+            if(GPIO_ReadInputDataBit(BUTTON_2_PORT, BUTTON_2_PIN)==eFALSE)
+            {
+              /* Set flag EXT line Leg */
+              bFlag_Leg_Bike_Int = eTRUE;
+            }
+          }
+        #ifdef USE_FREERTOS
+          portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+        #endif
+        }
+   #endif
 #endif
-  /* Check button 1*/
-  if(EXTI_GetITStatus(EXT_BUTTON_1_LINE) != RESET)
-  {  
-    /* Clear the EXTI line 3 pending bit */
-    EXTI_ClearITPendingBit(EXT_BUTTON_1_LINE);
-    /* Check IO signal Low Logic */
-    if(GPIO_ReadInputDataBit(BUTTON_1_PORT, BUTTON_1_PIN)==eFALSE)
-    {
-      /* Set flag EXT line key */
-      bFlag_Key_Bike_Int = eTRUE;
-    }
-  }
-  /* Check button 2*/
-  if(EXTI_GetITStatus(EXT_BUTTON_2_LINE) != RESET)
-  {  
-    /* Clear the EXTI line 7 pending bit */
-    EXTI_ClearITPendingBit(EXT_BUTTON_2_LINE);
-    /* Check IO signal Low Logic */
-    if(GPIO_ReadInputDataBit(BUTTON_2_PORT, BUTTON_2_PIN)==eFALSE)
-    {
-      /* Set flag EXT line Leg */
-      bFlag_Leg_Bike_Int = eTRUE;
-    }
-  }
-#ifdef USE_FREERTOS
-  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
-#endif
-}
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */

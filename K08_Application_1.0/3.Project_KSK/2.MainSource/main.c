@@ -29,6 +29,8 @@
 
 /*Valiable For Control StepMotor*/
 extern timer tP_StepA;
+/*Valiable For ScanHole*/
+extern timer tP_ScanHole;
 
 //#define USE_DEBUG_TIME_CATCH
 #ifdef	USE_DEBUG_TIME_CATCH
@@ -85,11 +87,11 @@ extern timer tP_StepA;
         
         
         
-        
 
 /*-----------------------------------------------------------*/
+        
 /* Main source */
-void main(void)
+  void main(void)
 {
 	/* Init hardware module for MCU*/
 	vMCU_Init_Hardware();
@@ -111,8 +113,12 @@ void main(void)
         /*Valiable For Control StepMotor*/
 	extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
-	timer_set(&tP_StepA, 30 ,CLOCK_TYPE_US);
-
+	//timer_set(&tP_StepA, X_Axis_Speed ,CLOCK_TYPE_US);
+	timer_set(&tP_StepA,10,CLOCK_TYPE_US);
+  		/*Valiable For ScanHole*/
+    timer_set (&tP_ScanHole,500,CLOCK_TYPE_MS);
+    
+    
 	#ifdef	USE_DEBUG_TIME_CATCH
  		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
 	#endif

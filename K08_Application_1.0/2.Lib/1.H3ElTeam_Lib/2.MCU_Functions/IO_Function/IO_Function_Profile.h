@@ -22,26 +22,26 @@
 #define USE_IO_FUNCTION
 	/* Uncomment to use LED to display, comment to disable */
 	#define USE_LED
-		#define USE_LED_1	/* Led Signal */
+//		#define USE_LED_1	/* Led Signal */
 //		#define USE_LED_2
 //		#define USE_LED_3
 //		#define USE_LED_4
 	/* Uncomment to use Relay, comment to disable */
 	#define USE_RELAY
-		#define USE_RELAY_1
-		#define USE_RELAY_2
-		#define USE_RELAY_3
+//		#define USE_RELAY_1
+//		#define USE_RELAY_2
+//		#define USE_RELAY_3
 
 		//#define USE_RELAY_1_FB
 	/* Uncomment to use LED to display, comment to disable */
 	#define USE_BUTTON_IO
 	#define NUMBER_IO_BUTTON_USE 3
-		#define USE_BUTTON_IO_1
-			#define USE_BUTTON_IO_1_EXT
-		#define USE_BUTTON_IO_2
-			#define USE_BUTTON_IO_2_EXT
-		#define USE_BUTTON_IO_3
-            #define USE_BUTTON_IO_3_EXT
+//		#define USE_BUTTON_IO_1
+//			#define USE_BUTTON_IO_1_EXT
+//		#define USE_BUTTON_IO_2
+//			#define USE_BUTTON_IO_2_EXT
+//		#define USE_BUTTON_IO_3
+//          #define USE_BUTTON_IO_3_EXT
 //		#define USE_BUTTON_IO_4
 /************************************************************************************************************/
 /* Detail IO function */
@@ -127,13 +127,13 @@
 	
 	#ifdef USE_BUTTON_IO
 		#ifdef USE_BUTTON_IO_1
-			#define BUTTON_1_PORT		GPIOB
-			#define BUTTON_1_PIN		GPIO_Pin_5
-			#define BUTTON_1_RCC_PORT	RCC_APB2Periph_GPIOB
+			#define BUTTON_1_PORT		GPIOA
+			#define BUTTON_1_PIN		GPIO_Pin_6
+			#define BUTTON_1_RCC_PORT	RCC_APB2Periph_GPIOA
 			#define BUTTON_1_CLK_CMD	RCC_APB2PeriphClockCmd
 			#define BUTTON_1_MODE		GPIO_Mode_IPU
 			#define BUTTON_1_SPEED		GPIO_Speed_50MHz
-					#ifdef  USE_BUTTON_IO_1_EXT
+					    #ifdef  USE_BUTTON_IO_1_EXT
 						#define EXT_BUTTON_1_LINE                   EXTI_Line5
 						#define EXT_BUTTON_1_EXT                    EXTI9_5_IRQn
 //                        #define BUTTON_1_EXT_HANDLER                EXTI9_5_IRQHandler

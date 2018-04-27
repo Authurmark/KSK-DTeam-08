@@ -89,9 +89,11 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
-    P2TCMD_SPINDLE      = 0x10,
-    P2TCMD_TEST         = 0x11,
-	P2TCMD_FEEDBACK		= 0x21,
+    P2TCMD_Control_X_axis     = 0x10,
+    P2TCMD_Control_Y_axis     = 0x11,
+    P2TCMD_Control_Z_axis     = 0x21,
+   	P2TCMD_FEEDBACK		      = 0x41,
+    P2TCMD_Control_Motor	  = 0x51,
 
 
     /*Common command*/
@@ -100,13 +102,59 @@ typedef enum Cmd_Type {
     
     /* COMMAND FOR RELAY */
     P2TCMD_SET_RELAY_PARA = 0xC1,
-    P2TCMD_SET_LED_PARA = 0xC2,
+    P2TCMD_SET_LED_PARA = 0xC2,	
     P2TCMD_SET_RELAY_DIRECT = 0xC3,
     P2TCMD_SET_LED_DIRECT = 0xC4,
     
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
+/* stepmotor*/
+typedef enum {
+    ResetHome 	   	= 0x01,
+   	ReleaseCutter   = 0x02,
+	GetCutter		= 0x03,
+	RunForScan	 	= 0x04,
+	RunToPoint    	= 0x05,
+	Stop		  	= 0x06,
+    Ready         	= 0x07,
+}state_process;
+
+typedef enum {
+    STEP_FORWARD = 0x01,
+    STEP_REVERSE = 0x02,
+    STEP_BREAK   = 0x03,
+    STEP_DISABLE = 0x04,
+}state_step_motor;
+
+typedef enum{
+	bFlag_EndStop1 	= 0x01,
+	bFlag_EndStop2 	= 0x02,
+	None			= 0x03,
+}FlagEndStop;
+
+typedef enum{
+	E_OverLoad		= 0x01,
+	E_OverJourney	= 0x02,
+	E_OverTime		= 0x03,
+}eError_Process;
+
+typedef struct{
+	state_process		bProcess_Axis;
+	eError_Process		Error_Process;
+	enumbool			bFlag_Process_Update;
+}Buffer_Motor_Control_Process;
+extern Buffer_Motor_Control_Process  BUFFER_MOTOR_CONTROL_PROCESS;
+/* Step Motor */
+typedef struct{
+uint16				PositionControl;				//Recieve
+uint16				PositionGet;					//Send
+uint8				Speed;							//Recieve			
+state_step_motor 	bDirection;						//Recieve
+}Buffer_Control_Axis;
+extern Buffer_Control_Axis BUFFER_CONTROL_X_AXIS;
+extern Buffer_Control_Axis BUFFER_CONTROL_Y_AXIS;
+extern Buffer_Control_Axis BUFFER_CONTROL_Z_AXIS;
 
 
 
@@ -139,3 +187,8 @@ void vMakeBufferTXTask( void *pvParameters );
 /* Extern flag */
 extern enumbool bFlagGetCommandLEDConfigUART1;
 extern structIO_Manage_Output bLEDConfigCommand;
+/*EXTERN VALUE OF AXIS X, Y ,Z*/
+extern uint32 X_Axis_PositionGet;
+extern uint32 Y_Axis_PositionGet;
+
+

@@ -42,15 +42,23 @@ extern  uint32_t rotary_cntr;
 /* State of User Task */
 typedef enum
 {
-        eST_User_Task_INIT			= 1,
-        eST_User_Task_IDLE 			= 2,
+        eST_User_Task_INIT				= 1,
+        eST_User_Task_IDLE 				= 2,
         eST_User_Task_LOGGING			= 3,
-        eST_User_Task_ERROR			= 4,
-        eST_User_Task_CHECKING_EVENT		= 5,
+        eST_User_Task_ERROR				= 4,
+        eST_User_Task_CHECKING_EVENT    = 5,
         eST_User_Task_PC_CONNECT		= 6,
-        eST_User_Task_PWM                       = 7,
-        eST_User_Task_DMA_ADC                   = 8,
-        eST_User_Task_Encoder                   = 9,
+        eST_User_Task_PWM               = 7,
+        eST_User_Task_DMA_ADC           = 8,
+        eST_User_Task_Encoder           = 9,
+		eST_User_Task_ResetHome			= 10,
+		eST_User_Task_ReleaseCutter 	= 11,
+		eST_User_Task_GetCutter			= 12,
+		eST_User_Task_RunForScan		= 13,
+		eST_User_Task_RunToPoint		= 14,
+		eST_User_Task_Stop   			= 15,
+		
+		
 		
         eST_User_Task_UN 			= 0xff,
 }eST_User_Task;
@@ -112,6 +120,9 @@ uint32_t	ixIndex_ADC_Buffer;
 uint32_t	ADC_Buffer[10];
 static uint32_t sum_ADC = 0;
 static uint32_t value_ADC_tb = 0;
+enumbool  bFlag_Update = eFALSE; 
+enumbool bFlag_Finish =  eFALSE;
+extern uint32 bFlag_Status_Axis;
 
 void vUserTaskMainProcess(void)
 {
@@ -135,8 +146,174 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-                        }
+                BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE;
+              if (BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE)
+			   {
+				BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis = RunForScan;
+            	switch(BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis)
+				{
+					case ResetHome:
+					  eState_User_Task = eST_User_Task_ResetHome;
+					  bFlag_Update = eTRUE;
+					break;
+					case ReleaseCutter:
+					  eState_User_Task = eST_User_Task_ReleaseCutter;
+					  bFlag_Update = eTRUE;
+					break;
+
+					case GetCutter:
+					  eState_User_Task = eST_User_Task_GetCutter;
+					  bFlag_Update = eTRUE;
+					break;
+  
+					case RunForScan:
+					  eState_User_Task = eST_User_Task_RunForScan; 
+					  bFlag_Update = eTRUE; 
+					break;
+
+					case RunToPoint :
+                      eState_User_Task = eST_User_Task_RunToPoint;
+					  bFlag_Update = eTRUE;
+                    break;
+
+					case Stop:
+                      eState_User_Task = eST_User_Task_Stop;
+					break;
+
+					default :
+					break;
+				}
+			   }
+           }
+		 break;
+                
+                
+                
+                
+                
+		case eST_User_Task_ResetHome:
+			if(bFlag_Update==eTRUE)
+			{
+			 	  bFlag_Update = eFALSE;
+                  BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
+				  bFlag_Status_Axis = 0;
+			}
+			else
+			{
+				
+				/*X to Home*/
+				   	Z_HOME();
+					
+			    /*Y to Home*/
+			       X_HOME();
+				
+           		/*Z to Home*/
+			       Y_HOME();
+                 			  
+				/*Condition Process Finished*/
+				  if(bFlag_Status_Axis == 9)	bFlag_Finish== eTRUE;
+
+      
+				/*Back to eST_User_Task_IDLE, when finished process*/
+			      if (bFlag_Finish== eTRUE)    eState_User_Task=eST_User_Task_IDLE;
+				
+				//Back to eST_User_Task_IDLE, when reset
+//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//				  eState_User_Task=eST_User_Task_INIT;
+            }
 		break;
+
+		case eST_User_Task_ReleaseCutter:
+			if(bFlag_Update==eTRUE)
+			{
+			 	 bFlag_Update = eFALSE;
+ 				 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
+				 bFlag_ReleaseCutter 	= 0;
+				 bFlag_GetCutter 	  	= 0;	
+                 bFlag_GoHOME_X 		= eTRUE;
+				 bFlag_GoHOME_Y 		= eTRUE;
+				 bFlag_GoHOME_Z 		= eTRUE;
+			}
+			else
+			{
+			      vInitReleaseCutter();
+ 
+				//Back to eST_User_Task_IDLE, when finished process
+				 if(bFlag_ReleaseCutter == 7)              eState_User_Task=eST_User_Task_IDLE;		
+				//Back to eST_User_Task_IDLE, when reset
+//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//				 eState_User_Task=eST_User_Task_INIT;
+            }
+		break;
+        case eST_User_Task_GetCutter:
+			if(bFlag_Update==eTRUE)
+			{
+			 	 bFlag_Update = eFALSE;
+ 				 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
+				 bFlag_ReleaseCutter 	= 0;
+				 bFlag_GetCutter 	  	= 0;	
+                 bFlag_GoHOME_X 		= eTRUE;
+				 bFlag_GoHOME_Y 		= eTRUE;
+				 bFlag_GoHOME_Z 		= eTRUE;
+			}
+			else
+			{
+				vInitGetCutter();
+				//Back to eST_User_Task_IDLE, when finished process
+				 if(bFlag_GetCutter == 7)              eState_User_Task=eST_User_Task_IDLE;		
+				//Back to eST_User_Task_IDLE, when reset
+//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//				 eState_User_Task=eST_User_Task_INIT;
+			}
+   		break;
+		case eST_User_Task_RunForScan:
+                   if(bFlag_Update==eTRUE)
+			{
+			 	  bFlag_Update = eFALSE;
+ 				  bFlag_ScanHole_Y 	= 0;
+                  bFlag_ScanHole_X 	= 0;
+				  bFlag_GoHOME_X   	= eTRUE;
+				  bFlag_GoHOME_Y 	= eTRUE;
+				  bFlag_GoHOME_Z 	= eTRUE;
+			}
+			else
+			{
+				ScanHole(); 
+		   		//Back to eST_User_Task_IDLE, when finished process
+				if (bFlag_ScanHole_X == 11)				eState_User_Task=eST_User_Task_IDLE;
+				
+				//Back to eST_User_Task_IDLE, when reset
+//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//				  eState_User_Task=eST_User_Task_INIT;
+			}
+		break;
+		break;
+		case eST_User_Task_RunToPoint:
+		  if(bFlag_Update==eTRUE)
+			{
+			 	  bFlag_Update = eFALSE;
+ 				  bFlag_RunToPoint = 0;
+				  bFlag_GoHOME_X = eTRUE;
+				  bFlag_GoHOME_Y = eTRUE;
+				  bFlag_GoHOME_Z = eTRUE;
+			}
+			else
+			{
+			
+                  Run_To_Point();
+				//Back to eST_User_Task_IDLE, when finished process
+				if (bFlag_RunToPoint == 4)				 eState_User_Task=eST_User_Task_IDLE;
+				
+				//Back to eST_User_Task_IDLE, when reset
+//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//				  eState_User_Task=eST_User_Task_INIT;
+		  	}
+
+        case eST_User_Task_Stop:
+         
+		break;
+                
+                //<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//
 		case eST_User_Task_LOGGING:
 			if(bFlag_1st_Case==eTRUE)
 			{
@@ -178,85 +355,11 @@ void vUserTaskMainProcess(void)
 				
 			}
 		break;
-                case eST_User_Task_Encoder:
-                        if(bFlag_1st_Case==eTRUE)
-                        {
-                                bFlag_1st_Case = eFALSE;
-                        }
-                        else
-                        {			
-                                /* Check encoder counter */
-                                vGetEncoderValue_X();
-                 
-                        }
-                break;
-                case eST_User_Task_PWM:
-                        if(bFlag_1st_Case==eTRUE)
-                        {
-                                bFlag_1st_Case = eFALSE;
-                        }
-                        else
-                        {        
-                                 /*Motor control*/
-
-                                /* Local variable */
-                                static enumbool bFlagSystemRun = eFALSE;
-                                if(bFlagSystemRun == eFALSE)
-                                {
-                                  vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
-                                }
-                                
-                                if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
-                                //if(EMERGENCY_BUTTON_IO==0)
-                                {
-                                  bFlagSystemRun = eTRUE;
-                                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-                             
-                                  static uint8_t bDutyMotor;
-                                  bDutyMotor =50;
-                                  vMotorControl(bDutyMotor, 1);
-                                }
-                                
-                                if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
-                                {
-                                    bFlagSystemRun = eTRUE;
-                                    vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-
-                                    static uint8_t bDutyMotor;
-                                    bDutyMotor =50;
-                                    vMotorControl(bDutyMotor, 2);
-                                }            
-                        }
-                break;
-                case eST_User_Task_DMA_ADC:
-                                if(bFlag_1st_Case==eTRUE)
-                                {
-                                        bFlag_1st_Case = eFALSE;
-                                }
-                                else
-                                { 
-                                        /* Test ADC to PWM function */
-                                        static uint32_t iIndex;
-                                        sum_ADC = 0;
-                                        ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
-
-                                        if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
-                                        ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
-                                        
-                                        sum_ADC = 0;
-                                        
-                                        for (iIndex=0;iIndex<10;iIndex++)
-                                        {
-                                          sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
-                                        }
-
-                                        value_ADC_tb = sum_ADC/10;
-                                        MOTOR_1_DUTY(value_ADC_tb/41);
-                                }
-                break;
 		default:
-			eState_User_Task = eST_User_Task_DMA_ADC;
+			eState_User_Task = eST_User_Task_IDLE;
 			bFlag_1st_Case = eTRUE;
-		break;
-	}
+		break; 
 }
+}
+
+
