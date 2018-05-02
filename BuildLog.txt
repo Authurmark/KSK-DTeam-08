@@ -88,7 +88,37 @@ Ngày 4/9 : - Done
 
 
 
+***********   MASTER   ***********************
+Ngày 4/16 : Hoạch định buffer data (Config machine Parameter, Control Machine Process, Hole data, Control Axis, Control Spindle) cho Master
+----------------------------------------
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-------------------------------------------------------------------------------------------------------//
+//---------------------------------------------FIX BUG GLOBAL-------------------------------------------//
+//-----------------------------------------------------------------------------------------------------//
+4/18/2018 : Chia State RESETCUTTER cuả Axis Process thành 2 State : RELEASECUTTER va GETCUTTER
+4/18/2018 : Thêm dữ liệu bFeedBackAxis đối với buffer BUFFER_AXIS_PROCESS, để nhận xác nhận từ Slave1 đã hoàn thành chu trình
+4/19/2018 - Bug : reset i_UART1_RX=0; khi đã nhận đủ UART_BUFFER_RX
+
+4/21/2018 : Thêm trạng thái SPINDLE_STOP trong UFFER_CONTROL_DC_SPINDLE.bProcess
+4/21/2018 : Thêm dữ liệu Flag_QualityPoor đối với buffer BUFFER_CURRENT_MEASURE <--- cờ của Slave2 bật khi giá trị current vượt quá Max giới hạn
+
+4/27/2018 : Không dùng lệnh Send_BUF bên ngoài vMakeBufferTXTask (tránh bị xung đột)

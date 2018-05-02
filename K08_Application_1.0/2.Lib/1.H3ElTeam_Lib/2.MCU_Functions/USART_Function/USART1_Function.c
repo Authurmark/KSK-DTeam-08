@@ -28,10 +28,11 @@ extern uint8_t USART1_TXBuff[DEFAULT_USART1_NUMBER_BYTES_TX_BUFFER];
 /* USART1 Init function */
 void USART1_Init( void )
 {
-	#ifdef USE_CMCIS_DRIVER
-        NVIC_InitTypeDef NVIC_InitStructure;
-        GPIO_InitTypeDef GPIO_InitStructure;
-	#ifdef USE_USART1
+      #ifdef USE_USART1
+                #ifdef USE_CMCIS_DRIVER
+                NVIC_InitTypeDef NVIC_InitStructure;
+                GPIO_InitTypeDef GPIO_InitStructure;
+	
 		#ifdef USE_DEFAULT_USART1_IO
                       #warning: USART1 function use GPIOA_GPIO_Pin_9 and GPIOA_GPIO_Pin_10
                       /* Enable USART1 clock */

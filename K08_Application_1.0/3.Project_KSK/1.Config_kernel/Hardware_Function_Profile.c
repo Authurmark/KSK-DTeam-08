@@ -45,8 +45,8 @@ hardware function.
 		.USART_WordLength			=	USART_WordLength_8b,			//USART_WordLength_8b | USART_WordLength_9b
 		.USART_StopBits				=	USART_StopBits_1, 				//USART_StopBits_1 | USART_StopBits_0_5 | USART_StopBits_2 | USART_StopBits_1_5
 		.USART_Parity				=	USART_Parity_No, 				//USART_Parity_No | USART_Parity_Even | USART_Parity_Odd
-		.USART_Mode					=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
-		.USART_HardwareFlowControl	=	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
+		.USART_Mode				=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
+		.USART_HardwareFlowControl	        =	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
 	};
 	
 	#ifdef USE_CLOCK_USART1 /* Use clock to sync */
@@ -59,30 +59,30 @@ hardware function.
 	{
 		.DMA_PeripheralBaseAddr =	USART1_BASE + 04,			//USART1 DR Address
         .DMA_MemoryBaseAddr		=	Null,						//Buffer Data Address, will change when send data, put the pointer to this parameter
-        .DMA_DIR 				= 	DMA_DIR_PeripheralDST,		//DMA_DIR_PeripheralDST | DMA_DIR_PeripheralSRC
+        .DMA_DIR 			= 	DMA_DIR_PeripheralDST,		//DMA_DIR_PeripheralDST | DMA_DIR_PeripheralSRC
         .DMA_BufferSize			= 	1,							//Buffer Size Transmit Data
         .DMA_PeripheralInc		= 	DMA_PeripheralInc_Disable,	//DMA_PeripheralInc_Enable | DMA_PeripheralInc_Disable
         .DMA_MemoryInc			= 	DMA_MemoryInc_Enable,		//DMA_MemoryInc_Enable | DMA_MemoryInc_Disable
-        .DMA_PeripheralDataSize	= 	DMA_PeripheralDataSize_Byte,//DMA_PeripheralDataSize_Byte | DMA_PeripheralDataSize_HalfWord | DMA_PeripheralDataSize_Word
-        .DMA_MemoryDataSize 	= 	DMA_MemoryDataSize_Byte,	//DMA_MemoryDataSize_Byte | DMA_MemoryDataSize_HalfWord | DMA_MemoryDataSize_Word
-        .DMA_Mode 				= 	DMA_Mode_Normal,			//DMA_Mode_Circular | DMA_Mode_Normal
+        .DMA_PeripheralDataSize	        = 	DMA_PeripheralDataSize_Byte,//DMA_PeripheralDataSize_Byte | DMA_PeripheralDataSize_HalfWord | DMA_PeripheralDataSize_Word
+        .DMA_MemoryDataSize 	        = 	DMA_MemoryDataSize_Byte,	//DMA_MemoryDataSize_Byte | DMA_MemoryDataSize_HalfWord | DMA_MemoryDataSize_Word
+        .DMA_Mode 			= 	DMA_Mode_Normal,			//DMA_Mode_Circular | DMA_Mode_Normal
         .DMA_Priority 			= 	DMA_Priority_VeryHigh,		//DMA_Priority_VeryHigh | DMA_Priority_High | DMA_Priority_Medium | DMA_Priority_Low
-        .DMA_M2M 				= 	DMA_M2M_Disable,			//DMA_M2M_Enable | DMA_M2M_Disable
+        .DMA_M2M 			= 	DMA_M2M_Disable,			//DMA_M2M_Enable | DMA_M2M_Disable
 	};
 	/* DMA_USART1_RX Init*/
 	DMA_InitTypeDef DMA_USART1_RX_InitStructure =
 	{
 		.DMA_PeripheralBaseAddr	=	USART1_BASE + 04,			//USART1 DR Address
         .DMA_MemoryBaseAddr		=	(uint32_t)USART1_RXBuff,	//Buffer Data Address
-        .DMA_DIR				= 	DMA_DIR_PeripheralSRC,		//DMA_DIR_PeripheralDST | DMA_DIR_PeripheralSRC
+        .DMA_DIR			= 	DMA_DIR_PeripheralSRC,		//DMA_DIR_PeripheralDST | DMA_DIR_PeripheralSRC
         .DMA_BufferSize 		= 	DEFAULT_USART1_NUMBER_BYTES_RX_BUFFER,//Buffer Size Transmit Data
         .DMA_PeripheralInc 		= 	DMA_PeripheralInc_Disable,	//DMA_PeripheralInc_Enable | DMA_PeripheralInc_Disable
         .DMA_MemoryInc 			= 	DMA_MemoryInc_Enable,		//DMA_MemoryInc_Enable | DMA_MemoryInc_Disable
-        .DMA_PeripheralDataSize	= 	DMA_PeripheralDataSize_Byte,//DMA_PeripheralDataSize_Byte | DMA_PeripheralDataSize_HalfWord | DMA_PeripheralDataSize_Word
+        .DMA_PeripheralDataSize	        = 	DMA_PeripheralDataSize_Byte,//DMA_PeripheralDataSize_Byte | DMA_PeripheralDataSize_HalfWord | DMA_PeripheralDataSize_Word
         .DMA_MemoryDataSize		= 	DMA_MemoryDataSize_Byte,	//DMA_MemoryDataSize_Byte | DMA_MemoryDataSize_HalfWord | DMA_MemoryDataSize_Word
-        .DMA_Mode 				= 	DMA_Mode_Circular,			//DMA_Mode_Circular | DMA_Mode_Normal
+        .DMA_Mode 			= 	DMA_Mode_Circular,			//DMA_Mode_Circular | DMA_Mode_Normal
         .DMA_Priority 			= 	DMA_Priority_VeryHigh,		//DMA_Priority_VeryHigh | DMA_Priority_High | DMA_Priority_Medium | DMA_Priority_Low
-        .DMA_M2M 				= 	DMA_M2M_Disable,			//DMA_M2M_Enable | DMA_M2M_Disable
+        .DMA_M2M 			= 	DMA_M2M_Disable,			//DMA_M2M_Enable | DMA_M2M_Disable
 	};
 	#endif /* USE_DMA_USART1 */
 #endif /* USE_USART1 */
@@ -109,8 +109,8 @@ hardware function.
 		.USART_WordLength			=	USART_WordLength_8b,			//USART_WordLength_8b | USART_WordLength_9b
 		.USART_StopBits				=	USART_StopBits_1, 				//USART_StopBits_1 | USART_StopBits_0_5 | USART_StopBits_2 | USART_StopBits_1_5
 		.USART_Parity				=	USART_Parity_No, 				//USART_Parity_No | USART_Parity_Even | USART_Parity_Odd
-		.USART_Mode					=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
-		.USART_HardwareFlowControl	=	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
+		.USART_Mode				=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
+		.USART_HardwareFlowControl	        =	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
 	};
 #endif /* USE_USART2 */
 
@@ -136,8 +136,8 @@ hardware function.
 		.USART_WordLength			=	USART_WordLength_8b,			//USART_WordLength_8b | USART_WordLength_9b
 		.USART_StopBits				=	USART_StopBits_1, 				//USART_StopBits_1 | USART_StopBits_0_5 | USART_StopBits_2 | USART_StopBits_1_5
 		.USART_Parity				=	USART_Parity_No, 				//USART_Parity_No | USART_Parity_Even | USART_Parity_Odd
-		.USART_Mode					=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
-		.USART_HardwareFlowControl	=	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
+		.USART_Mode				=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
+		.USART_HardwareFlowControl	        =	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
 	};
 #endif /* USE_USART3 */
 
@@ -163,8 +163,8 @@ hardware function.
 		.USART_WordLength			=	USART_WordLength_8b,			//USART_WordLength_8b | USART_WordLength_9b
 		.USART_StopBits				=	USART_StopBits_1, 				//USART_StopBits_1 | USART_StopBits_0_5 | USART_StopBits_2 | USART_StopBits_1_5
 		.USART_Parity				=	USART_Parity_No, 				//USART_Parity_No | USART_Parity_Even | USART_Parity_Odd
-		.USART_Mode					=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
-		.USART_HardwareFlowControl	=	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
+		.USART_Mode				=	USART_Mode_Rx | USART_Mode_Tx, 	//USART_Mode_Rx | USART_Mode_Tx
+		.USART_HardwareFlowControl	        =	USART_HardwareFlowControl_None, //USART_HardwareFlowControl_None | USART_HardwareFlowControl_RTS | USART_HardwareFlowControl_CTS | USART_HardwareFlowControl_RTS_CTS
 	};
 	
 	#ifdef USE_CLOCK_UART4 /* Use clock to sync */

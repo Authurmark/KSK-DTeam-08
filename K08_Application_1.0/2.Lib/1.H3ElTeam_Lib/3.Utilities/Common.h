@@ -48,6 +48,7 @@
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
 #include "USART2_AppCall_Function.h"
+#include "USART3_AppCall_Function.h"
 #include "Watchdog_Function.h"
 
 #endif /* __COMMON_H */

@@ -2461,6 +2461,15 @@
                     <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART2_Function.c</name>
                 </file>
             </group>
+            <group>
+                <name>3.3.3.USART3_Kernel</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART3_AppCall_Function.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART3_Function.c</name>
+                </file>
+            </group>
         </group>
         <group>
             <name>3.4.Watchdog_Function</name>

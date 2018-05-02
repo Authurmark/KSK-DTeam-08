@@ -20,7 +20,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>3586667144</Checksum>
+        <Checksum>1818709557</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -55,7 +55,10 @@
         <ITMlogFile>$PROJ_DIR$\ITM.log</ITMlogFile>
     </SWOTraceHWSettings>
     <watch_formats>
-        <Fmt0>{W}1:iIndex	3	0</Fmt0>
+        <Fmt0>{W}1:DataGet	3	0</Fmt0>
+        <Fmt1>{W}1:DataGet1	1	0</Fmt1>
+        <Fmt2>{W}1:DataGet2	1	0</Fmt2>
+        <Fmt3>{W}1:iIndex	3	0</Fmt3>
     </watch_formats>
     <Trace2>
         <Enabled>0</Enabled>
@@ -128,16 +131,27 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function\USART1_Function.c}.38.23" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.415.1" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.127.9" 0 0 1 "" 0 "" 0</Bp2>
-        <Count>3</Count>
+        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.250.9" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.335.11" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.793.13" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.823.13" 0 0 1 "" 0 "" 0</Bp3>
+        <Bp4>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.510.37" 0 0 1 "" 0 "" 0</Bp4>
+        <Bp5>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.530.29" 0 0 1 "" 0 "" 0</Bp5>
+        <Count>6</Count>
     </Breakpoints2>
     <Aliases>
         <A0>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\main.c" ""</A0>
         <A1>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\stm32f10x_it.c" ""</A1>
         <A2>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c" ""</A2>
-        <Count>3</Count>
-        <SuppressDialog>0</SuppressDialog>
+        <A3>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction\ringbuf.c" ""</A3>
+        <A4>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\list.c" ""</A4>
+        <A5>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3\port.c" ""</A5>
+        <A6>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3\portasm.s" ""</A6>
+        <A7>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\tasks.c" ""</A7>
+        <A8>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c" ""</A8>
+        <A9>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c" ""</A9>
+        <A10>_ "D:\Slave2\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\src\stm32f10x_usart.c" ""</A10>
+        <Count>11</Count>
+        <SuppressDialog>1</SuppressDialog>
     </Aliases>
 </settings>

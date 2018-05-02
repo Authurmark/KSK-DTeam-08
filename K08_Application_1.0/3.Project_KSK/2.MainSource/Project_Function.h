@@ -42,6 +42,16 @@ void vFLASH_User_Read(uint8_t lun, uint32_t Memory_Offset, uint32_t *Readbuff, u
 void vFLASH_User_Write(uint8_t lun, uint32_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length);
 void vFLASH_UpdateData(void);
 
+
+/*--------------------------------------------------------------------------------*/
+//---------DEFINE FOR PROTOTYPE & DETECT THREAD HOLE FUNCTION PROTOTYPE-----------//
+/*-------------------------------------------------------------------------------*/
+void vInit_DetectHole(void);
+enumbool bLaserSensor_1(void);
+enumbool bLaserSensor_2(void);
+enumbool bDetectThreadHole(void);
+
+
 /*----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & PWM FUNCTION PROTOTYPE----------------//
 /*--------------------------------------------------------------------------*/
@@ -63,17 +73,21 @@ void vInit_DMA_ADC_Function(void);
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
 /*---------------------------------------------------------------------------*/
+#define SPINDLE_LINEARHOME      0x1388           //50mm
+#define SPINDLE_POSITION_CHECK  0x07D0           //20mm
+typedef struct {
+  uint16        pulse_cnt_LinearScale;
+  uint16        spindle_position;
+}strBuffer_linearscale;
+ 
+extern strBuffer_linearscale Buffer_LinearScale;
 
-void vGetEncoderValue(void);
-void EXTI2_IRQHandler(void);
-void EXTI1_IRQHandler(void);
+void vInitLinearScale(void);
+void vInit_LinearScale_BPulse(void);
+void EXTILine7_Config(void);
+void EXTI9_5_IRQHandler(void);
+void vGetLinearScaleValue(void);
 
-/*-----------------------------------------------------------------------------*/
-//------------DEFINE FOR PROTOTYPE & STEPMOTOR FUNCTION PROTOTYPE-------------//
-/*---------------------------------------------------------------------------*/
-
-void vInit_STEP_MOTOR_Function (void);
-void Control_step_motor (void);
 
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & IO FUNCTION PROTOTYPE------------------//

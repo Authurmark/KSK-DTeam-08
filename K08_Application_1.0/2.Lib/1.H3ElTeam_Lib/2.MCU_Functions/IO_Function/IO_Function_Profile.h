@@ -22,26 +22,26 @@
 #define USE_IO_FUNCTION
 	/* Uncomment to use LED to display, comment to disable */
 	#define USE_LED
-		#define USE_LED_1	/* Led Signal */
+//		#define USE_LED_1	/* Led Signal */
 //		#define USE_LED_2
 //		#define USE_LED_3
 //		#define USE_LED_4
 	/* Uncomment to use Relay, comment to disable */
 	#define USE_RELAY
-		#define USE_RELAY_1
-		#define USE_RELAY_2
-		#define USE_RELAY_3
+//		#define USE_RELAY_1
+//		#define USE_RELAY_2
+//		#define USE_RELAY_3
 
 		//#define USE_RELAY_1_FB
 	/* Uncomment to use LED to display, comment to disable */
 	#define USE_BUTTON_IO
 	#define NUMBER_IO_BUTTON_USE 3
-		#define USE_BUTTON_IO_1
-			#define USE_BUTTON_IO_1_EXT
-		#define USE_BUTTON_IO_2
-			#define USE_BUTTON_IO_2_EXT
-		#define USE_BUTTON_IO_3
-            #define USE_BUTTON_IO_3_EXT
+//		#define USE_BUTTON_IO_1
+//			#define USE_BUTTON_IO_1_EXT
+//		#define USE_BUTTON_IO_2
+//			#define USE_BUTTON_IO_2_EXT
+//		#define USE_BUTTON_IO_3
+//                      #define USE_BUTTON_IO_3_EXT
 //		#define USE_BUTTON_IO_4
 /************************************************************************************************************/
 /* Detail IO function */

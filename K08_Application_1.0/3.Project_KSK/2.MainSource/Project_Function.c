@@ -79,6 +79,12 @@ void vMCU_Init_Hardware( void )
 	USART2_AppCall_Init(&pUSART2);
 	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
 	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
+        
+        /* Init usart3 */
+	USART3_AppCall_Init(&pUSART3);
+	USART3_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+	USART3_AppCall_SendString("[SYSTEM DEBUG]: USART3 Init Success!\r\n");
+        
 	/* Config Clock AFIO, use for antenate function  */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 }
@@ -94,27 +100,58 @@ void vProject_Init()
 	USART1_AppCall_SendString("[SYSTEM DEBUG]: PD0 PD1 Remap done!\r\n");
     
 	/* Config LED, for LED Tag Signal */
-	extern IO_Struct pLED1;
-	IO_LED1_Init(&pLED1);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
-	/* Turn off LED */
-	pLED1.write(OFF);
-	pLED1.write(ON);
+        #ifdef USE_LED_1
+          extern IO_Struct pLED1;
+          IO_LED1_Init(&pLED1);
+          USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
+          /* Turn off LED */
+          pLED1.write(OFF);
+          pLED1.write(ON);
+        #endif          
+
 	
 	/* Config Button */
-	extern IO_Struct pBUT_1, pBUT_2, pBUT_3;
-	IO_BUTTON_1_Init(&pBUT_1);
-	IO_BUTTON_2_Init(&pBUT_2);
-        IO_BUTTON_3_Init(&pBUT_3);
+        #ifdef USE_BUTTON_IO_1
+          extern IO_Struct pBUT_1;
+          IO_BUTTON_1_Init(&pBUT_1);
+        #endif
+        
+        #ifdef USE_BUTTON_IO_2
+          extern IO_Struct pBUT_2;
+          IO_BUTTON_2_Init(&pBUT_2);
+        #endif
+        
+        #ifdef USE_BUTTON_IO_3
+          extern IO_Struct pBUT_3;
+          IO_BUTTON_3_Init(&pBUT_3);
+        #endif
 	
 	/* Config Relay */
-	extern IO_Struct pRELAY_1, pRELAY_2, pRELAY_3;
-	IO_RELAY_1_Init(&pRELAY_1);
-	IO_RELAY_2_Init(&pRELAY_2);
-	IO_RELAY_3_Init(&pRELAY_3);
-	pRELAY_1.write(OFF);
-	pRELAY_2.write(OFF);
-	pRELAY_3.write(OFF);
+	
+        #ifdef USE_RELAY_1
+          extern IO_Struct pRELAY_1;
+          IO_RELAY_1_Init(&pRELAY_1);
+          pRELAY_1.write(OFF);
+        #endif
+        
+	#ifdef USE_RELAY_2
+          extern IO_Struct pRELAY_2;
+          IO_RELAY_2_Init(&pRELAY_2);
+          pRELAY_2.write(OFF);
+        #endif
+	
+        
+  	#ifdef USE_RELAY_3
+          extern IO_Struct pRELAY_3;
+          IO_RELAY_3_Init(&pRELAY_3);
+          pRELAY_3.write(OFF);
+        #endif      
+	
+        /* Init Detect Thread Hole function*/
+        vInit_DetectHole();
+        
+        /* Init Linear Scale Function*/
+        vInitLinearScale();
 	
 	/* Init PWM function */
 	vInitPWMFunction();
@@ -126,6 +163,8 @@ void vProject_Init()
 	/* Init TIM3 encoder function */
 	//vInit_TIM_ENCODER_Function();
         
+//        /* Init FeedBack Detect OverTime */
+//        vInitFeedBackDetectOverTime();
         
 	/* Update Flash Data */
 	//vFLASH_UpdateData();
@@ -259,6 +298,54 @@ void vFLASH_UpdateData(void)
 //-------------------KSK CONFIG FUNCTION---------------------//
 /*-----------------------------------------------------------*/
 
+//---------DETECT THREAD HOLE FUNCTION----------//
+#define Pin_LaserSensor_1       GPIO_Pin_8
+#define Pin_LaserSensor_2       GPIO_Pin_9
+void vInit_DetectHole()
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  GPIO_InitStructure.GPIO_Pin = Pin_LaserSensor_1 | Pin_LaserSensor_2;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);  
+}
+
+uint8 Cnt_TimeHold_LS1;
+uint8 Cnt_TimeHold_LS2;
+   
+enumbool bLaserSensor_1()
+{
+  //Scan status pin
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eTRUE)                 Cnt_TimeHold_LS1=Cnt_TimeHold_LS1+1;                    //1 stick = 10ms
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eFALSE)                Cnt_TimeHold_LS1=0;
+ 
+  //Define status pin
+  if(Cnt_TimeHold_LS1>=2)               return eTRUE;   
+  if(Cnt_TimeHold_LS1<2)                return eFALSE;
+}
+
+enumbool bLaserSensor_2()
+{
+  //Scan status pin
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eTRUE)                 Cnt_TimeHold_LS2=Cnt_TimeHold_LS2+1;                    //1 stick = 10ms
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eFALSE)                Cnt_TimeHold_LS2=0;
+ 
+  //Define status pin
+  if(Cnt_TimeHold_LS2>=2)               return eTRUE;   
+  if(Cnt_TimeHold_LS2<2)                return eFALSE;
+}
+
+enumbool bDetectThreadHole()
+{
+  if(bLaserSensor_1())
+//    if(bLaserSensor_2())
+      return eTRUE;
+  
+  else
+    return eFALSE;
+}
 
 //---------PWM FUNCTION----------//
 /*
@@ -475,6 +562,11 @@ void vInit_DMA_ADC_Function(void)
 
 
 //---------ENCODER FUNCTION----------//
+/* In Master KIT : Read Linear Scale */
+
+
+
+
 /*
   Author :  Le Bien
   Date   :  03/04/2018
@@ -485,160 +577,74 @@ void vInit_DMA_ADC_Function(void)
   4. Read encoder value by vGetEncoderValue
 */
 
-GPIO_InitTypeDef  GPIO_InitStructure;
-NVIC_InitTypeDef  NVIC_InitStructure;
-EXTI_InitTypeDef  EXTI_InitStructure;
- 
-uint16_t countA = 0, countB = 0 ; 
-uint16_t rotary_cntr = 0;
-uint32_t debug =0;
+strBuffer_linearscale Buffer_LinearScale;
 
-void EXTILine1_Config(void);
-void EXTILine2_Config(void);
-
-void vGetEncoderValue(void)
+void vInitLinearScale()
 {
-    EXTILine1_Config();
-    EXTILine2_Config();
-    
-    rotary_cntr = countA + countB ;
-    MOTOR_2_DUTY(30);
-    if(rotary_cntr >=2400)
-    {
-     MOTOR_2_DUTY(0);
-    }                               
+  EXTILine7_Config();
+  vInit_LinearScale_BPulse();
 }
 
-void EXTILine2_Config(void)
+
+void vGetLinearScaleValue(void)
 {
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    //calculate pulse --> Spindle position value
+    //godown => value--       
+}
+
+
+void EXTILine7_Config(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure;
+  NVIC_InitTypeDef  NVIC_InitStructure;
+  EXTI_InitTypeDef  EXTI_InitStructure;
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; 
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7; 
+  GPIO_Init(GPIOB, &GPIO_InitStructure); 
   
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource2);
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource7);
   
-  EXTI_InitStructure.EXTI_Line = EXTI_Line2;
+  EXTI_InitStructure.EXTI_Line = EXTI_Line7;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
   EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);
   
     
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-}
-
-void EXTILine1_Config(void)
-{
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; 
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA,GPIO_PinSource1);
-  
-  EXTI_InitStructure.EXTI_Line = EXTI_Line1;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-  
-    
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
  
-void EXTI1_IRQHandler(void)
+
+void vInit_LinearScale_BPulse()
 {
- if(EXTI_GetITStatus(EXTI_Line1) != RESET)
- {
-  EXTI_ClearITPendingBit(EXTI_Line1);
-  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) )
-  countA = (1200+countA+1)%1200;
-  else
-  countA = (1200+countA-1)%1200;
+  GPIO_InitTypeDef GPIO_InitStructure;
   
- }
-}
-
-void EXTI2_IRQHandler(void)
-{
- if(EXTI_GetITStatus(EXTI_Line2) != RESET)
- {
-  EXTI_ClearITPendingBit(EXTI_Line2);
- if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) )
-   countB = (1200+countB-1)%1200;
-  else
-   countB = (1200+countB+1)%1200;
- }
-}
-
-
-
-
-
-
-
-
-
-
-//---------CONTROL STEPMOTOR FUNCTION----------//
-/*
-  Author :  Le Bien
-  Date   :  09/04/2018
-  Edited :  09/04/2018 
-  1. Control Stepmotor by Generate Pulse
-  2. Config IO: pinA3 - CCW | pinA4 - DIR | pin A5 - ENABLE     by vInit_STEP_MOTOR_Function
-  3. Control Stepmotor by Control_step_motor
-*/
-GPIO_InitTypeDef  GPIO_InitStructure;
-timer tP_StepA;
-uint8 cnt_stepmotor; 
-
-void Control_step_motor (void)
-{
-    vInit_STEP_MOTOR_Function();
-    rotary_cntr = countA + countB ;
-    if( rotary_cntr  >= 2000)
-     {
-       GPIO_SetBits(GPIOA ,GPIO_Pin_4 );
-        rotary_cntr =  0;
-     }
-   	
-    if(timer_expired(&tP_StepA))
-	{
-		timer_restart(&tP_StepA);
-		cnt_stepmotor=(cnt_stepmotor+1)%2;
-		if(cnt_stepmotor==0)
-		GPIO_SetBits(GPIOA ,GPIO_Pin_3 );
-		else 
-		GPIO_ResetBits(GPIOA ,GPIO_Pin_3 );
-	}
-}
- 
-void vInit_STEP_MOTOR_Function (void)
-{
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);    
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_Write(GPIOA,0x0000);
+  GPIO_Init(GPIOB, &GPIO_InitStructure);  
 }
 
+void EXTI9_5_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line7) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line7);
+  if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6) )
+    Buffer_LinearScale.pulse_cnt_LinearScale ++;
+  else
+    Buffer_LinearScale.pulse_cnt_LinearScale --;
+ }
+}
 
 
 
