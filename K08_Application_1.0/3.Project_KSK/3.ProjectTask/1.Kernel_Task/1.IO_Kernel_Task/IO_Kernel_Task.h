@@ -21,7 +21,15 @@ hardware function.
 #define _IO_Kernel_Task__H
 /* File includes. */
 #include "IO_Function_Profile.h"
-/*-----------------------------------------------------------*/
+
+
+/*--------------------------- DETECT proximity sensor---------------------------*/
+#define Port_Proximity_Sensor GPIOB
+#define Pin_Proximity_Sensor  GPIO_Pin_7
+
+void Detect_Proximity_Sensor(void);
+/*------------------------------------------------------------------------------*/
+
 /* Funtion Prototype */
 void vIO_Kernel_Task( void *pvParameters );
 void fIO_Input_Task( void );

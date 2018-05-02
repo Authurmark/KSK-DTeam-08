@@ -52,7 +52,29 @@ void vInitPWMFunction(void);
 void vChangeDutyCycleOC1(uint8_t bDutyPercent);
 void vChangeDutyCycleOC2(uint8_t bDutyPercent);
 
-void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
+typedef enum {
+    SPINDLE_RORATY = 0x01,
+    SPINDLE_RESET  = 0x02,
+}state_process;
+
+typedef enum {
+    SPINDLE_FORWARD = 0x01,
+    SPINDLE_REVERSE = 0x02,
+    SPINDLE_BREAK   = 0x03,
+    SPINDLE_DISABLE = 0x04,
+}state_DC_Spindle;
+
+void vMotorControl( uint8 bDutyMotor,state_DC_Spindle bDirection);
+void vInit_HomeEncoder(void);
+void Spindle_Home(void);
+
+extern uint32 bFlag_Status_Spindle;
+extern uint16 Current_Value;
+
+/*----------------------------------------------------------------------------*/
+//------------------------Current_Measure_Value------------------------------//
+/*--------------------------------------------------------------------------*/
+void Current_Measure_Value(void);
 
 /*----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & ADC FUNCTION PROTOTYPE----------------//
@@ -60,45 +82,10 @@ void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
 
 void vInit_DMA_ADC_Function(void);
 
-/*-----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
-/*---------------------------------------------------------------------------*/
-
-/*ENCODER OF AXIS X*/
-void vGetEncoderValue_X(void);
-void EXTI1_IRQHandler(void);
-void EXTI2_IRQHandler(void);
-void EXTILine1_Config(void);
-void EXTILine2_Config(void);
-/*ENCODER OF AXIS Y*/
-void EXTI3_IRQHandler(void);
-void EXTI4_IRQHandler(void);
-void EXTILine3_Config(void);
-void EXTILine4_Config(void);
-void vGetEncoderValue_Y(void);
-
-/*-----------------------------------------------------------------------------*/
-//------------DEFINE FOR PROTOTYPE & STEPMOTOR FUNCTION PROTOTYPE-------------//
-/*---------------------------------------------------------------------------*/
-
-void vInit_STEP_MOTOR_Function (void);
-void Generate_Pulse_X(void);
-void Generate_Pulse_Y(void);
-void Generate_Pulse_Z(void);
-void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) ;
-void Control_Pulse (void);
-void vMotorStepControl(void);
-void Determined_Position(uint8 iIndex_amicro);
-void Compare_Position(void);
-void Control_Direction_X(void);
-void Control_Direction_Y(void);
-void Control_Direction_Z(void);
-void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection);
 
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & IO FUNCTION PROTOTYPE------------------//
 /*---------------------------------------------------------------------------*/
-
 /* Extern variabe */
 extern structIO_Button strIO_Button_Value, strOld_IO_Button_Value;
 extern IO_Struct pLED1, pCutOffCircuit;
@@ -119,8 +106,8 @@ extern __IO uint16_t ADCConvertedValue;
 #define BUTTON_2_STATE		strIO_Button_Value.bButtonState[eButton2]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 
-#define OUT_LED_1		strLED_1
-#define OUT_LED_2               strLED_2
+#define OUT_LED_1			strLED_1
+#define OUT_LED_2           strLED_2
 
 #define EMERGENCY_BUTTON_1_STATE	BUTTON_1_STATE
 #define EMERGENCY_BUTTON_IO	        pBUT_1.read()
@@ -129,19 +116,19 @@ extern __IO uint16_t ADCConvertedValue;
 
 
 /* Define function for all function of RFID Bike project */	
-#define LED_USER_ON		pLED1.write(ON);
+#define LED_USER_ON			pLED1.write(ON);
 #define LED_USER_OFF		pLED1.write(OFF);
 #define LED_USER_TOGGLE		pLED1.write(1-pLED1.writeSta());
 #define KEY_IN_STATE		strIO_Button_Value.bButtonState[eButton1]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 #define OUT_IC_FIRE_STR		strRELAY_1
-#define OUT_KEY_STR		strRELAY_2
+#define OUT_KEY_STR			strRELAY_2
 #define OUT_XINHAN_STR		strRELAY_3
-#define OUT_BELL		strBELL
+#define OUT_BELL			strBELL
 #define OUT_LED_SIGNAL		strLED_1
-#define OUT_TRUNK		strTRUNK
+#define OUT_TRUNK			strTRUNK
 #define RS_485_MODE_RECIEVE 	pRS485_DIR.write(eFALSE)
 #define RS_485_MODE_TRANSMIT 	pRS485_DIR.write(eTRUE)
-#define TURNOFFBOARD 		pCutOffCircuit.write(eFALSE)
-#define TURNONBOARD 		pCutOffCircuit.write(eTRUE)
+#define TURNOFFBOARD 			pCutOffCircuit.write(eFALSE)
+#define TURNONBOARD 			pCutOffCircuit.write(eTRUE)
 #endif /* _Project_Function__H */

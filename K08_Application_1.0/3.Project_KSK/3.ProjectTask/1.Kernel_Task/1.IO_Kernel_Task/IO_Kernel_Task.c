@@ -123,8 +123,35 @@ void vIO_Kernel_Task( void *pvParameters )
 		fIO_Input_Task();
 		/* Output Task: Relay, LED... */
 		fIO_Output_Task();
+		/*DETECT proximity sensor*/
+		Detect_Proximity_Sensor();
 	}
 }
+
+/*-------------------------------------------------- DETECT proximity sensor ------------------------------------------*/
+uint8 Cnt_TimeHold_Proximity_Sensor[6];
+enumbool State_Proximity_Sensor[6];
+ 
+void Detect_Proximity_Sensor(void)
+{
+	if((GPIO_ReadInputDataBit(Port_Proximity_Sensor, Pin_Proximity_Sensor))== eTRUE)					 Cnt_TimeHold_Proximity_Sensor[0]++;
+	if((GPIO_ReadInputDataBit(Port_Proximity_Sensor, Pin_Proximity_Sensor))== eFALSE)					 Cnt_TimeHold_Proximity_Sensor[0]=0;
+	if(Cnt_TimeHold_Proximity_Sensor[0] >= 2)							 					 			 State_Proximity_Sensor[0] = eTRUE;
+	if(Cnt_TimeHold_Proximity_Sensor[0] < 2)												 			 State_Proximity_Sensor[0] = eFALSE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Input Process Task, all function input will run here. */
 void fIO_Input_Task( void )

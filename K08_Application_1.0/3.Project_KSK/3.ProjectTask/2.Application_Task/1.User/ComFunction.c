@@ -74,56 +74,11 @@ structIO_Manage_Output bLEDConfigCommand;
 /*--------------------------------------------------------------------*/
 //--------------------------BUFFER DATA------------------------------//
 /*------------------------------------------------------------------*/
-
-/* Control DC Spindle */
-typedef enum {
-    SPINDLE_RORATY = 0x01,
-    SPINDLE_RESET  = 0x02,
-}state_process;
-
-typedef enum {
-    SPINDLE_FORWARD = 0x01,
-    SPINDLE_REVERSE = 0x02,
-    SPINDLE_BREAK   = 0x03,
-    SPINDLE_DISABLE = 0x04,
-}state_DC_Spindle;
-
-typedef struct{
-  state_process         bProcess;
-  uint8                 Speed_DC;
-  state_DC_Spindle      bDC_Driection;
-}BufferRX_Control_DC_Spindle;
-
-BufferRX_Control_DC_Spindle BUFFER_RX_CONTROL_DC_SPINDLE;
-
-
-/* Current Measure Value */
-#define NUM_MEMBER_ADC_Current_Measure          10
-typedef struct{
-  uint16        Buffer_ADC_Current_Measure[NUM_MEMBER_ADC_Current_Measure];
-  uint16        Current_Value;
-  uint16        Current_Max;
-  enumbool      Flag_Update;
-}Buffer_Current_Measure;
-
+Buffer_Control_DC_Spindle BUFFER_CONTROL_DC_SPINDLE;
+/************************Current Measure Value*********************/
 Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
-
-
-
 /* Encoder Home Value */
-typedef struct{
-  uint16        pulse_encoder;
-  uint16        angle_motor;
-  enumbool      Flag_Update;
-}Buffer_Encoder;
-
-Buffer_Encoder  BUFFER_ENCODER;
-
-
-
-
-
-
+Buffer_EncoderHome  BUFFER_ENCODERHOME;
 /*--------------------------------------------------------------------*/
 //-------------------USER COMMUNICATION FUNCTION---------------------//
 /*------------------------------------------------------------------*/
@@ -220,21 +175,23 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
           //Xu ly data, dua vao cac buffer khac nhau, tuy thuoc vao iUART_CMD_TYPE
           switch ((cmd_type)UART_BUFFER_RX[iIndex+iUART_CMD_TYPE])
           {
-          case P2TCMD_INFO :
+          	case P2TCMD_INFO :
               vFeedBack_info_sys();
             break;
   
-          case P2TCMD_SPINDLE:
+          	case P2TCMD_SPINDLE:
               /* CODE MAU GHI DU LIEU VAO BUFFER DATA */
-              BUFFER_RX_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_RX[iUART_CMD];
-              BUFFER_RX_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
-              BUFFER_RX_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
+              BUFFER_CONTROL_DC_SPINDLE.bProcess             =UART_BUFFER_RX[iUART_CMD];
+             // BUFFER_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
+              BUFFER_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
               UART_Comm_Feedback_Command_Content(UART_BUFFER_TX,0,FBCODE_OK);
               /* END CODE MAU GHI DU LIEU VAO BUFFER */
             break;
-          
+          	case P2TCMD_Current_Measure:
+               BUFFER_CURRENT_MEASURE.Current_Max			 = UART_BUFFER_RX[iUART_DATA];
+			break;
           /* CODE MAU TAO BUFFER TX GUI */
-          case P2TCMD_TEST:
+          	case P2TCMD_TEST:
               pUART.send_str("[SYSTEM DEBUG]: NHAN LENH CMD P2TCMD!\r\n");
               uint16 PARA1 = 0xE1A0;
               //uint8 PARA2 = 0xA1;
@@ -470,6 +427,7 @@ uint8 CntUartBufferTx;
 typedef enum {
     Bf_Current_Measure  = 0x00,
     Bf_Encoder          = 0x01,
+   	Bf_Control_Process 	= 0x02,
 }state_make_uart_buffer_tx;
 
 
@@ -499,8 +457,7 @@ void vMakeBufferTXTask( void *pvParameters )
           uint16 PARA2 ;
           
           BUFFER_CURRENT_MEASURE.Current_Value          =0xAE00;
-          BUFFER_ENCODER.pulse_encoder                  =0xAF00;
-          BUFFER_ENCODER.angle_motor                    =0x9D9D;
+                 
           /*END TAO DU LIEU TEST */
           
           CntUartBufferTx = (CntUartBufferTx+1)%2;
@@ -512,14 +469,15 @@ void vMakeBufferTXTask( void *pvParameters )
                   UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,0,0,0,0);
                   UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);
               break;
-
               case Bf_Encoder :
-                  PARA1 = BUFFER_ENCODER.pulse_encoder;
-                  PARA2 = BUFFER_ENCODER.angle_motor;
-                  UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,PARA2,0,0,0);
+                  PARA1 = BUFFER_ENCODERHOME.Flag_Home;
+                  UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,0,0,0,0);
                   UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);        
               break;
-
+			  case Bf_Control_Process:
+                   PARA1 = BUFFER_CONTROL_DC_SPINDLE.Error_Process;
+				   UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,0,0,0,0);
+                   UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);
               default :
               break;
           }

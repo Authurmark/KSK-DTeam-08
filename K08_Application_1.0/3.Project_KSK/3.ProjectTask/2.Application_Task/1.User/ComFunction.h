@@ -48,12 +48,6 @@ hardware function.
 #define iUART_PRE_5         4
 #define iUART_PRE_6         5
 
-//#define iUART_CMD           6
-//#define iUART_SIZE_LOW      7
-//#define iUART_SIZE_HIGH     8
-//#define iUART_IDX_LOW       9                           
-//#define iUART_IDX_HIGH      10                          
-//#define iUART_DATA          11
 
 #define iUART_CMD_TYPE      6
 #define iUART_CMD           7
@@ -89,10 +83,11 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
-    P2TCMD_SPINDLE      = 0x10,
-    P2TCMD_TEST         = 0x11,
-	P2TCMD_FEEDBACK		= 0x21,
-
+    P2TCMD_SPINDLE      	= 0x10,
+    P2TCMD_TEST         	= 0x11,
+	P2TCMD_FEEDBACK			= 0x21,
+    P2TCMD_Current_Measure	= 0x31,
+    
 
     /*Common command*/
     P2TCMD_CLOSE = 0x01,
@@ -107,8 +102,37 @@ typedef enum Cmd_Type {
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
+/**************************************************************/
+typedef enum{
+	E_OverLoad		= 0x01,
+	E_OverTime		= 0x02,
+}eError_Process;
+
+/* Control DC Spindle */
+typedef struct{
+  state_process         bProcess;
+  uint8                 Speed_DC;
+  eError_Process		Error_Process;
+  state_DC_Spindle      bDC_Driection;
+}Buffer_Control_DC_Spindle;
+extern Buffer_Control_DC_Spindle BUFFER_CONTROL_DC_SPINDLE;
+/* Encoder Home Value */
+typedef struct{
+   uint8         Flag_Home;
+   enumbool      Flag_Update;
+}Buffer_EncoderHome;
+extern Buffer_EncoderHome  BUFFER_ENCODERHOME;
 
 
+/* Current Measure Value */
+#define NUM_MEMBER_ADC_Current_Measure          10
+typedef struct{
+  uint16        Buffer_ADC_Current_Measure[NUM_MEMBER_ADC_Current_Measure];
+  uint16        Current_Value;
+  uint16        Current_Max;
+  enumbool      Flag_Update;
+}Buffer_Current_Measure;
+extern Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
 
 /*--------------------------------------------------------------------*/
 //-----------------------FUNCTION PROTOTYPE--------------------------//
