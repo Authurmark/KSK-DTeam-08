@@ -1,10 +1,11 @@
-Slave2 - USART
+﻿Slave2 - USART
 
 #define iUART_PRE_1         0
 #define iUART_PRE_2         1
 #define iUART_PRE_3         2
 #define iUART_PRE_4         3
 #define iUART_PRE_5         4
+#define iUART_PRE_6         5
 
 #define iUART_CMD_TYPE      6
 #define iUART_CMD           7
@@ -16,7 +17,7 @@ Slave2 - USART
 
 
 
-----note : byte 12-> l� data
+----note : byte 12-> là data
 ----note : chua co byte end_data
 ----note PREMABLE_BYTE : cac byte format data, de nhan dang du lieu dung
 
@@ -48,3 +49,120 @@ ATKSK+$11$01$00$00$00$00$C1$C2$C3$C4$C5$C6$7E
 
 Spindle:
 ATKSK+$10$01$00$00$00$00	$32$02$00$00$00$00$7E
+
+
+
+
+
+
+
+
+
+#-------------------------------------------#
+---------BUFFER DATA SEND AND RECIEVE--------
+#-------------------------------------------#
+
+
+
+
+//---------Test Control Machine Process----//
+Ghi chú :Truyền nhận giữa PC <-> Master
+
+--------------------------------------- PMachine_ResetHome -------------------------------------------------
+Go Process ResetHome : ATKSK+$12$01 $00$00$00$00 $00$00$00$00$00$00 $7E					- ATKSK+$12$01$00$00$00$00$00$00$00$00$00$00$7E
+When Process Finish  :
+----with BUFFER_AXIS_PROCESS.bFeedBackAxis 	: ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E	- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+----with Encoder BUFFER_ENCODER.Flag_Home=eTRUE : ATKSK+$14$01$00$00$00$00 $00$00$00$00$00$00 $7E	- ATKSK+$14$01$00$00$00$00$00$00$00$00$00$00$7E
+
+
+--------------------------------------- PMachine_ReleaseCutter -------------------------------------------------
+Go Process ReleaseCutter : ATKSK+$12$02 $00$00$00$00 $00$00$00$00$00$00 $7E				- ATKSK+$12$02$00$00$00$00$00$00$00$00$00$00$7E
+When Process Finish : 
+----with BUFFER_AXIS_PROCESS.bFeedBackAxis 	: ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E 	- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+
+
+--------------------------------------- PMachine_ScanHole -------------------------------------------------
+Go Process ScanHole : ATKSK+$12$04 $00$00$00$00 $00$00$00$00$00$00 $7E					- ATKSK+$12$04$00$00$00$00$00$00$00$00$00$00$7E
+When Process Finish : 
+----with BUFFER_AXIS_PROCESS.bFeedBackAxis 	: ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E	- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+
+
+
+
+--------------------------------------- PMachine_ThreadChecker -------------------------------------------------
+
+DATA HOLE : ATKSK+$13		$05			$00$00$00$00	$1F$7D	$2A$31	$01  $00 $7E	- ATKSK+$13$05$00$00$00$00$1F$7D$2A$31$01$00$7E
+	    BufferData		Index_Hole_data		not thing	320,31	125,86	M3
+
+X,Y - 16bit -> max : 655,35 mm (573 - 390 - 104)
+X : 320,31	-> 7D1F
+Y : 125,86	-> 312A
+
+
+							iIdex_hole_check
+Du lieu gia lap bang USART<->PC :
+ATKSK+$11	$01		$00$00$00$00	$01		$00$00$00$00$00  $7E			- ATKSK+$11$01$00$00$00$00$01$00$00$00$00$00$7E
+BufferData	TEST_1		not thing	sHold_Cutter
+* TEST_1 : Tạo dữ liệu ảo cho Hold Cutter để test Release Cutter và Get Cutter
+
+$A0 : BufferData TEST
+
+Go Process ThreadChecker : ATKSK+$12$05 $00$00$00$00 	$05  		$00$00$00$00$00 $7E		- ATKSK+$12$05$00$00$00$00$05$00$00$00$00$00$7E
+
+1. Change Cutter :
+----> with Encoder BUFFER_ENCODER.Flag_Home=eTRUE : ATKSK+$14$01$00$00$00$00 $00$00$00$00$00$00 $7E	- ATKSK+$14$01$00$00$00$00$00$00$00$00$00$00$7E
+----> Finish Release Cutter : ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E 				- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+
+----> with Encoder BUFFER_ENCODER.Flag_Home=eTRUE : ATKSK+$14$01$00$00$00$00 $00$00$00$00$00$00 $7E	- ATKSK+$14$01$00$00$00$00$00$00$00$00$00$00$7E
+----> Finish Get Cutter     : ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E				- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+
+2. Run to Hole :
+----> Finish Run to Hole    : ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E				- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+
+3. CheckThread :
+sSpindle_GetReady -> sSpindle_Z_GoDown 
+----> Finish Run to Point :  ATKSK+$15$02$00$00$00$00 $00$00$00$00$00$00 $7E				- ATKSK+$15$02$00$00$00$00$00$00$00$00$00$00$7E
+-> sSpindle_Spindle_GoDown -> sSpindle_Checking
+
+Du lieu gia lap bang USART<->PC :
+ATKSK+$A0	$02		$00$00$00$00	$6C$07		$00$00$00$00  $7E			- ATKSK+$A0$02$00$00$00$00$6C$07$00$00$00$00$7E
+BufferData	TEST_2		not thing	19,00
+* TEST_2 : Tạo dữ liệu ảo cho Buffer_LinearScale.spindle_position để test trạng thái kiểm đạt lỗ ren
+* Buffer_LinearScale.spindle_position : 19,00
+
+
+
+
+----> Finish 
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------#
+---------------FEEDBACK DATA-----------------
+#-------------------------------------------#
+1. Mã lệnh điều khiển
+Send Device : bFlag_Update=1   --------->  Recieve Device : eFlag_Process_Update=1  ---------->   Send Device  : bFlag_Update==0
+	     		        bProcess	        		 	     Feedback
+
+* Nếu bFlag_Update chưa set về 0, thì dữ liệu này tiếp tục được gửi lần nữa
+
+
+2. Thông số hoạt động :
+Send Device ----> Recieve Device : bFlag_Process_Info=1 ----------------->  Recieve Device : bFlag_Process_Info=0
+						          after timestep1
+
+* Nếu bFlag_Process_Info=0 sau 1 khoảng thời gian timestep2 thì Error OverTime
+
+3. Thông báo Error :
+Send Device : bFlag_Error=1   --------->  Recieve Device  ---------->   Send Device  : bFlag_Error=0   
+	     		        bError	                   Feedback
+
+* Nếu bFlag_Error chưa set về 0, thì dữ liệu này tiếp tục được gửi lần nữa
+

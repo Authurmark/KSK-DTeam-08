@@ -22,7 +22,7 @@
 #include "Common.h"
 /* Define USART3 Function */ 
 /* Uncomment to use USART3, comment to disable*/
-//#define USE_USART3  
+#define USE_USART3  
 /* Uncomment to use default, comment to use alternative*/
 	#define USE_DEFAULT_USART3_IO
 	/* Uncomment to use USE_CLOCK_USART3, comment to disable*/
@@ -40,7 +40,7 @@
 /* Define USART3 Function */	
 #ifdef USE_USART3
 	#define USART3_RCC			RCC_APB1Periph_USART3
-	#define USART3_CLK_CMD		RCC_APB1PeriphClockCmd
+	#define USART3_CLK_CMD		        RCC_APB1PeriphClockCmd
 
 	#ifdef	USE_DEFAULT_USART3_IO
 		#define USART3_RX_PORT		GPIOB

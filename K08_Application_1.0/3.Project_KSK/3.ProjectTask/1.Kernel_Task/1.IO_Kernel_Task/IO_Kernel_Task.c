@@ -210,11 +210,20 @@ void fIO_Relay_Process(void)
 	{
         timer_restart(&tIO_Relay_Task);
 		/* Process Relay 1 */
-		vIO_Output(&strRELAY_1, &pRELAY_1);
+                #ifdef USE_RELAY_1
+                    vIO_Output(&strRELAY_1, &pRELAY_1);
+                #endif
+                    
+                
 		/* Process Relay 2 */
-		vIO_Output(&strRELAY_2, &pRELAY_2);
+                #ifdef USE_RELAY_2
+                    vIO_Output(&strRELAY_2, &pRELAY_2);
+                #endif
+                
+                #ifdef USE_RELAY_3
 		/* Process Relay 3 */
-		vIO_Output(&strRELAY_3, &pRELAY_3);
+                    vIO_Output(&strRELAY_3, &pRELAY_3);
+                #endif
 	}
 }
 

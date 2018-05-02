@@ -31,3 +31,51 @@ typedef enum
 }eUserState;
 /* Funtion Prototype */
 void vUserTask( void *pvParameters );
+
+
+/* Init Parameter For System */
+void vInitCutter(void);
+
+
+
+
+
+
+/* Control Air Valves */
+void vReleaseCutter(void);
+void vGetCutter(void);
+
+
+#define sCoil_1_GoDown       eTRUE         
+#define sCoil_1_GoUp         eFALSE
+#define sCoil_1_ResetHome    eFALSE
+
+#define sCoil_2_GoDown       eFALSE         
+#define sCoil_2_GoUp         eTRUE
+#define sCoil_2_ResetHome    eTRUE
+
+#define sCoil_3_GoDown       eFALSE         
+#define sCoil_3_GoUp         eFALSE
+#define sCoil_3_ResetHome    eTRUE
+
+typedef enum {
+    SpindleGoDown      = 0x01,
+    SpindleGoUp        = 0x02,
+    SpindleResetHome   = 0x03,
+}state_control_air_value;
+
+typedef struct{
+  state_control_air_value       bProcess;
+  enumbool                      sCoil_1;
+  enumbool                      sCoil_2;
+  enumbool                      sCoil_3;
+}strcontrolairvalue;
+
+strcontrolairvalue sControlAirValue;
+
+
+
+void vSetAirVale(state_control_air_value bProcess);
+
+void vStepChangeCutterProcess(void);
+void vStepSpindleCheckHoleProcess(void);
