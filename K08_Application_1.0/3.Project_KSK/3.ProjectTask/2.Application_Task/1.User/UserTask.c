@@ -42,17 +42,17 @@ extern  uint32_t rotary_cntr;
 /* State of User Task */
 typedef enum
 {
-        eST_User_Task_INIT			= 1,
-        eST_User_Task_IDLE 			= 2,
-        eST_User_Task_LOGGING			= 3,
-        eST_User_Task_ERROR			= 4,
-        eST_User_Task_CHECKING_EVENT		= 5,
-        eST_User_Task_PC_CONNECT		= 6,
+        eST_User_Task_INIT						= 1,
+        eST_User_Task_IDLE 						= 2,
+        eST_User_Task_LOGGING					= 3,
+        eST_User_Task_ERROR						= 4,
+        eST_User_Task_CHECKING_EVENT			= 5,
+        eST_User_Task_PC_CONNECT				= 6,
         eST_User_Task_PWM                       = 7,
         eST_User_Task_DMA_ADC                   = 8,
         eST_User_Task_Encoder                   = 9,
 		
-        eST_User_Task_UN 			= 0xff,
+        eST_User_Task_UN 						= 0xff,
         
         eST_User_Task_ResetHome                 =0x11,
         eST_User_Task_ResetCutter               =0x12,
@@ -126,7 +126,12 @@ uint8 Status_CheckThreadProcess;
 #define Time_SpindleUpInHole             700            //ms
 timer tIO_SpindleUpInHole;
 enumbool bFlag_FinishCheckHole  = eFALSE;
-uint8    Status_SpindleCheckProcess =0;             
+uint8    Status_SpindleCheckProcess =0;     
+
+/*BFLAG FOR STATUS LED*/
+enumbool bFlag_Ready_Led	 	= eFALSE;
+enumbool bFLag_Working_Led		= eFALSE;
+enumbool bFlag_Pause_Led    	= eFALSE;        
 
 
 
@@ -186,16 +191,18 @@ void vUserTaskMainProcess(void)
                                 
                                 //Get Ready for Spindle Control
                                 vSetAirVale(SpindleResetHome);
-
-                                BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
-                                BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+								
+								
+                                BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
+                                BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
  
 			}
 			else
 			{
-                                BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_Ready;
+                                BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Ready;
                                 eState_User_Task = eST_User_Task_IDLE;
                                 bFlag_1st_Case = eTRUE;
+								bFlag_Ready_Led = eTRUE;	
 			}
 		break;
                 
@@ -211,39 +218,56 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_IDLE:
 			if(bFlag_1st_Case==eTRUE)
 			{
-				bFlag_1st_Case = eFALSE;
+				bFlag_1st_Case = eFALSE; 
+				if(bFlag_Ready_Led == eTRUE)
+				{
+				GPIO_SetBits(GPIOA,GPIO_Pin_4);
+				} 
 			}
 			else
 			{
                           //when process finish and PC recieve feedback status process, system comback to Idle
                           //PC send new command, and BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eTRUE;
                           //In this time, we will handle the system
+						  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eTRUE;
                           if(BUFFER_MACHINE_CONTROL.eFlag_Process_Update==eTRUE)
                           {
+							  BUFFER_MACHINE_CONTROL.bProcess_Control_Machine = PMachine_ResetHome;
                               switch(BUFFER_MACHINE_CONTROL.bProcess_Control_Machine)
                               {
                                   case PMachine_ResetHome:
                                     eState_User_Task=eST_User_Task_ResetHome;
                                     eFlag_Process_Finish=eFALSE;
                                     bFlag_1st_Case = eTRUE;
+									bFLag_Working_Led = eTRUE;
+									bFlag_Ready_Led = eFALSE;
+//                                  GPIO_SetBits(GPIOA,GPIO_Pin_11);
+//									GPIO_SetBits(GPIOA,GPIO_Pin_12);
+//									GPIO_SetBits(GPIOA,GPIO_Pin_15);
                                   break;
                                     
                                   case PMachine_ResetCutter:
-                                    eState_User_Task=eST_User_Task_ResetCutter;
-                                    eFlag_Process_Finish=eFALSE;
+                                    eState_User_Task = eST_User_Task_ResetCutter;
+                                    eFlag_Process_Finish = eFALSE;
                                     bFlag_1st_Case = eTRUE;
+									bFLag_Working_Led = eTRUE;
+									bFlag_Ready_Led = eFALSE;
                                   break;
                                     
                                   case PMachine_ScanHole:
-                                    eState_User_Task=eST_User_Task_ScanHole;
-                                    eFlag_Process_Finish=eFALSE;
+                                    eState_User_Task = eST_User_Task_ScanHole;
+                                    eFlag_Process_Finish = eFALSE;
                                     bFlag_1st_Case = eTRUE;
+									bFLag_Working_Led = eTRUE;
+									bFlag_Ready_Led = eFALSE;
                                   break;
                                     
                                   case PMachine_ThreadChecker:
-                                    eState_User_Task=eST_User_Task_ThreadChecker;
+                                    eState_User_Task = eST_User_Task_ThreadChecker;
                                     eFlag_Process_Finish=eFALSE;
-                                    bFlag_1st_Case = eTRUE;
+                                    bFlag_1st_Case    = eTRUE;
+									bFLag_Working_Led = eTRUE;
+									bFlag_Ready_Led   = eFALSE;
                                   break;
                                                                      
                                   default :
@@ -277,6 +301,19 @@ void vUserTaskMainProcess(void)
                   }
                   else
                   {
+						  // STOP BUTTON
+						  if(State_StopButton[0] == eTRUE)
+							{
+								eState_User_Task = eST_User_Task_IDLE;
+								bFlag_1st_Case==eTRUE;
+							}
+                          else
+							{
+						  //Turn on Working_Led
+						  if(bFLag_Working_Led == eTRUE)
+							{
+								GPIO_SetBits(GPIOA,GPIO_Pin_5);
+							}
                           //Feedback Status Process Machine to PC
                           BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetHome;
                     
@@ -298,14 +335,16 @@ void vUserTaskMainProcess(void)
                           if (eFlag_Process_Finish==eTRUE)
                           {
                             BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-                            eState_User_Task=eST_User_Task_IDLE;
+                            eState_User_Task = eST_User_Task_IDLE;
+							bFLag_Working_Led == eFALSE;
+							bFlag_Ready_Led = eTRUE;
                           }
                           //Back to eST_User_Task_IDLE, when reset
                           if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
                           {
-                            
-                            eState_User_Task=eST_User_Task_INIT;
+                            eState_User_Task = eST_User_Task_INIT;
                           }
+						}
                   }
                 break;
                 
@@ -331,7 +370,19 @@ void vUserTaskMainProcess(void)
                           #endif /*USE_DEBUG_MASTER*/
                   }
                   else
-                  {     
+                  {
+						  // STOP BUTTON
+						  if(State_StopButton[0] == eTRUE)
+							{
+								eState_User_Task=eST_User_Task_IDLE;
+							}
+						  else
+							{
+						  //Turn on Working_Led
+						  if(bFLag_Working_Led == eTRUE)
+							{
+								GPIO_SetBits(GPIOA,GPIO_Pin_5);
+							}    
                           //Control X,Y,Z
                           if(BUFFER_ENCODER.Flag_Home==eTRUE)
                           {
@@ -360,6 +411,8 @@ void vUserTaskMainProcess(void)
                           {
                             BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
                             eState_User_Task=eST_User_Task_IDLE;
+							bFLag_Working_Led == eFALSE;
+							bFlag_Ready_Led = eTRUE;
                           }
                           //Back to eST_User_Task_IDLE, when reset
                           if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
@@ -367,6 +420,7 @@ void vUserTaskMainProcess(void)
                             
                             eState_User_Task=eST_User_Task_INIT;
                           }
+					 }
                   }
                 break;
                 
@@ -395,6 +449,18 @@ void vUserTaskMainProcess(void)
                   }
                   else
                   {
+					  // STOP BUTTON
+					  if(State_StopButton[0] == eTRUE)
+						{
+							eState_User_Task=eST_User_Task_IDLE;
+						}
+					  else
+						{
+						  //Turn on Working_Led
+						  if(bFLag_Working_Led == eTRUE)
+							{
+								GPIO_SetBits(GPIOA,GPIO_Pin_5);
+							} 
                           //Scan Thread Hole
                           if(bDetectThreadHole())
                             BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data]=eTRUE;
@@ -417,6 +483,8 @@ void vUserTaskMainProcess(void)
                           {
                             BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
                             eState_User_Task=eST_User_Task_IDLE;
+							bFLag_Working_Led == eFALSE;
+							bFlag_Ready_Led = eTRUE;
                           }
                           //Back to eST_User_Task_IDLE, when reset
                           if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
@@ -424,6 +492,7 @@ void vUserTaskMainProcess(void)
                             
                             eState_User_Task=eST_User_Task_INIT;
                           }
+					 }
                   }
                 break;
                 
@@ -449,6 +518,18 @@ void vUserTaskMainProcess(void)
                   }
                   else
                   {
+					  // STOP BUTTON
+					  if(State_StopButton[0] == eTRUE)
+						{
+							eState_User_Task=eST_User_Task_IDLE;
+						}
+					   else
+						{
+						  //Turn on Working_Led
+						  if(bFLag_Working_Led == eTRUE)
+							{
+								GPIO_SetBits(GPIOA,GPIO_Pin_5);
+							}
                           //Read Hole Data follow iIdex_hole_check
                           switch (Status_CheckThreadProcess)
                           {
@@ -467,7 +548,7 @@ void vUserTaskMainProcess(void)
                                       }
                                   //Conditions Change State :
                                       if(bChangeCutter==eFALSE)
-                                        Status_CheckThreadProcess=Status_RuntoHole;
+                                        Status_CheckThreadProcess = Status_RuntoHole;
                                 break;
                                 
                               case Status_RuntoHole :
@@ -502,8 +583,8 @@ void vUserTaskMainProcess(void)
                                     //3rd : + run follow steps
                                     vStepSpindleCheckHoleProcess();
                                     //Conditions Change State :
-                                    if(Status_SpindleCheckProcess==sSpindle_Finish)
-                                      Status_CheckThreadProcess=Status_FinishThreadProcess;
+                                    if(Status_SpindleCheckProcess == sSpindle_Finish)
+                                      Status_CheckThreadProcess = Status_FinishThreadProcess;
                                 break;
                                 
                               case Status_FinishThreadProcess :
@@ -529,13 +610,15 @@ void vUserTaskMainProcess(void)
                           {
                             BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
                             eState_User_Task=eST_User_Task_IDLE;
+							bFLag_Working_Led == eFALSE;
+							bFlag_Ready_Led = eTRUE;
                           }
                           //Back to eST_User_Task_IDLE, when reset
                           if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
                           {
-                            
                             eState_User_Task=eST_User_Task_INIT;
                           }
+						}
                   }
                 break;
                 
@@ -650,23 +733,24 @@ void vSetAirVale(state_control_air_value bProcess)
   switch(bProcess)
   {
   case SpindleGoDown:
-      sControlAirValue.sCoil_1=sCoil_1_GoDown;
-      sControlAirValue.sCoil_2=sCoil_2_GoDown;
-      sControlAirValue.sCoil_3=sCoil_3_GoDown;
+		GPIO_SetBits(sCoil_1, sCoil_1_GoDown);
+        GPIO_ResetBits(sCoil_2,sCoil_2_GoDown);
+ 		GPIO_ResetBits(sCoil_3,sCoil_3_GoDown);
     break;
     
   case SpindleGoUp:
-      sControlAirValue.sCoil_1=sCoil_1_GoUp;
-      sControlAirValue.sCoil_2=sCoil_2_GoUp;
-      sControlAirValue.sCoil_3=sCoil_3_GoUp;
+        GPIO_ResetBits(sCoil_1,sCoil_1_GoUp);
+		GPIO_SetBits(sCoil_2,sCoil_2_GoUp);
+ 		GPIO_ResetBits(sCoil_3,sCoil_3_GoUp);
     break;
     
   case SpindleResetHome:
-      sControlAirValue.sCoil_1=sCoil_1_ResetHome;
-      sControlAirValue.sCoil_2=sCoil_2_ResetHome;
-      sControlAirValue.sCoil_3=sCoil_3_ResetHome;
+ 		GPIO_SetBits(sCoil_3,sCoil_3_ResetHome);
+		GPIO_ResetBits(sCoil_2,sCoil_2_ResetHome);
+        GPIO_ResetBits(sCoil_1,sCoil_1_ResetHome);
+ 		
     break;
-    
+
   default:
     break;
   }
@@ -764,7 +848,7 @@ void vStepSpindleCheckHoleProcess()
       
     case sSpindle_Spindle_GoDown:
           //What things to do
-          Buffer_LinearScale.spindle_position=SPINDLE_LINEARHOME;                           
+          Buffer_LinearScale.spindle_position = SPINDLE_LINEARHOME;                           
           
           BUFFER_CONTROL_DC_SPINDLE.bDC_Driection=SPINDLE_FORWARD;              
           BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RORATY;
@@ -882,96 +966,7 @@ void vStepSpindleCheckHoleProcess()
 
 
 
-//<<<<<<<<<----------------------------------------->>>>>>>>>//
-//-----------------------CODE TEST---------------------------//
-//<<<<<<<<<----------------------------------------->>>>>>>>>//
-//
-//                case eST_User_Task_Encoder:
-//                        if(bFlag_1st_Case==eTRUE)
-//                        {
-//                                bFlag_1st_Case = eFALSE;
-//                        }
-//                        else
-//                        {			
-//                                /* Check encoder counter */
-//                                vGetEncoderValue();
-//                                MOTOR_2_DUTY(30);
-//                                if(rotary_cntr >=2000)
-//                                {
-//                                   MOTOR_2_DUTY(0);
-//                                }                   
-//                        }
-//                break;
-//                case eST_User_Task_PWM:
-//                        if(bFlag_1st_Case==eTRUE)
-//                        {
-//                                bFlag_1st_Case = eFALSE;
-//                        }
-//                        else
-//                        {        
-//                                 /*Motor control*/
-//
-//                                /* Local variable */
-//                                static enumbool bFlagSystemRun = eFALSE;
-//                                if(bFlagSystemRun == eFALSE)
-//                                {
-//                                  vIO_ConfigOutput(&OUT_LED_1,10,0,0,RELAY_ON,RELAY_OFF,eFALSE);
-//                                }
-//                                
-//                                if(EMERGENCY_BUTTON_1_STATE==eButtonSingleClick)
-//                                //if(EMERGENCY_BUTTON_IO==0)
-//                                {
-//                                  bFlagSystemRun = eTRUE;
-//                                  vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-//                             
-//                                  static uint8_t bDutyMotor;
-//                                  bDutyMotor =50;
-//                                  vMotorControl(bDutyMotor, 1);
-//                                }
-//                                
-//                                if(EMERGENCY_BUTTON_2_STATE==eButtonSingleClick)
-//                                {
-//                                    bFlagSystemRun = eTRUE;
-//                                    vIO_ConfigOutput(&OUT_LED_1,10,100,10,RELAY_OFF,RELAY_OFF,eTRUE);
-//
-//                                    static uint8_t bDutyMotor;
-//                                    bDutyMotor =50;
-//                                    vMotorControl(bDutyMotor, 2);
-//                                }            
-//                        }
-//                break;
 
-//uint32_t	ixIndex_ADC_Buffer;
-//uint32_t	ADC_Buffer[10];
-//static uint32_t sum_ADC = 0;
-//static uint32_t value_ADC_tb = 0;
-
-//                case eST_User_Task_DMA_ADC:
-//                                if(bFlag_1st_Case==eTRUE)
-//                                {
-//                                        bFlag_1st_Case = eFALSE;
-//                                }
-//                                else
-//                                { 
-//                                        /* Test ADC to PWM function */
-//                                        static uint32_t iIndex;
-//                                        sum_ADC = 0;
-//                                        ixIndex_ADC_Buffer = ixIndex_ADC_Buffer+1;
-//
-//                                        if(ixIndex_ADC_Buffer>=10)		ixIndex_ADC_Buffer=0;
-//                                        ADC_Buffer[ixIndex_ADC_Buffer] = ADCConvertedValue;
-//                                        
-//                                        sum_ADC = 0;
-//                                        
-//                                        for (iIndex=0;iIndex<10;iIndex++)
-//                                        {
-//                                          sum_ADC = sum_ADC+ ADC_Buffer[iIndex];
-//                                        }
-//
-//                                        value_ADC_tb = sum_ADC/10;
-//                                        MOTOR_1_DUTY(value_ADC_tb/41);
-//                                }
-//                break;
 
 
 

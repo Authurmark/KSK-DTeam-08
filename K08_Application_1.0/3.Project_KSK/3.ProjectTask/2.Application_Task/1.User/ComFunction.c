@@ -418,7 +418,7 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
             
             
             
-            
+           
             
           //Recieve Data from Slave2 - USART2
           case P2TCMD_ENCODER_HOME:
@@ -681,7 +681,7 @@ void vFeedBackDetectOverTime(void)
 //    }
 //  }
   
-}
+//}
 
 
 
@@ -851,7 +851,7 @@ typedef enum {
 
 //USART 2 - send to Slave2
 typedef enum {
-    Bf2_ConfigParamater          = 0x00,
+    Bf2_ConfigParamater         = 0x00,
     Bf_Control_DC_Spindle       = 0x01,
     Bf_Current_Measure          = 0x02,
 }state_make_uart2_buffer_tx;
@@ -1027,18 +1027,18 @@ void vMakeBufferTXTask( void *pvParameters )
 //              break;
 //            
 //              //send to PC-USART3
-
+//
 //            
 //            
 //              //send to Slave1-USART1
 //              
 //              
 //              //send to Slave2-USART2
-
 //
-
+//
+//
 //          }
-//   
+   
       }
 }
 

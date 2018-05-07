@@ -123,8 +123,40 @@ void vIO_Kernel_Task( void *pvParameters )
 		fIO_Input_Task();
 		/* Output Task: Relay, LED... */
 		fIO_Output_Task();
+		/*DETECT BUTTON*/
+		Detect_StopButton();
 	}
 }
+/*--------- DETECT BUTTON ---------------*/
+uint8 Cnt_TimeHold_StopButton[2];
+enumbool State_StopButton[2];
+
+uint8 Cnt_TimeHold_PauseButton[2];
+enumbool State_PauseButton[2];
+
+
+void Detect_StopButton(void)
+{
+	/*----------------------------------------------StopButton---------------------------------------------------*/
+	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eTRUE)					 Cnt_TimeHold_StopButton[0]++;
+	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eFALSE)					 Cnt_TimeHold_StopButton[0]=0;
+	if(Cnt_TimeHold_StopButton[0] >= 2)							 							 State_StopButton[0] = eTRUE;
+	if(Cnt_TimeHold_StopButton[0] < 2)														 State_StopButton[0] = eFALSE;
+		/*----------------------------------------------PauseButton---------------------------------------------------*/
+	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eTRUE)					 Cnt_TimeHold_PauseButton[0]++;
+	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eFALSE)					 Cnt_TimeHold_PauseButton[0]=0;
+	if(Cnt_TimeHold_PauseButton[0] >= 2)							 					     State_PauseButton[0] = eTRUE;
+	if(Cnt_TimeHold_PauseButton[0] < 2)														 State_PauseButton[0] = eFALSE;
+}
+
+
+
+
+
+
+
+
+
 
 /* Input Process Task, all function input will run here. */
 void fIO_Input_Task( void )

@@ -50,26 +50,6 @@ void vInit_DetectHole(void);
 enumbool bLaserSensor_1(void);
 enumbool bLaserSensor_2(void);
 enumbool bDetectThreadHole(void);
-
-
-/*----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & PWM FUNCTION PROTOTYPE----------------//
-/*--------------------------------------------------------------------------*/
-#define MOTOR_1_DUTY 	vChangeDutyCycleOC1
-#define MOTOR_2_DUTY 	vChangeDutyCycleOC2
-
-void vInitPWMFunction(void);
-void vChangeDutyCycleOC1(uint8_t bDutyPercent);
-void vChangeDutyCycleOC2(uint8_t bDutyPercent);
-
-void vMotorControl(uint8_t bDutyMotor, uint8_t bDirection);
-
-/*----------------------------------------------------------------------------*/
-//--------------DEFINE FOR PROTOTYPE & ADC FUNCTION PROTOTYPE----------------//
-/*--------------------------------------------------------------------------*/
-
-void vInit_DMA_ADC_Function(void);
-
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
 /*---------------------------------------------------------------------------*/
@@ -87,6 +67,18 @@ void vInit_LinearScale_BPulse(void);
 void EXTILine7_Config(void);
 void EXTI9_5_IRQHandler(void);
 void vGetLinearScaleValue(void);
+/*-----------------------------------------------------------------------------*/
+//-------------------------------Control Air Valve----------------------------//
+/*---------------------------------------------------------------------------*/
+void vInit_SetAirVale(void);
+/*-----------------------------------------------------------------------------*/
+//------------------------   -CONFIG LED AND BUTTON---------------------------//
+/*---------------------------------------------------------------------------*/
+void vInit_LED(void);
+void vInit_LED_DeBug(void);
+void vInit_BUTTON(void);
+void EXTILine15_Config(void);
+void EXTI15_10_IRQHandler(void);
 
 
 /*-----------------------------------------------------------------------------*/
@@ -99,6 +91,12 @@ extern IO_Struct pLED1, pCutOffCircuit;
 extern structIO_Manage_Output strRELAY_1, strRELAY_2, strRELAY_3;
 extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
+/*EXTERN BUTTON*/
+extern uint8 Cnt_TimeHold_StopButton[2];
+extern enumbool State_StopButton[2];
+extern uint8 Cnt_TimeHold_PauseButton[2];
+extern enumbool State_PauseButton[2];
+
 
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;

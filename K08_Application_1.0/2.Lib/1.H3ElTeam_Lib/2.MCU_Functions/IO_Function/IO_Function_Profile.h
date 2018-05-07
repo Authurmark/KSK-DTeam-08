@@ -107,7 +107,7 @@
 
 		#ifdef USE_RELAY_2
 			#define RELAY_2_PORT		GPIOA
-			#define RELAY_2_PIN			GPIO_Pin_15
+			#define RELAY_2_PIN			GPIO_Pin_7
 			#define RELAY_2_RCC_PORT	RCC_APB2Periph_GPIOA
 			#define RELAY_2_CLK_CMD		RCC_APB2PeriphClockCmd
 			#define RELAY_2_MODE		GPIO_Mode_Out_PP
@@ -116,7 +116,7 @@
 		
 		#ifdef USE_RELAY_3
 			#define RELAY_3_PORT		GPIOA
-			#define RELAY_3_PIN			GPIO_Pin_4
+			#define RELAY_3_PIN			GPIO_Pin_1
 			#define RELAY_3_RCC_PORT	RCC_APB2Periph_GPIOA
 			#define RELAY_3_CLK_CMD		RCC_APB2PeriphClockCmd
 			#define RELAY_3_MODE		GPIO_Mode_Out_PP
@@ -128,7 +128,7 @@
 	#ifdef USE_BUTTON_IO
 		#ifdef USE_BUTTON_IO_1
 			#define BUTTON_1_PORT		GPIOB
-			#define BUTTON_1_PIN		GPIO_Pin_5
+			#define BUTTON_1_PIN		GPIO_Pin_12
 			#define BUTTON_1_RCC_PORT	RCC_APB2Periph_GPIOB
 			#define BUTTON_1_CLK_CMD	RCC_APB2PeriphClockCmd
 			#define BUTTON_1_MODE		GPIO_Mode_IPU
@@ -145,7 +145,7 @@
 		#endif /* USE_BUTTON_IO_1 */
 		#ifdef USE_BUTTON_IO_2
 			#define BUTTON_2_PORT		GPIOB
-			#define BUTTON_2_PIN		GPIO_Pin_8
+			#define BUTTON_2_PIN		GPIO_Pin_13
 			#define BUTTON_2_RCC_PORT	RCC_APB2Periph_GPIOB
 			#define BUTTON_2_CLK_CMD	RCC_APB2PeriphClockCmd
 			#define BUTTON_2_MODE		GPIO_Mode_IPU
@@ -172,7 +172,7 @@
 		#endif /* USE_BUTTON_IO_3 */
 		#ifdef USE_BUTTON_IO_4
 			#define BUTTON_4_PORT		GPIOA
-			#define BUTTON_4_PIN		GPIO_Pin_3
+			#define BUTTON_4_PIN		GPIO_Pin_0
 			#define BUTTON_4_RCC_PORT	RCC_APB2Periph_GPIOA
 			#define BUTTON_4_CLK_CMD	RCC_APB2PeriphClockCmd
 			#define BUTTON_4_MODE		GPIO_Mode_IPU

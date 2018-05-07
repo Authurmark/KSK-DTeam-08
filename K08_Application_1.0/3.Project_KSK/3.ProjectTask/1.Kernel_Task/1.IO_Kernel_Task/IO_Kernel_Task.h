@@ -21,7 +21,7 @@ hardware function.
 #define _IO_Kernel_Task__H
 /* File includes. */
 #include "IO_Function_Profile.h"
-/*-----------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 /* Funtion Prototype */
 void vIO_Kernel_Task( void *pvParameters );
 void fIO_Input_Task( void );
@@ -33,4 +33,12 @@ void fIO_Relay_Process( void );
 void fIO_LED_Process( void );
 void fIO_BELL_Process( void );
 
+/*------------------------- DETECT BUTTON ------------------------------------*/
+#define Port_StopButton			GPIOB
+#define Pin_StopButton			GPIO_Pin_14
+
+#define Port_PauseButton	    GPIOB
+#define Pin_PauseButton			GPIO_Pin_15
+
+void Detect_StopButton(void);
 #endif /* _IO_Kernel_Task__H */

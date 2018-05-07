@@ -22,12 +22,12 @@ hardware function.
 /*-----------------------------------------------------------*/
 typedef enum
 { 
-    eUserTask_State_Idle			= 1,
+    eUserTask_State_Idle				= 1,
     eUserTask_State_CheckButton 		= 2,
     eUserTask_State_CheckPIR 			= 3,
-    eUserTask_State_CheckRelayState 	        = 4,
+    eUserTask_State_CheckRelayState		= 4,
     eMainTask_State_MAIN,
-    eMainNullState                              =0xff,
+    eMainNullState                      =0xff,
 }eUserState;
 /* Funtion Prototype */
 void vUserTask( void *pvParameters );
@@ -44,34 +44,28 @@ void vInitCutter(void);
 /* Control Air Valves */
 void vReleaseCutter(void);
 void vGetCutter(void);
+#define sCoil_1				GPIOB
+#define sCoil_2           	GPIOB
+#define sCoil_3				GPIOB
 
+#define sCoil_1_GoDown		GPIO_Pin_3         
+#define sCoil_1_GoUp        GPIO_Pin_3
+#define sCoil_1_ResetHome   GPIO_Pin_3
 
-#define sCoil_1_GoDown       eTRUE         
-#define sCoil_1_GoUp         eFALSE
-#define sCoil_1_ResetHome    eFALSE
+#define sCoil_2_GoDown      GPIO_Pin_4         
+#define sCoil_2_GoUp        GPIO_Pin_4 
+#define sCoil_2_ResetHome   GPIO_Pin_4 
 
-#define sCoil_2_GoDown       eFALSE         
-#define sCoil_2_GoUp         eTRUE
-#define sCoil_2_ResetHome    eTRUE
-
-#define sCoil_3_GoDown       eFALSE         
-#define sCoil_3_GoUp         eFALSE
-#define sCoil_3_ResetHome    eTRUE
+#define sCoil_3_GoDown      GPIO_Pin_5      
+#define sCoil_3_GoUp        GPIO_Pin_5
+#define sCoil_3_ResetHome   GPIO_Pin_5
+ 
 
 typedef enum {
     SpindleGoDown      = 0x01,
     SpindleGoUp        = 0x02,
     SpindleResetHome   = 0x03,
 }state_control_air_value;
-
-typedef struct{
-  state_control_air_value       bProcess;
-  enumbool                      sCoil_1;
-  enumbool                      sCoil_2;
-  enumbool                      sCoil_3;
-}strcontrolairvalue;
-
-strcontrolairvalue sControlAirValue;
 
 
 

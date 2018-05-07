@@ -20,7 +20,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>1818709557</Checksum>
+        <Checksum>3083802752</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -30,8 +30,8 @@
         <Enabled>_ 0</Enabled>
     </CodeCoverage>
     <Disassembly>
-        <InstrCount>0</InstrCount>
         <MixedMode>1</MixedMode>
+        <InstrCount>0</InstrCount>
     </Disassembly>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -131,13 +131,8 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.250.9" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\ComFunction.c}.335.11" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.793.13" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.823.13" 0 0 1 "" 0 "" 0</Bp3>
-        <Bp4>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.510.37" 0 0 1 "" 0 "" 0</Bp4>
-        <Bp5>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.530.29" 0 0 1 "" 0 "" 0</Bp5>
-        <Count>6</Count>
+        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\3.ProjectTask\2.Application_Task\1.User\UserTask.c}.307.9" 0 0 1 "" 0 "" 0</Bp0>
+        <Count>1</Count>
     </Breakpoints2>
     <Aliases>
         <A0>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\main.c" ""</A0>
