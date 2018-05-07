@@ -95,6 +95,14 @@ extern IO_Struct pRS485_DIR;
 
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
+/*--------------------------Error_Process----------------------------------------*/
+void vInit_Error_Process(void);
+extern enumbool bFlag_Error_Process;
+
+
+
+
+
 
 #define LED_USER_1_ON		pLED1.write(ON);
 #define LED_USER_1_OFF		pLED1.write(OFF);

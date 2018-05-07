@@ -106,13 +106,13 @@ typedef enum Cmd_Type {
 typedef enum{
 	E_OverLoad		= 0x01,
 	E_OverTime		= 0x02,
-}eError_Process;
+}bError_Process;
 
 /* Control DC Spindle */
 typedef struct{
   state_process         bProcess;
   uint8                 Speed_DC;
-  eError_Process		Error_Process;
+  bError_Process		Error_Process;
   state_DC_Spindle      bDC_Driection;
 }Buffer_Control_DC_Spindle;
 extern Buffer_Control_DC_Spindle BUFFER_CONTROL_DC_SPINDLE;

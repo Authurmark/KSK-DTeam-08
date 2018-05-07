@@ -105,13 +105,8 @@ void main(void)
 	OS_xTaskCreate(vIO_Kernel_Task, "IO_KERNEL_TASK", IO_KERNEL_TASK_STACK_SIZE, NULL, IO_KERNEL_TASK_PRIORITY, &xIO_Task_Handle );
 	/* Create Application Task */
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
-        /* Create MakeBufferTX Task */
+    /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
-
-        /*Valiable For Control StepMotor*/
-	#ifdef	USE_DEBUG_TIME_CATCH
- 		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
-	#endif
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
     while(1);
@@ -142,9 +137,11 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
+  vInit_Error_Process();
   
   vComDataProcess_USART1();
   vComDataProcess_USART2();
+
   
 }
 

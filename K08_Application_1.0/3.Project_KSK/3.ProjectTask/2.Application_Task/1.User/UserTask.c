@@ -135,15 +135,18 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-    			BUFFER_CONTROL_DC_SPINDLE.bProcess =   SPINDLE_RESET;
+    			BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RESET;
 				switch(BUFFER_CONTROL_DC_SPINDLE.bProcess)
 				{
 					case SPINDLE_RORATY:
 					  eState_User_Task = eST_User_Task_SpindleRotary;
-					  bFlag_Update = eTRUE;
+					  bFlag_1st_Case = eTRUE;
+ 					  BUFFER_ENCODERHOME.Flag_Home = 0;
 					break;
 					case SPINDLE_RESET:
 					  eState_User_Task = eST_User_Task_SpindleReset;
+					  bFlag_1st_Case = eTRUE;
+					  bFlag_Status_Spindle = 0;
 					break;
 					default:
 					break;
@@ -151,29 +154,38 @@ void vUserTaskMainProcess(void)
             }
 		break;
         case eST_User_Task_SpindleRotary:
-            if(bFlag_Update==eTRUE)
+            if(bFlag_1st_Case==eTRUE)
 			{
-			 	bFlag_Update = eFALSE;	
+			 	bFlag_1st_Case = eFALSE;
 			}
 			else
 			{   
                 
-				vMotorControl(30,SPINDLE_FORWARD);
+				vMotorControl(20,SPINDLE_FORWARD);
 		     	Current_Measure_Value();
-                if(Current_Value >= BUFFER_CURRENT_MEASURE.Current_Max)
-                vMotorControl(30,SPINDLE_REVERSE);
-                
+//                if(Current_Value >= BUFFER_CURRENT_MEASURE.Current_Max)
+//                vMotorControl(30,SPINDLE_REVERSE);
+             //   if(bFlag_Error_Process == eTRUE) eState_User_Task = eST_User_Task_IDLE;
 			}
 		break;
 		case eST_User_Task_SpindleReset:
-			if(bFlag_Update==eTRUE)
+			if(bFlag_1st_Case==eTRUE)
 			{
-			 	  bFlag_Update = eFALSE;	
+			 	bFlag_1st_Case = eFALSE;
+				BUFFER_ENCODERHOME.Flag_Update = eFALSE;
 			}
 			else
 			{
+               if(BUFFER_ENCODERHOME.Flag_Home ==1)
+			   {
+                eState_User_Task = eST_User_Task_IDLE;
+			   }
+               else
+			   {
 			   Spindle_Home();
-               if( bFlag_Status_Spindle == 2)    eState_User_Task = eST_User_Task_IDLE;
+               if(bFlag_Status_Spindle == 2)     eState_User_Task = eST_User_Task_IDLE;
+			   //if(bFlag_Error_Process == eTRUE)  eState_User_Task = eST_User_Task_IDLE;
+			   }
 			}
 		break;
 		case eST_User_Task_LOGGING:

@@ -278,8 +278,8 @@ void vInitPWMFunction(void)
         
         /* PWM will control DC motor */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; 
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; 
+//	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable; 
 	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
@@ -308,7 +308,7 @@ void vInitPWMFunction(void)
 	GPIO_InitTypeDef  GPIO_InitStructure;
         
 	/* Configure PB0 PB1 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 ;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);  
@@ -316,11 +316,11 @@ void vInitPWMFunction(void)
 
 void vChangeDutyCycleOC1(uint8_t bDutyPercent)
 {
-	TIM1->CCR1 = (bDutyPercent*65535)/100;
+	TIM1 -> CCR1 = (bDutyPercent*65535)/100;
 }
 void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 {
-	TIM1->CCR2 = (bDutyPercent*65535)/100;
+	TIM1 -> CCR2 = (bDutyPercent*65535)/100;
 }
 
 void vMotorControl( uint8 bDutyMotor,state_DC_Spindle bDirection)
@@ -435,21 +435,28 @@ void vInit_DMA_ADC_Function(void)
 uint32 bFlag_Status_Spindle = 0;
 void Spindle_Home(void)
 {
-  BUFFER_ENCODERHOME.Flag_Home = 0;
-  if(bFlag_Status_Spindle == 0)
+  switch (bFlag_Status_Spindle)
   {
-  vMotorControl(20,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
-  bFlag_Status_Spindle =1;
-  }
-  if((GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4)== eFALSE) && bFlag_Status_Spindle ==1 ) 
-  {
-  BUFFER_ENCODERHOME.Flag_Home = 1;
-  vMotorControl(0,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
-  }
-  if(BUFFER_ENCODERHOME.Flag_Home = 1)
-  {
-  bFlag_Status_Spindle =2;
-  }
+  case 0:
+ // vMotorControl(20,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
+    vMotorControl(20,SPINDLE_FORWARD);
+	if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4)== eFALSE)
+	{
+  	bFlag_Status_Spindle =1;
+    vMotorControl(0,SPINDLE_DISABLE);
+	}
+  break;
+  case 1:
+	BUFFER_ENCODERHOME.Flag_Home = 1;
+	BUFFER_ENCODERHOME.Flag_Update = eTRUE;
+	if(BUFFER_ENCODERHOME.Flag_Home == 1)
+	{
+	bFlag_Status_Spindle = 2;
+	}
+  break;
+  default:
+  break;
+ }
 }
 
 void vInit_HomeEncoder(void)
@@ -474,12 +481,23 @@ void Current_Measure_Value(void)
 
   Buffer_ADC_Current_Measure[iIndexCurrentMeasure] = ADCConvertedValue;
   iIndexCurrentMeasure=(iIndexCurrentMeasure+1)%10;
- 
- 
   for (iIndex=0;iIndex<10;iIndex++)
   {
 	Sum_ADC = Sum_ADC+ Buffer_ADC_Current_Measure[iIndex];
   }
   Current_Value = Sum_ADC/10;
 }
+
+/*--------------------------Error_Process----------------------------------------*/
+enumbool bFlag_Error_Process = eFALSE;
+int i = 0;
+void vInit_Error_Process(void)
+{
+ if(Current_Value >> BUFFER_CURRENT_MEASURE.Current_Max) 
+ { 
+ BUFFER_CONTROL_DC_SPINDLE.Error_Process = E_OverLoad;
+ bFlag_Error_Process = eTRUE;	
+ }
+}
+
 #endif /* _Project_Function__C */

@@ -189,6 +189,7 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
             break;
           	case P2TCMD_Current_Measure:
                BUFFER_CURRENT_MEASURE.Current_Max			 = UART_BUFFER_RX[iUART_DATA];
+               BUFFER_CURRENT_MEASURE.Flag_Update            = eTRUE;
 			break;
           /* CODE MAU TAO BUFFER TX GUI */
           	case P2TCMD_TEST:
@@ -465,11 +466,19 @@ void vMakeBufferTXTask( void *pvParameters )
           switch (CntUartBufferTx)
           {
               case Bf_Current_Measure :
+ 				  if(BUFFER_CURRENT_MEASURE.Flag_Update == eTRUE)
+					{
+					BUFFER_CURRENT_MEASURE.Current_Value;
+					}
                   PARA1 = BUFFER_CURRENT_MEASURE.Current_Value;
                   UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,0,0,0,0);
                   UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);
               break;
               case Bf_Encoder :
+				  if(BUFFER_ENCODERHOME.Flag_Update == eTRUE)
+                  {
+				  BUFFER_ENCODERHOME.Flag_Home;
+				  }
                   PARA1 = BUFFER_ENCODERHOME.Flag_Home;
                   UART_MakeData(UART2_BUFFER_TX,0,PARA1,0,0,0,0,0);
                   UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);        

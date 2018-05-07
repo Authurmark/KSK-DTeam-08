@@ -116,7 +116,7 @@
 		
 		#ifdef USE_RELAY_3
 			#define RELAY_3_PORT		GPIOA
-			#define RELAY_3_PIN			GPIO_Pin_4
+			#define RELAY_3_PIN			GPIO_Pin_1
 			#define RELAY_3_RCC_PORT	RCC_APB2Periph_GPIOA
 			#define RELAY_3_CLK_CMD		RCC_APB2PeriphClockCmd
 			#define RELAY_3_MODE		GPIO_Mode_Out_PP
