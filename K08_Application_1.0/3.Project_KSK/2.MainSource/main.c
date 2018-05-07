@@ -63,7 +63,7 @@ extern timer tP_ScanHole;
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
-        extern void vMakeBufferTXTask (void *pvParameters);
+    extern void vMakeBufferTXTask (void *pvParameters);
     
 	/* Variable for Handler */
 	xTaskHandle xIO_Task_Handle;
@@ -107,20 +107,19 @@ extern timer tP_ScanHole;
 	OS_xTaskCreate(vIO_Kernel_Task, "IO_KERNEL_TASK", IO_KERNEL_TASK_STACK_SIZE, NULL, IO_KERNEL_TASK_PRIORITY, &xIO_Task_Handle );
 	/* Create Application Task */
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
-        /* Create MakeBufferTX Task */
+    /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
 
-        /*Valiable For Control StepMotor*/
+    /*Valiable For Control StepMotor*/
 	extern uint8 X_Axis_Speed;
 	vInit_STEP_MOTOR_Function();
 	//timer_set(&tP_StepA, X_Axis_Speed ,CLOCK_TYPE_US);
 	timer_set(&tP_StepA,10,CLOCK_TYPE_US);
-  		/*Valiable For ScanHole*/
+    /*Valiable For ScanHole*/
     timer_set (&tP_ScanHole,500,CLOCK_TYPE_MS);
-    
-    
+  
 	#ifdef	USE_DEBUG_TIME_CATCH
- 		timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
+ 	timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
 	#endif
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
@@ -153,6 +152,7 @@ void vApplicationIdleHook(void);
 void vApplicationIdleHook(void)
 {
   vMotorStepControl();
+  vInit_Error_Process();
 
   vComDataProcess_USART1();
   vComDataProcess_USART2();

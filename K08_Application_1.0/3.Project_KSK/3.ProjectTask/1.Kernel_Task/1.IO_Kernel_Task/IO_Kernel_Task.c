@@ -136,33 +136,53 @@ void vIO_Kernel_Task( void *pvParameters )
 
 /*--------- DETECT ENDSTOP ---------------*/
 
-uint8 Cnt_TimeHold_EndStop_X [6];
-enumbool State_EndStop_X [6];
+uint8 Cnt_TimeHold_EndStop_X_1 [6];
+enumbool State_EndStop_X_1 [6];
+uint8 Cnt_TimeHold_EndStop_X_2 [6];
+enumbool State_EndStop_X_2 [6];
 
-uint8 Cnt_TimeHold_EndStop_Y [6];
-enumbool State_EndStop_Y [6];
+uint8 Cnt_TimeHold_EndStop_Y_1 [6];
+enumbool State_EndStop_Y_1 [6];
+uint8 Cnt_TimeHold_EndStop_Y_2 [6];
+enumbool State_EndStop_Y_2 [6];
 
-uint8 Cnt_TimeHold_EndStop_Z [6];
-enumbool State_EndStop_Z [6];
-
+uint8 Cnt_TimeHold_EndStop_Z_1 [6];
+enumbool State_EndStop_Z_1 [6];
+uint8 Cnt_TimeHold_EndStop_Z_2 [6];
+enumbool State_EndStop_Z_2 [6];
 
 void Detect_EndStop(void)
 {
 	/*----------------------------------------------ENDSTOP AXIS X 1---------------------------------------------------*/
-	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eTRUE)					 Cnt_TimeHold_EndStop_X[0]++;
-	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eFALSE)					 Cnt_TimeHold_EndStop_X[0]=0;
-	if(Cnt_TimeHold_EndStop_X[0] >= 2)							 							 State_EndStop_X[0] = eTRUE;
-	if(Cnt_TimeHold_EndStop_X[0] < 2)														 State_EndStop_X[0] = eFALSE;
+	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eTRUE)					 Cnt_TimeHold_EndStop_X_1[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eFALSE)					 Cnt_TimeHold_EndStop_X_1[0]=0;
+	if(Cnt_TimeHold_EndStop_X_1[0] >= 2)							 						 State_EndStop_X_1[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_X_1[0] < 2)														 State_EndStop_X_1[0] = eFALSE;
+	/*----------------------------------------------ENDSTOP AXIS X 2---------------------------------------------------*/
+	if((GPIO_ReadInputDataBit(Port_EndStop_X_2, Pin_EndStop_X_2))== eTRUE)					 Cnt_TimeHold_EndStop_X_2[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_X_2, Pin_EndStop_X_2))== eFALSE)					 Cnt_TimeHold_EndStop_X_2[0]=0;
+	if(Cnt_TimeHold_EndStop_X_2[0] >= 2)							 						 State_EndStop_X_2[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_X_2[0] < 2)														 State_EndStop_X_2[0] = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
-	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eTRUE)					 Cnt_TimeHold_EndStop_Y[0]++;
-	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eFALSE)					 Cnt_TimeHold_EndStop_Y[0]=0;
-	if(Cnt_TimeHold_EndStop_Y[0] >= 2)							 							 State_EndStop_Y[0] = eTRUE;
-	if(Cnt_TimeHold_EndStop_Y[0] < 2)														 State_EndStop_Y[0] = eFALSE;	
+	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eTRUE)					 Cnt_TimeHold_EndStop_Y_1[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eFALSE)					 Cnt_TimeHold_EndStop_Y_1[0]=0;
+	if(Cnt_TimeHold_EndStop_Y_1[0] >= 2)							 						 State_EndStop_Y_1[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_Y_1[0] < 2)														 State_EndStop_Y_1[0] = eFALSE;	
+	/*----------------------------------------------ENDSTOP AXIS Y 2---------------------------------------------------*/
+	if((GPIO_ReadInputDataBit(Port_EndStop_Y_2, Pin_EndStop_Y_2))== eTRUE)					 Cnt_TimeHold_EndStop_Y_2[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_Y_2, Pin_EndStop_Y_2))== eFALSE)					 Cnt_TimeHold_EndStop_Y_2[0]=0;
+	if(Cnt_TimeHold_EndStop_Y_2[0] >= 2)							 						 State_EndStop_Y_2[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_Y_2[0] < 2)														 State_EndStop_Y_2[0] = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
-	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eTRUE)					 Cnt_TimeHold_EndStop_Z[0]++;
-	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eFALSE)					 Cnt_TimeHold_EndStop_Z[0]=0;
-	if(Cnt_TimeHold_EndStop_Z[0] >= 2)							 							 State_EndStop_Z[0] = eTRUE;
-	if(Cnt_TimeHold_EndStop_Z[0] < 2)														 State_EndStop_Z[0] = eFALSE;	
+	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eTRUE)					 Cnt_TimeHold_EndStop_Z_1[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eFALSE)					 Cnt_TimeHold_EndStop_Z_1[0]=0;
+	if(Cnt_TimeHold_EndStop_Z_1[0] >= 2)							 							 State_EndStop_Z_1[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_Z_1[0] < 2)														 State_EndStop_Z_1[0] = eFALSE;
+	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
+	if((GPIO_ReadInputDataBit(Port_EndStop_Z_2, Pin_EndStop_Z_2))== eTRUE)					 Cnt_TimeHold_EndStop_Z_2[0]++;
+	if((GPIO_ReadInputDataBit(Port_EndStop_Z_2, Pin_EndStop_Z_2))== eFALSE)					 Cnt_TimeHold_EndStop_Z_2[0]=0;
+	if(Cnt_TimeHold_EndStop_Z_2[0] >= 2)							 						 State_EndStop_Z_2[0] = eTRUE;
+	if(Cnt_TimeHold_EndStop_Z_2[0] < 2)														 State_EndStop_Z_2[0] = eFALSE;	
 }  
 
 

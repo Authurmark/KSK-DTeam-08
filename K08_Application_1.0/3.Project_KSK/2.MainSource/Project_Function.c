@@ -399,7 +399,6 @@ void EXTI2_IRQHandler(void)
  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
    {
 	countB_X = (1200+countB_X-1)%1200;
-
 	}
   else
    countB_X = (1200+countB_X+1)%1200;
@@ -835,7 +834,6 @@ void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection)
 			*cnt_stepmotor = (*cnt_stepmotor+1)%2;
 			generate_pulse();
 			if(*cnt_stepmotor == 0) 		*Cnt_Pulse += 1;
-            
 		break;
 		case MOTOR_STEP_REVERSE:
 			GPIO_ResetBits(GPIOB, pin_Z_DIR);
@@ -929,7 +927,7 @@ void vInit_STEP_MOTOR_Function (void)
   GPIO_Write(GPIOB,0x0001);
  /*config pin for Endstop*/
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+  GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPD;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -950,7 +948,7 @@ void Z_HOME(void)
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
 	}
-	if (State_EndStop_Z[0] == eTRUE && bFlag_Status_Axis==0)
+	if (State_EndStop_Z_1[0] == eTRUE && bFlag_Status_Axis==0)
     {
 		Z_Axis_bDirection = MOTOR_STEP_GOREVERSE;
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
@@ -959,7 +957,7 @@ void Z_HOME(void)
 		bFlag_Status_Axis = 1;
 	}
 	
-    if (State_EndStop_Z[0]==eFALSE && bFlag_Status_Axis==1)	
+    if (State_EndStop_Z_1[0]== eFALSE && bFlag_Status_Axis==1)	
 	{
 		Z_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
@@ -968,7 +966,7 @@ void Z_HOME(void)
 		bFlag_Status_Axis = 2;
 	}
 
-    if(State_EndStop_Z[0] == eTRUE && bFlag_Status_Axis==2)
+    if(State_EndStop_Z_1[0] == eTRUE && bFlag_Status_Axis==2)
     {
 		 Z_Axis_bDirection = MOTOR_STEP_STOP;
 		 bFlag_Status_Axis = 3;
@@ -984,21 +982,21 @@ void X_HOME(void)
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
 	
 	}
-  if(State_EndStop_X[0] == eTRUE && bFlag_Status_Axis == 3)
+  if(State_EndStop_X_1[0] == eTRUE && bFlag_Status_Axis == 3)
 	{
     X_Axis_bDirection = MOTOR_STEP_GOREVERSE; 
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
     timer_set(&tP_StepA, 70 ,CLOCK_TYPE_US);
 	bFlag_Status_Axis =4;
 	}
-  if(State_EndStop_X[0]== eFALSE && bFlag_Status_Axis == 4)
+  if(State_EndStop_X_1[0]== eFALSE && bFlag_Status_Axis == 4)
 	{
 	X_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
 	timer_set(&tP_StepA, 150 ,CLOCK_TYPE_US);
 	bFlag_Status_Axis = 5;
     }
-  if(State_EndStop_X[0]== eTRUE && bFlag_Status_Axis == 5)
+  if(State_EndStop_X_1[0]== eTRUE && bFlag_Status_Axis == 5)
 	{
 	X_Axis_bDirection = MOTOR_STEP_STOP;
     bFlag_Status_Axis = 6;
@@ -1012,19 +1010,19 @@ void Y_HOME(void)
 	timer_set(&tP_StepA, 20 ,CLOCK_TYPE_US);
     Y_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 	}
-  if(State_EndStop_Y[0]== eTRUE && bFlag_Status_Axis == 6)
+  if(State_EndStop_Y_1[0]== eTRUE && bFlag_Status_Axis == 6)
 	{
 	Y_Axis_bDirection = MOTOR_STEP_GOREVERSE;
-    timer_set(&tP_StepA, 50 ,CLOCK_TYPE_US);
+    timer_set(&tP_StepA, 70 ,CLOCK_TYPE_US);
 	bFlag_Status_Axis = 7;
 	}
-  if(State_EndStop_Y[0]== eFALSE && bFlag_Status_Axis == 7)
+  if(State_EndStop_Y_1[0]== eFALSE && bFlag_Status_Axis == 7)
 	{
     Y_Axis_bDirection = MOTOR_STEP_GOFORWARD;
-    timer_set(&tP_StepA, 80 ,CLOCK_TYPE_US);
+    timer_set(&tP_StepA, 150 ,CLOCK_TYPE_US);
 	bFlag_Status_Axis = 8;
     }
-  if(State_EndStop_Y[0]== eTRUE && bFlag_Status_Axis == 8)
+  if(State_EndStop_Y_1[0]== eTRUE && bFlag_Status_Axis == 8)
 	{
 	Y_Axis_bDirection = MOTOR_STEP_STOP;
 	bFlag_Status_Axis = 9;
@@ -1128,8 +1126,11 @@ switch (bFlag_ReleaseCutter)
 		 X_Axis_bDirection= MOTOR_STEP_STOP;
 		 Y_Axis_bDirection= MOTOR_STEP_STOP;
 		 Z_Axis_bDirection= MOTOR_STEP_STOP;
-		 bFlag_ReleaseCutter == 7; 
+		 bFlag_ReleaseCutter = 7; 
 		 }
+	  break;
+	  case 7:
+		 bFlag_ReleaseCutter = 8; 
 	  break;
 	default:
 	break;
@@ -1217,6 +1218,9 @@ void vInitGetCutter(void)
 	  Z_Axis_bDirection= MOTOR_STEP_STOP;
       bFlag_GetCutter = 7;
 	}
+	break;
+	case 7:
+		bFlag_ReleaseCutter = 8; 
 	break;
   default:
   break;
@@ -3491,4 +3495,36 @@ void ScanHole (void)
     }
 }
 
+
+
+/*--------------------------Error_Process----------------------------------------*/
+enumbool bFlag_Error_Process = eFALSE;
+void vInit_Error_Process(void)
+{
+ if( State_EndStop_X_2[0] == eTRUE)
+ { 	
+  BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverJourney;
+  bFlag_Error_Process = eTRUE; 	
+ }
+ if( State_EndStop_Y_2[0] == eTRUE) 
+{	
+ BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverJourney;
+ bFlag_Error_Process = eTRUE;
+}
+ if( State_EndStop_Z_2[0] == eTRUE) 	
+{
+ BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverJourney;
+ bFlag_Error_Process = eTRUE;
+}
+// if(X_Axis_Encoder == X_Axis_Encoder) 	
+//{
+// BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverLoad;
+// bFlag_Error_Process = eTRUE;
+//}
+// if(Y_Axis_Encoder == Y_Axis_Encoder) 	
+//{
+// BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverLoad;
+// bFlag_Error_Process = eTRUE;
+//}
+}
 #endif /* _Project_Function__C */

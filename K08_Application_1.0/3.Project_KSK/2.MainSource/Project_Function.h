@@ -146,14 +146,20 @@ typedef enum sStepMotor
 }sStepMotor;
 
 extern uint8 Pin_Endstop [6];
-extern uint8 Cnt_TimeHold_EndStop_X [6];
-extern enumbool State_EndStop_X [6];
+extern uint8 Cnt_TimeHold_EndStop_X_1 [6];
+extern enumbool State_EndStop_X_1 [6];
+extern uint8 Cnt_TimeHold_EndStop_X_2 [6];
+extern enumbool State_EndStop_X_2 [6];
 
-extern uint8 Cnt_TimeHold_EndStop_Y [6];
-extern enumbool State_EndStop_Y [6];
+extern uint8 Cnt_TimeHold_EndStop_Y_1 [6];
+extern enumbool State_EndStop_Y_1 [6];
+extern uint8 Cnt_TimeHold_EndStop_Y_2 [6];
+extern enumbool State_EndStop_Y_2 [6];
 
-extern uint8 Cnt_TimeHold_EndStop_Z [6];
-extern enumbool State_EndStop_Z [6];
+extern uint8 Cnt_TimeHold_EndStop_Z_1 [6];
+extern enumbool State_EndStop_Z_1 [6];
+extern uint8 Cnt_TimeHold_EndStop_Z_2 [6];
+extern enumbool State_EndStop_Z_2[6];
 
 #define EndStopX_1		0
 #define EndStopX_2		0
@@ -165,7 +171,9 @@ extern enumbool State_EndStop_Z [6];
 extern uint8 Cnt_TimeHold_Proximity_Sensor[6];
 extern enumbool State_Proximity_Sensor[6];
 extern uint32 bFlag_Status_Sensor ;
-
+/***********************Error_Process***************************/
+void vInit_Error_Process(void);
+extern enumbool bFlag_Error_Process ;
 
 
 
