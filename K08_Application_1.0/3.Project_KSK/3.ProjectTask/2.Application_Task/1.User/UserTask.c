@@ -57,6 +57,7 @@ typedef enum
 		eST_User_Task_RunForScan		= 13,
 		eST_User_Task_RunToPoint		= 14,
 		eST_User_Task_Stop   			= 15,
+		eST_User_Task_Pause				= 16,
 		
 		
 		
@@ -149,7 +150,7 @@ void vUserTaskMainProcess(void)
                 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE;
               if (BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE)
 			   {
-				BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis = RunForScan;
+				BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis = ReleaseCutter;
             	switch(BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis)
 				{
 					case ResetHome:
@@ -176,10 +177,6 @@ void vUserTaskMainProcess(void)
 					  bFlag_1st_Case = eTRUE;
                     break;
 
-					case Stop:
-                      eState_User_Task = eST_User_Task_Stop;
-					break;
-
 					default :
 					break;
 				}
@@ -194,34 +191,62 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_ResetHome:
 			if(bFlag_1st_Case==eTRUE)
 			{
-			 	  bFlag_1st_Case = eFALSE;
-                  BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
-				  bFlag_Status_Axis = 0;
-				  bFlag_Error_Process = eFALSE;
+			 	  	bFlag_1st_Case = eFALSE;
+                	BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
+					bFlag_Status_Axis = 0;
+				  	bFlag_Error_Process = eFALSE;
+				  	bFlag_GoHOME_X = eFALSE; 
+					bFlag_GoHOME_Y = eFALSE;
+					bFlag_GoHOME_Z = eFALSE;	
 			}
 			else
 			{
-				
-				/*X to Home*/
-				   	Z_HOME();
-					
-			    /*Y to Home*/
-			       X_HOME();
-				
-           		/*Z to Home*/
-			       Y_HOME();
-                 			  
-				/*Condition Process Finished*/
-				  if(bFlag_Status_Axis == 9)	bFlag_Finish == eTRUE;
+				switch (BUFFER_STATEBUTTON.bflag_Stop )
+				{
+				case 1:
+					eState_User_Task = eST_User_Task_Stop;
+				break;
+				case 0:
+					switch(BUFFER_STATEBUTTON.bflag_Pause)
+					{
+					case 0:
+						  /*X to Home*/
+						  Z_HOME();
 
-      
-				/*Back to eST_User_Task_IDLE, when finished process*/
-			      if (bFlag_Finish== eTRUE)    eState_User_Task=eST_User_Task_IDLE;
-				  if(bFlag_Error_Process == eTRUE) eState_User_Task=eST_User_Task_IDLE;
-              
-				//Back to eST_User_Task_IDLE, when reset
-//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//				  eState_User_Task=eST_User_Task_INIT;
+						  /*Y to Home*/
+						  X_HOME();
+
+						  /*Z to Home*/
+						  Y_HOME();
+
+						  /*Condition Process Finished*/
+						  if(bFlag_Status_Axis == 12)	bFlag_Finish == eTRUE;
+
+
+						  /*Back to eST_User_Task_IDLE, when finished process*/
+						  if (bFlag_Finish== eTRUE) 
+						  {   
+						  eState_User_Task=eST_User_Task_IDLE;
+						  bFlag_GoHOME_X = eTRUE; 
+						  bFlag_GoHOME_Y = eTRUE;
+						  bFlag_GoHOME_Z = eTRUE;
+						  }
+						  if(bFlag_Error_Process == eTRUE) eState_User_Task=eST_User_Task_IDLE;
+
+						  //Back to eST_User_Task_IDLE, when reset
+//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//						  eState_User_Task=eST_User_Task_INIT;
+					break;
+					case 1:
+					
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+				}
             }
 		break;
 
@@ -230,7 +255,7 @@ void vUserTaskMainProcess(void)
 			{
 			 	 bFlag_1st_Case = eFALSE;
  				 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
-				 bFlag_ReleaseCutter 	= 0;	
+				 State_ReleaseCutter 	= 0;	
                  bFlag_GoHOME_X 		= eTRUE;
 				 bFlag_GoHOME_Y 		= eTRUE;
 				 bFlag_GoHOME_Z 		= eTRUE;
@@ -238,22 +263,41 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-			      vInitReleaseCutter();
- 
-				//Back to eST_User_Task_IDLE, when finished process
-				 if(bFlag_ReleaseCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;
-				 if(bFlag_Error_Process == eTRUE)  			eState_User_Task=eST_User_Task_IDLE;		
-				//Back to eST_User_Task_IDLE, when reset
-//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//				 eState_User_Task=eST_User_Task_INIT;
-            }
+				switch (BUFFER_STATEBUTTON.bflag_Stop )
+				{
+				case 1:
+					eState_User_Task = eST_User_Task_Stop;
+				break;
+				case 0:
+					switch(BUFFER_STATEBUTTON.bflag_Pause)
+					{
+					case 0:
+						  ReleaseCutter_Machine();
+
+						  //Back to eST_User_Task_IDLE, when finished process
+						  if(State_ReleaseCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;
+						  if(bFlag_Error_Process == eTRUE)  			eState_User_Task=eST_User_Task_IDLE;		
+						  //Back to eST_User_Task_IDLE, when reset
+//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//						  eState_User_Task=eST_User_Task_INIT;
+					break;
+					case 1:
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+                }
+			}
 		break;
         case eST_User_Task_GetCutter:
 			if(bFlag_1st_Case==eTRUE)
 			{
 			 	 bFlag_1st_Case = eFALSE;
  				 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eFALSE;
-				 bFlag_GetCutter 	  	= 0;	
+				 State_GetCutter 	  	= 0;	
                  bFlag_GoHOME_X 		= eTRUE;
 				 bFlag_GoHOME_Y 		= eTRUE;
 				 bFlag_GoHOME_Z 		= eTRUE;
@@ -261,21 +305,41 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-				vInitGetCutter();
-				//Back to eST_User_Task_IDLE, when finished process
-				 if(bFlag_GetCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;	
-				 if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;	
-				//Back to eST_User_Task_IDLE, when reset
-//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//				 eState_User_Task=eST_User_Task_INIT;
+				switch (BUFFER_STATEBUTTON.bflag_Stop )
+				{
+				case 1:
+					eState_User_Task = eST_User_Task_Stop;
+				break;
+				case 0:
+					switch(BUFFER_STATEBUTTON.bflag_Pause)
+					{
+					case 0:
+						  GetCutter_Machine();
+						  //Back to eST_User_Task_IDLE, when finished process
+						   if(State_GetCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;	
+						   if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;	
+						  //Back to eST_User_Task_IDLE, when reset
+//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//						  eState_User_Task=eST_User_Task_INIT;
+					break;
+					case 1:
+					
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+			    }
 			}
    		break;
 		case eST_User_Task_RunForScan:
                    if(bFlag_1st_Case==eTRUE)
 			{
 			 	  bFlag_1st_Case = eFALSE;
- 				  bFlag_ScanHole_Y 		= 0;
-                  bFlag_ScanHole_X 		= 0;
+ 				  State_ScanHole_Y 		= 0;
+                  State_ScanHole_X 		= 0;
 				  bFlag_GoHOME_X   		= eTRUE;
 				  bFlag_GoHOME_Y 		= eTRUE;
 				  bFlag_GoHOME_Z 		= eTRUE;
@@ -283,13 +347,33 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-				ScanHole(); 
-		   		//Back to eST_User_Task_IDLE, when finished process
-				if (bFlag_ScanHole_X == 11)				eState_User_Task=eST_User_Task_IDLE;
-				if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;
-				//Back to eST_User_Task_IDLE, when reset
-//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//				  eState_User_Task=eST_User_Task_INIT;
+				switch (BUFFER_STATEBUTTON.bflag_Stop )
+				{
+				case 1:
+					eState_User_Task = eST_User_Task_Stop;
+				break;
+				case 0:
+					switch (BUFFER_STATEBUTTON.bflag_Pause)
+					{
+					case 0:
+						  ScanHole(); 
+						  //Back to eST_User_Task_IDLE, when finished process
+						  if (bFlag_Scanhold_Finish == eTRUE)	    eState_User_Task=eST_User_Task_IDLE;
+						  if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;
+						  //Back to eST_User_Task_IDLE, when reset
+//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//						  eState_User_Task=eST_User_Task_INIT;
+					break;
+					case 1:
+
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+			     }
 			}
 		break;
 		break;
@@ -297,7 +381,7 @@ void vUserTaskMainProcess(void)
 		  if(bFlag_1st_Case==eTRUE)
 			{
 			 	  bFlag_1st_Case  		= eFALSE;
- 				  bFlag_RunToPoint 		= 0;
+ 				  State_RunToPoint		= 0;
 				  bFlag_GoHOME_X 		= eTRUE;
 				  bFlag_GoHOME_Y 		= eTRUE;
 				  bFlag_GoHOME_Z 	 	= eTRUE;
@@ -305,18 +389,44 @@ void vUserTaskMainProcess(void)
 			}
 			else
 			{
-			
-                  Run_To_Point();
-				//Back to eST_User_Task_IDLE, when finished process
-				if (bFlag_RunToPoint == 4)				 eState_User_Task=eST_User_Task_IDLE;
-				if(bFlag_Error_Process == eTRUE) 		 eState_User_Task=eST_User_Task_IDLE;
-				//Back to eST_User_Task_IDLE, when reset
-//				if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//				  eState_User_Task=eST_User_Task_INIT;
-		  	}
+				switch (BUFFER_STATEBUTTON.bflag_Stop )
+				{
+				case 1:
+					eState_User_Task = eST_User_Task_Stop;
+				break;
+				case 0:
+					switch(BUFFER_STATEBUTTON.bflag_Pause)
+					{
+					case 0:
+						  Run_To_Point();
+						  //Back to eST_User_Task_IDLE, when finished process
+						  if (State_RunToPoint == 4)				 eState_User_Task=eST_User_Task_IDLE;
+						  if(bFlag_Error_Process == eTRUE) 		 eState_User_Task=eST_User_Task_IDLE;
+						  //Back to eST_User_Task_IDLE, when reset
+//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+//						  eState_User_Task=eST_User_Task_INIT;
+					break;
+					case 1:
+
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+		  	     }
+			 }
 
         case eST_User_Task_Stop:
-         
+			memset(UART1_BUFFER_RX,0,i_MAX_UART);  
+			eState_User_Task = eST_User_Task_IDLE;
+			BUFFER_STATEBUTTON.bflag_Stop = 0;
+         	bFlag_1st_Case = eTRUE;
+		break;
+
+		case eST_User_Task_Pause:
+
 		break;
                 
                 //<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//

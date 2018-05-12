@@ -106,9 +106,9 @@
 		#endif /* USE_RELAY_1_FB */
 
 		#ifdef USE_RELAY_2
-			#define RELAY_2_PORT		GPIOA
-			#define RELAY_2_PIN			GPIO_Pin_15
-			#define RELAY_2_RCC_PORT	RCC_APB2Periph_GPIOA
+			#define RELAY_2_PORT		GPIOB
+			#define RELAY_2_PIN			GPIO_Pin_6
+			#define RELAY_2_RCC_PORT	RCC_APB2Periph_GPIOB
 			#define RELAY_2_CLK_CMD		RCC_APB2PeriphClockCmd
 			#define RELAY_2_MODE		GPIO_Mode_Out_PP
 			#define RELAY_2_SPEED		GPIO_Speed_50MHz
@@ -135,7 +135,7 @@
 			#define BUTTON_1_SPEED		GPIO_Speed_50MHz
 					    #ifdef  USE_BUTTON_IO_1_EXT
 						#define EXT_BUTTON_1_LINE                   EXTI_Line5
-						#define EXT_BUTTON_1_EXT                    EXTI9_5_IRQn
+//						#define EXT_BUTTON_1_EXT                    EXTI9_5_IRQn
 //                        #define BUTTON_1_EXT_HANDLER                EXTI9_5_IRQHandler
 						#define EXT_BUTTON_1_MODE                 	EXTI_Mode_Interrupt
 						#define EXT_BUTTON_1_TRIGGER                EXTI_Trigger_Falling
@@ -152,7 +152,7 @@
 			#define BUTTON_2_SPEED		GPIO_Speed_50MHz
 					#ifdef  USE_BUTTON_IO_2_EXT
 						#define EXT_BUTTON_2_LINE                   EXTI_Line8
-						#define EXT_BUTTON_2_EXT                    EXTI9_5_IRQn
+//						#define EXT_BUTTON_2_EXT                    EXTI9_5_IRQn
 //                        #define EXT_BUTTON_2_EXT_HANDLER            EXTI9_5_IRQHandler
 						#define EXT_BUTTON_2_MODE                 	EXTI_Mode_Interrupt
 						#define EXT_BUTTON_2_TRIGGER                EXTI_Trigger_Falling
@@ -160,7 +160,7 @@
 						#define BUTTON_2_PIN_SOURCE                 GPIO_PinSource8
 					#endif /* USE_BUTTON_IO_1_EXT */
 		#endif /* USE_BUTTON_IO_2 */
-        #define EXT_BUTTON_1_2_EXT_HANDLER            EXTI9_5_IRQHandler
+//        #define EXT_BUTTON_1_2_EXT_HANDLER            EXTI9_5_IRQHandler
 
 		#ifdef USE_BUTTON_IO_3
 			#define BUTTON_3_PORT		GPIOA

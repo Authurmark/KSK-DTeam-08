@@ -152,6 +152,7 @@ void vProject_Init()
 	/* Init EXTI encoder function */
 	  EXTILine1_Config();
   	  EXTILine2_Config();
+	  EXTILine15_Config();
       EXTILine3_Config();
 	  EXTILine4_Config();
 
@@ -304,17 +305,18 @@ GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef  NVIC_InitStructure;
 EXTI_InitTypeDef  EXTI_InitStructure;
  
-uint16_t countA_X = 0, countB_X = 0 ; 
+uint16_t countA_X = 0, countB_X = 0 ;
+int countZ_X = 0; 
 uint16   X_Axis_Encoder = 0;
-int  cnt_rotary_X = 0;
 
-enumbool bFlag_CntRotary_X=eFALSE;
+
+enumbool bFlag_CntRotary_X = eFALSE;
 
 void vGetEncoderValue_X(void)
 {
 
-  if (bFlag_CntRotary_X == eFALSE)    	X_Axis_Encoder = countA_X  + countB_X + 2400*cnt_rotary_X;         
-  if (bFlag_CntRotary_X == eTRUE)		X_Axis_Encoder = countA_X  - 1 + 2400*cnt_rotary_X; 
+  if (bFlag_CntRotary_X == eFALSE)    	X_Axis_Encoder = countA_X  + countB_X + 24000*countZ_X;         
+  if (bFlag_CntRotary_X == eTRUE)		X_Axis_Encoder = countA_X  - 1 + 2400*countZ_X; 
        	      	              
 }
 
@@ -337,8 +339,8 @@ void EXTILine1_Config(void)
   
     
   NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
@@ -362,8 +364,33 @@ void EXTILine2_Config(void)
   
     
   NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
+void EXTILine15_Config(void)
+{
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15; 
+  GPIO_Init(GPIOC, &GPIO_InitStructure); 
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOC,GPIO_PinSource15);
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line15;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+    
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
@@ -375,18 +402,17 @@ void EXTI1_IRQHandler(void)
   EXTI_ClearITPendingBit(EXTI_Line1);
   if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) )
   {  
-	countA_X = (1200+countA_X+1)%1200;
-	bFlag_CntRotary_X=eFALSE;
+	countA_X = (16000+countA_X+1)%16000;
+	bFlag_CntRotary_X = eFALSE;
 	if(	countA_X==0)
 	{
-		cnt_rotary_X++;
-		bFlag_CntRotary_X=eTRUE;
+		bFlag_CntRotary_X = eTRUE;
 	}
   }	  
   else
   {
-  	countA_X = (1200+countA_X-1)%1200;
-  	if(	countA_X==1199)				cnt_rotary_X--;
+  	countA_X = (16000+countA_X-1)%16000;
+  	
   }
  }
 }
@@ -398,10 +424,23 @@ void EXTI2_IRQHandler(void)
   EXTI_ClearITPendingBit(EXTI_Line2);
  if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1)== GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
    {
-	countB_X = (1200+countB_X-1)%1200;
+	countB_X = (16000+countB_X-1)%16000;
 	}
   else
-   countB_X = (1200+countB_X+1)%1200;
+   countB_X = (16000+countB_X+1)%16000;
+ }
+}
+void EXTI15_10_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line15) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line15);
+ if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)!= GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))
+   {
+	countZ_X = countZ_X + 1;
+   }
+  else
+   countZ_X = countZ_X - 1;
  }
 }
 /* Encoder function for Axis Y*/
@@ -409,15 +448,15 @@ GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef  NVIC_InitStructure;
 EXTI_InitTypeDef  EXTI_InitStructure;
  
-uint16_t countA_Y = 0, countB_Y = 0 ; 
+uint16_t countA_Y = 0, countB_Y = 0; 
 uint32   Y_Axis_Encoder = 0;
-int  cnt_rotary_Y = 0;
+int  countZ_Y = 0;
 
 enumbool bFlag_CntRotary_Y = eFALSE;
 void vGetEncoderValue_Y(void)
 {
-  if (bFlag_CntRotary_Y==eFALSE)    	Y_Axis_Encoder = countA_Y  + countB_Y + 2400*cnt_rotary_Y;         
-  if (bFlag_CntRotary_Y==eTRUE)		    Y_Axis_Encoder = countA_Y  - 1 + 2400*cnt_rotary_Y;
+  if (bFlag_CntRotary_Y==eFALSE)    	Y_Axis_Encoder = countA_Y  + countB_Y + 16000*countZ_Y;         
+  if (bFlag_CntRotary_Y==eTRUE)		    Y_Axis_Encoder = countA_Y  - 1 + 16000*countZ_Y;
 }
 void EXTILine3_Config(void)
 {
@@ -464,11 +503,35 @@ void EXTILine4_Config(void)
     
   NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
 
+void EXTILine5_Config(void)
+{
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; 
+  GPIO_Init(GPIOB, &GPIO_InitStructure); 
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource5);
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line5;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+    
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
 void EXTI3_IRQHandler(void)
 {
  if(EXTI_GetITStatus(EXTI_Line3) != RESET)
@@ -476,18 +539,18 @@ void EXTI3_IRQHandler(void)
   EXTI_ClearITPendingBit(EXTI_Line3);
   if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_4) )
   {  
-	countA_Y = (1200+countA_Y+1)%1200;
+	countA_Y = (16000+countA_Y+1)%16000;
 	bFlag_CntRotary_Y=eFALSE;
 	if(	countA_Y==0)
 	{
-		cnt_rotary_Y++;
-		bFlag_CntRotary_Y=eTRUE;
+		
+		bFlag_CntRotary_Y = eTRUE;
 	}
   }	  
   else
   {
-  	countA_Y = (1200+countA_Y-1)%1200;
-  	if(	countA_Y==1199)				cnt_rotary_Y--;
+  	countA_Y = (16000+countA_Y-1)%16000;
+  	
   }
  }
 }
@@ -499,11 +562,24 @@ void EXTI4_IRQHandler(void)
   EXTI_ClearITPendingBit(EXTI_Line4);
  if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_4))
    {
-	countB_Y = (1200+countB_Y-1)%1200;
+	countB_Y = (16000+countB_Y-1)%16000;
 
 	}
   else
-   countB_Y = (1200+countB_Y+1)%1200;
+    countB_Y = (16000+countB_Y+1)%16000;
+ }
+}
+void EXTI9_5_IRQHandler(void)
+{
+ if(EXTI_GetITStatus(EXTI_Line5) != RESET)
+ {
+  EXTI_ClearITPendingBit(EXTI_Line5);
+ if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3)!= GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_5))
+   {
+	countZ_Y = countZ_Y + 1;
+   }
+  else
+   countZ_Y = countZ_Y - 1;
  }
 }
 
@@ -598,7 +674,7 @@ uint8_t Z_Axis_SDirection;
 #define pin_Z_ENABLE		GPIO_Pin_12
 /**********************************************************/
 enumbool bFlag_Compare = eTRUE;
-enumbool	bFlag_GoHOME_X = eFALSE;
+enumbool	bFlag_GoHOME_X = eFALSE; // dung de bat buoc may phai ve home truoc khi chay
 enumbool	bFlag_GoHOME_Y = eFALSE;
 enumbool	bFlag_GoHOME_Z = eFALSE;	
 
@@ -701,7 +777,8 @@ void vMotorStepControl(void)
 	if(timer_expired(&tP_StepA))
 	{
 		timer_restart(&tP_StepA);
-
+		vGetEncoderValue_X();
+		vGetEncoderValue_Y();
 		switch(X_Axis_bDirection)
 		{ 
             case MOTOR_STEP_GOFORWARD:
@@ -941,92 +1018,123 @@ void vInit_STEP_MOTOR_Function (void)
 uint32 bFlag_Status_Axis =0 ;
 void Z_HOME(void)
 {   
-	if(bFlag_Status_Axis==0)
+	switch (bFlag_Status_Axis)
 	{
+	case 0:
 		Z_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 		timer_set(&tP_StepA, 20 ,CLOCK_TYPE_US);
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	}
-	if (State_EndStop_Z_1[0] == eTRUE && bFlag_Status_Axis==0)
+        bFlag_Status_Axis =1;
+	break;
+	case 1:
+	if (State_EndStop_Z_1[0] == eTRUE)
     {
 		Z_Axis_bDirection = MOTOR_STEP_GOREVERSE;
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
 		timer_set(&tP_StepA, 70 ,CLOCK_TYPE_US);
-		bFlag_Status_Axis = 1;
+		bFlag_Status_Axis = 2;
 	}
-	
-    if (State_EndStop_Z_1[0]== eFALSE && bFlag_Status_Axis==1)	
+	break;
+    case 2:
+    if (State_EndStop_Z_1[0]== eFALSE )	
 	{
 		Z_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		timer_set(&tP_StepA, 150 ,CLOCK_TYPE_US);
-		bFlag_Status_Axis = 2;
+		timer_set(&tP_StepA, 200 ,CLOCK_TYPE_US);
+		bFlag_Status_Axis = 3;
 	}
-
-    if(State_EndStop_Z_1[0] == eTRUE && bFlag_Status_Axis==2)
+	break;
+	case 3:
+    if(State_EndStop_Z_1[0] == eTRUE)
     {
 		 Z_Axis_bDirection = MOTOR_STEP_STOP;
-		 bFlag_Status_Axis = 3;
+		 bFlag_Status_Axis = 4;
     }
-    
+	break;
+  	default:
+	break;
+    }
 }
 void X_HOME(void)
 {   
-  if(bFlag_Status_Axis == 3 )
+	switch (bFlag_Status_Axis)
 	{
+	case 4: 
 	X_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 	timer_set(&tP_StepA, 20 ,CLOCK_TYPE_US);
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	
-	}
-  if(State_EndStop_X_1[0] == eTRUE && bFlag_Status_Axis == 3)
+	bFlag_Status_Axis = 5;
+	break;
+	case 5:
+ 	if(State_EndStop_X_1[0] == eTRUE)
 	{
     X_Axis_bDirection = MOTOR_STEP_GOREVERSE; 
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
     timer_set(&tP_StepA, 70 ,CLOCK_TYPE_US);
-	bFlag_Status_Axis =4;
+	bFlag_Status_Axis =6;
 	}
-  if(State_EndStop_X_1[0]== eFALSE && bFlag_Status_Axis == 4)
+ 	break;
+	case 6:
+	if(State_EndStop_X_1[0]== eFALSE)
 	{
 	X_Axis_bDirection = MOTOR_STEP_GOFORWARD;
 	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	timer_set(&tP_StepA, 150 ,CLOCK_TYPE_US);
-	bFlag_Status_Axis = 5;
-    }
-  if(State_EndStop_X_1[0]== eTRUE && bFlag_Status_Axis == 5)
+	timer_set(&tP_StepA, 200 ,CLOCK_TYPE_US);
+	bFlag_Status_Axis = 7;
+	}
+	break;
+	case 7:
+	if(State_EndStop_X_1[0]== eTRUE )
 	{
 	X_Axis_bDirection = MOTOR_STEP_STOP;
-    bFlag_Status_Axis = 6;
-	
+	bFlag_Status_Axis = 8;
+	}
+	break;
+	default:
+	break;
 	}
 }
 void Y_HOME(void)
 {
-  if(bFlag_Status_Axis == 6)
+	switch (bFlag_Status_Axis)
+	{
+	case 8:
 	{
 	timer_set(&tP_StepA, 20 ,CLOCK_TYPE_US);
     Y_Axis_bDirection = MOTOR_STEP_GOFORWARD;
+	bFlag_Status_Axis = 9;
 	}
-  if(State_EndStop_Y_1[0]== eTRUE && bFlag_Status_Axis == 6)
+	break;
+	case 9:
+  	if(State_EndStop_Y_1[0]== eTRUE )
 	{
 	Y_Axis_bDirection = MOTOR_STEP_GOREVERSE;
     timer_set(&tP_StepA, 70 ,CLOCK_TYPE_US);
-	bFlag_Status_Axis = 7;
+	bFlag_Status_Axis = 10;
 	}
-  if(State_EndStop_Y_1[0]== eFALSE && bFlag_Status_Axis == 7)
+	break;
+	case 10:
+  	if(State_EndStop_Y_1[0]== eFALSE)
 	{
     Y_Axis_bDirection = MOTOR_STEP_GOFORWARD;
-    timer_set(&tP_StepA, 150 ,CLOCK_TYPE_US);
-	bFlag_Status_Axis = 8;
+    timer_set(&tP_StepA, 200 ,CLOCK_TYPE_US);
+	bFlag_Status_Axis = 11;
     }
-  if(State_EndStop_Y_1[0]== eTRUE && bFlag_Status_Axis == 8)
+	break;
+	case 11:
+  	if(State_EndStop_Y_1[0]== eTRUE)
 	{
 	Y_Axis_bDirection = MOTOR_STEP_STOP;
-	bFlag_Status_Axis = 9;
+	bFlag_Status_Axis = 12;
 	}
+	break;
+	default:
+	break;
+	}
+		
 }
 
 
@@ -1037,204 +1145,203 @@ uint32 bFlag_Status_Sensor = 0;
 #define Z_Cutter  		50
 #define Z_SafePosition 	100  
 
-uint32 bFlag_ReleaseCutter = 0;
-uint32 bFlag_GetCutter = 0;
+uint32 State_ReleaseCutter = 0;
+uint32 State_GetCutter     = 0;
 
-void vInitReleaseCutter(void)
+void ReleaseCutter_Machine(void)
 {
-switch (bFlag_ReleaseCutter)
+switch (State_ReleaseCutter)
 	{
 	  case 0:	
-	  //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
-		Z_Axis_PositionControl = Z_SafePosition;
-		Z_Axis_bDirection= MOTOR_STEP_ABLE;
-		vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_FORWARD);
-		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		bFlag_ReleaseCutter = 1;
+		//  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
+		  Z_Axis_PositionControl = Z_SafePosition;
+		  Z_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_FORWARD);
+		  State_ReleaseCutter = 1;
 	  break;
 
 	  case 1:
-		if(Cnt_Pulse_Z == Z_Axis_PulseControl)
-		{
-	  //  X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
-		Z_Axis_PulseControl = 0;
-		X_Axis_PositionControl = X_Cutter + 50;
-		X_Axis_bDirection = MOTOR_STEP_ABLE;
-		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_FORWARD);
-		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-		bFlag_ReleaseCutter = 2;
-		}
+		  if(Cnt_Pulse_Z == Z_Axis_PulseControl)
+		  {
+		//  X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
+		  Z_Axis_PulseControl = 0;
+		  X_Axis_PositionControl = X_Cutter + 50;
+		  X_Axis_bDirection = MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_FORWARD);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		  State_ReleaseCutter = 2;
+		  }
 	  break;
 	  case 2:
-		 if(Cnt_Pulse_X == X_Axis_PulseControl)
-		 {
+		  if(Cnt_Pulse_X == X_Axis_PulseControl)
+		  {
 	  //   Y_Cutter = BUFFER_CONTROL_Y_AXIS.PositionControl;
-		 X_Axis_PulseControl = 0;
-		 Y_Axis_PositionControl = Y_Cutter;
-		 Y_Axis_bDirection= MOTOR_STEP_ABLE;
-		 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_FORWARD);
-		 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-		 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-		 bFlag_ReleaseCutter = 3;
-		 }
+		   X_Axis_PulseControl = 0;
+		   Y_Axis_PositionControl = Y_Cutter;
+		   Y_Axis_bDirection= MOTOR_STEP_ABLE;
+		   vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		   vMotorStepControl_Status(StepMotorY, MOTOR_STEP_FORWARD);
+		   vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		   State_ReleaseCutter = 3;
+		  }
 	  break;
 	  case 3:
-		 if(Cnt_Pulse_Y == Y_Axis_PulseControl)
-		 {
-	  //   Z_Cutter = BUFFER_CONTROL_Z_AXIS.PositionControl;
-		 Y_Axis_PulseControl = 0;
-		 Z_Axis_PositionControl = Z_Cutter;
-		 Z_Axis_bDirection= MOTOR_STEP_ABLE;
-		 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_REVERSE);
-		 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-		 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		 bFlag_ReleaseCutter = 4;
-		 }
+		   if(Cnt_Pulse_Y == Y_Axis_PulseControl)
+		   {
+		//   Z_Cutter = BUFFER_CONTROL_Z_AXIS.PositionControl;
+			Y_Axis_PulseControl = 0;
+			Z_Axis_PositionControl = Z_Cutter;
+			Z_Axis_bDirection= MOTOR_STEP_ABLE;
+			vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+			vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+			vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_REVERSE);
+			State_ReleaseCutter = 4;
+		   }
 	  break;
 	  case 4:
 		 if(Cnt_Pulse_Z == Z_Axis_PulseControl)
 		 {
 	//   X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
-		 Z_Axis_PulseControl = 0;
-		 X_Axis_PositionControl = X_Cutter;
-		 X_Axis_bDirection= MOTOR_STEP_ABLE;
-		 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_REVERSE);
-		 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-		 bFlag_ReleaseCutter = 5;
+		  Z_Axis_PulseControl = 0;
+		  X_Axis_PositionControl = X_Cutter;
+		  X_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_REVERSE);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		  State_ReleaseCutter = 5;
 		 }
 	  break;
 	  case 5:
 		 if(Cnt_Pulse_X == X_Axis_PulseControl)
 		 {
-	 //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
-		 X_Axis_PulseControl = 0;
-		 Z_Axis_PositionControl = Z_SafePosition;
-		 Z_Axis_bDirection= MOTOR_STEP_ABLE;
-         Y_Axis_bDirection= MOTOR_STEP_STOP;
-		 vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
-		 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-		 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		 bFlag_ReleaseCutter = 6; 
+		  //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
+		  X_Axis_PulseControl = 0;
+		  Z_Axis_PositionControl = Z_SafePosition;
+		  Z_Axis_bDirection= MOTOR_STEP_ABLE;
+		  Y_Axis_bDirection= MOTOR_STEP_STOP;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
+		  State_ReleaseCutter = 6; 
 		 }
 	  break;
 	  case 6:
-		 if(Cnt_Pulse_Z == Z_Axis_PulseControl)
-		 { 
-		 X_Axis_bDirection= MOTOR_STEP_STOP;
-		 Y_Axis_bDirection= MOTOR_STEP_STOP;
-		 Z_Axis_bDirection= MOTOR_STEP_STOP;
-		 bFlag_ReleaseCutter = 7; 
-		 }
+		  if(Cnt_Pulse_Z == Z_Axis_PulseControl)
+		  { 
+		  X_Axis_bDirection= MOTOR_STEP_STOP;
+		  Y_Axis_bDirection= MOTOR_STEP_STOP;
+		  Z_Axis_bDirection= MOTOR_STEP_STOP;
+		  State_ReleaseCutter = 7; 
+		  }
 	  break;
 	  case 7:
-		 bFlag_ReleaseCutter = 8; 
+		 State_ReleaseCutter = 8; 
 	  break;
 	default:
 	break;
    }
 }
-void vInitGetCutter(void)
+void GetCutter_Machine(void)
 {
-  switch (bFlag_GetCutter)
+  switch (State_GetCutter)
 {
 	case 0:	
-	//  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
-	Z_Axis_PositionControl = Z_SafePosition;
-	Z_Axis_bDirection= MOTOR_STEP_ABLE;
-	vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_FORWARD);
-	vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	bFlag_GetCutter = 1;
+		  //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
+		  Z_Axis_PositionControl = Z_SafePosition;
+		  Z_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_FORWARD);
+		  State_GetCutter = 1;
 	break;
 	case 1:
-	if(Z_Axis_PulseControl == Cnt_Pulse_Z)
-	{
-	//   X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
-	X_Axis_PositionControl = X_Cutter;
-	X_Axis_bDirection = MOTOR_STEP_ABLE;
-	vMotorStepControl_Status(StepMotorX, MOTOR_STEP_FORWARD);
-	vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-	bFlag_GetCutter = 2;
-	}
+		  if(Z_Axis_PulseControl == Cnt_Pulse_Z)
+		  {
+		  //   X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
+		  X_Axis_PositionControl = X_Cutter;
+		  X_Axis_bDirection = MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_FORWARD);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		  State_GetCutter = 2;
+		  }
 	break;
 	case 2:
-	if(X_Axis_PulseControl == Cnt_Pulse_X)
-	{
-	//   Y_Cutter = BUFFER_CONTROL_Y_AXIS.PositionControl;
-	 Y_Axis_PositionControl = Y_Cutter;
-	 Y_Axis_bDirection= MOTOR_STEP_ABLE;
-	 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_FORWARD);
-	 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-	 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-	 bFlag_GetCutter = 3;
-	}
+		  if(X_Axis_PulseControl == Cnt_Pulse_X)
+		  {
+		  //   Y_Cutter = BUFFER_CONTROL_Y_AXIS.PositionControl;
+		  Y_Axis_PositionControl = Y_Cutter;
+		  Y_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_FORWARD);
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		  State_GetCutter = 3;
+		  }
 	break;
 	case 3:
-	if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-	{
-	//  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
-	 Z_Axis_PositionControl = Z_Cutter;
-	 Z_Axis_bDirection= MOTOR_STEP_ABLE;
-	 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_REVERSE);
-	 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-	 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	  bFlag_GetCutter = 4;
-	}
+		  if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+		  {
+		  //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
+		  Z_Axis_PositionControl = Z_Cutter;
+		  Z_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_REVERSE);
+		  State_GetCutter = 4;
+		  }
  	break;
 	case 4:
-	if(Z_Axis_PulseControl == Cnt_Pulse_Z)
-	{
-	//   X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
-	 X_Axis_PositionControl = X_Cutter + 50;
-	 X_Axis_bDirection= MOTOR_STEP_ABLE;
-	 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_REVERSE);
-	 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	 vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-	 bFlag_GetCutter = 5;
-
-	}
+		  if(Z_Axis_PulseControl == Cnt_Pulse_Z)
+		  {
+		  //   X_Cutter = BUFFER_CONTROL_X_AXIS.PositionControl;
+		  X_Axis_PositionControl = X_Cutter + 50;
+		  X_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_REVERSE);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
+		  State_GetCutter = 5;
+		  }
 	break;
 	case 5:
-	if(X_Axis_PulseControl == Cnt_Pulse_X )
-	{
-	//  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
-	 Z_Axis_PositionControl = Z_SafePosition;
-	 Z_Axis_bDirection= MOTOR_STEP_ABLE;
-	 vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
-	 vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
-	 vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-	 bFlag_GetCutter = 6;
-	}  
+		  if(X_Axis_PulseControl == Cnt_Pulse_X )
+		  {
+		  //  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
+		  Z_Axis_PositionControl = Z_SafePosition;
+		  Z_Axis_bDirection= MOTOR_STEP_ABLE;
+		  vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
+		  vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
+		  State_GetCutter = 6;
+		  }  
 	break;
 	case 6:
-	if(Z_Axis_PulseControl == Cnt_Pulse_Z)
-	{
-	  X_Axis_bDirection= MOTOR_STEP_STOP;
-	  Y_Axis_bDirection= MOTOR_STEP_STOP;
-	  Z_Axis_bDirection= MOTOR_STEP_STOP;
-      bFlag_GetCutter = 7;
-	}
+		  if(Z_Axis_PulseControl == Cnt_Pulse_Z)
+		  {
+		  X_Axis_bDirection= MOTOR_STEP_STOP;
+		  Y_Axis_bDirection= MOTOR_STEP_STOP;
+		  Z_Axis_bDirection= MOTOR_STEP_STOP;
+		  State_GetCutter = 7;
+		  }
 	break;
 	case 7:
-		bFlag_ReleaseCutter = 8; 
+		  State_GetCutter = 8; 
 	break;
   default:
   break;
  }
 }
 /*--------------------------------RUN TO POINT---------------------------------*/
-uint32 bFlag_RunToPoint = 0;
+uint32 State_RunToPoint = 0;
 
 #define X_Point  20
 #define Y_Point  20
 #
 void Run_To_Point(void)
 { 
-	switch(bFlag_RunToPoint)
+	switch(State_RunToPoint)
 	{
 	   case 0:
 	//  Z_SafePosition = BUFFER_CONTROL_Z_AXIS.PositionControl;
@@ -1243,7 +1350,7 @@ void Run_To_Point(void)
 		vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
-		bFlag_RunToPoint = 1;
+		State_RunToPoint = 1;
 		break;
 		case 1:
 	   	if(Z_Axis_PulseControl == Cnt_Pulse_Z)
@@ -1254,7 +1361,7 @@ void Run_To_Point(void)
 		vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
 		vMotorStepControl_Status(StepMotorY, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-		bFlag_RunToPoint = 2;
+		State_RunToPoint = 2;
 		}
         break;
 		case 2:
@@ -1266,7 +1373,7 @@ void Run_To_Point(void)
 		vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
 		vMotorStepControl_Status(StepMotorX, MOTOR_STEP_STOP);
 		vMotorStepControl_Status(StepMotorZ, MOTOR_STEP_STOP);
-		bFlag_RunToPoint = 3;
+		State_RunToPoint = 3;
 		}
 		break;
 		case 3:
@@ -1275,7 +1382,7 @@ void Run_To_Point(void)
 		X_Axis_bDirection = MOTOR_STEP_STOP;
 		Y_Axis_bDirection = MOTOR_STEP_STOP;
 		Z_Axis_bDirection = MOTOR_STEP_STOP;
-		bFlag_RunToPoint = 4;
+		State_RunToPoint = 4;
 		}
 		break;
 	default:
@@ -1288,22 +1395,22 @@ void Run_To_Point(void)
 #define X2_ScanHole  400
 #define Y1_ScanHole  50
 #define Y2_ScanHole  400
-uint32 bFlag_ScanHole_X = 0;
-uint32 bFlag_ScanHole_Y = 0;
+uint32 State_ScanHole_X = 0;
+uint32 State_ScanHole_Y = 0;
 void ScanHole (void)
 {
  	if(timer_expired(&tP_ScanHole))
 	{
 		timer_restart(&tP_ScanHole);
-        switch (bFlag_ScanHole_X)
+        switch (State_ScanHole_X)
 		{
         case 0:
            		Z_Axis_PositionControl = Z_SafePosition;
 				Z_Axis_bDirection = MOTOR_STEP_ABLE;
-                vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
 				vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
       			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-				bFlag_ScanHole_X =1;
+				vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_FORWARD);
+				State_ScanHole_X =1;
        	break;	
 		case 1:
  				if(Z_Axis_PulseControl == Cnt_Pulse_Z)
@@ -1316,7 +1423,7 @@ void ScanHole (void)
 				vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
 				vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
       			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-				bFlag_ScanHole_X =2;
+				State_ScanHole_X =2;
 				}
 		break;
 		case 2:
@@ -1326,10 +1433,10 @@ void ScanHole (void)
 				X_Axis_PulseControl =0;
 				Y_Axis_PositionControl = Y1_ScanHole;
 				Y_Axis_bDirection = MOTOR_STEP_ABLE;
-				vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
 				vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
+				vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
       			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-				bFlag_ScanHole_X =3;
+				State_ScanHole_X =3;
 				}
 		break;
         case 3:
@@ -1338,2156 +1445,106 @@ void ScanHole (void)
 				X_Axis_bDirection = MOTOR_STEP_STOP;
 				Y_Axis_bDirection = MOTOR_STEP_STOP;
 				Z_Axis_bDirection = MOTOR_STEP_STOP;
-				bFlag_ScanHole_X = 4;
+				State_ScanHole_X  = 4;
 				}
 		break;
         case 4:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 5;
-					}
-			break;
-            default :
-			break;
-			}
-        
+			 	LeftToRight_Scanhole();
 		break;
         case 5:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 6;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 6:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-                    X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;	
-					}
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 7;
-					}
-			break;
-            default :
-			break;
-			}
+				X_Axis_bDirection = MOTOR_STEP_STOP;		
+				RightToLeft_Scanhole();
 		break;
        	case 7:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 8;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 8:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 9;
-					}
-			break;
-            default :
-			break;
-			}
-        
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+           		LeftToRight_Scanhole();
 		break;
         case 9:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 10;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
-		case 10:	
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 11;
-					}
-			break;
-            default :
-			break;
-			}
+		case 10:
+				X_Axis_bDirection = MOTOR_STEP_STOP;	
+			 	RightToLeft_Scanhole();
 		break;
        	case 11:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 12;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 12:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 13;
-					}
-			break;
-            default :
-			break;
-			}
-        
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				LeftToRight_Scanhole();
 		break;
         case 13:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 14;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 14:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 15;
-					}
-			break;
-            default :
-			break;
-			}
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+			 	RightToLeft_Scanhole();
 		break;
        	case 15:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 16;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 16:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 17;
-					}
-			break;
-            default :
-			break;
-			}
-        
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				LeftToRight_Scanhole();
 		break;
         case 17:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 18;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 18:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 19;
-					}
-			break;
-            default :
-			break;
-			}
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				RightToLeft_Scanhole();
 		break;
        	case 19:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 20;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();			
+				}
 		break;
 		case 20:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;
-					}	
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl + 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 22;
-					}
-			break;
-            default :
-			break;
-			}
-        
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				LeftToRight_Scanhole();
 		break;
         case 21:
-			if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-			{
-            X_Axis_PositionControl = X_Axis_PositionControl + 30;
-			X_Axis_bDirection = MOTOR_STEP_ABLE;
-			vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
-			vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
-			vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
-			bFlag_ScanHole_X = 22;
-			}
+				if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+				{
+				X_Scanhole();
+				}
 		break;
 		case 22:
-			switch(bFlag_ScanHole_Y)
-			{
-			case 0:
-					X_Axis_bDirection = MOTOR_STEP_STOP;
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 80;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 1;
-			break;
- 			case 1:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-                    Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 2;	
-					}
-			break;
-			case 2:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 3;
-					}
-			break;
-			case 3:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 4;
-					}
-			break;	
-			case 4:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 5;
-					}
-			break;
-			case 5:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 6;
-					}
-			break;
-			case 6:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 7;
-					}
-			break;
-			case 7:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 8;
-					}
-			break;
-			case 8:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 9;
-					}
-			break;
-			case 9:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 10;
-					}	
-			break;
-			case 10:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 11;
-					}
-			break;
-			case 11:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 12;
-					}
-			break;
-			case 12:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 13;
-					}
-			break;
-			case 13:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 14;
-					}
-			break;
-			case 14:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 15;
-					}
-			break;
-			case 15:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 16;
-					}
-			break;
-			case 16:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 17;
-					}
-			break;
-			case 17:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 18;
-					}
-			break;
-			case 18:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 19;
-					}
-			break;
-			case 19:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 20;
-					}
-			break;
-			case 20:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_PositionControl = Y_Axis_PositionControl - 50;
-					Y_Axis_bDirection = MOTOR_STEP_ABLE;
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
-					vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
-					vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
- 					bFlag_ScanHole_Y = 21;
-					}
-			break;
-			case 21:
-					if(Y_Axis_PulseControl == Cnt_Pulse_Y)
-					{
-					Y_Axis_bDirection = MOTOR_STEP_STOP;
-					bFlag_ScanHole_Y = 0;
-					bFlag_ScanHole_X = 23;
-					}
-			break;
-            default :
-			break;
-			}
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				RightToLeft_Scanhole();
 		break;	
 		case 23:
-			X_Axis_bDirection = MOTOR_STEP_STOP;
-			Y_Axis_bDirection = MOTOR_STEP_STOP;
-			Z_Axis_bDirection = MOTOR_STEP_STOP;
+				X_Axis_bDirection = MOTOR_STEP_STOP;
+				Y_Axis_bDirection = MOTOR_STEP_STOP;
+				Z_Axis_bDirection = MOTOR_STEP_STOP;
 		break;
 		default:
 		break;
@@ -3495,7 +1552,88 @@ void ScanHole (void)
     }
 }
 
+void LeftToRight_Scanhole(void)
+{
+if( Y_Axis_PositionControl <= Y2_ScanHole )
+	{
+	switch (State_ScanHole_Y)
+	{
+	case 0:
+		Y_Axis_PositionControl = Y_Axis_PositionControl + 30;
+		Y_Axis_bDirection = MOTOR_STEP_ABLE;
+		vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
+		vMotorStepControl_Status(StepMotorY,MOTOR_STEP_FORWARD);
+		vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
+		State_ScanHole_Y = 1;
+	break;
+	case 1:
+		if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+		{
+		Y_Axis_bDirection = MOTOR_STEP_STOP;
+		State_ScanHole_Y = 0;
+		}
+	break;
+	default:
+	break;
+	}
+	}
+else 
+	{
+	State_ScanHole_X ++;
+	}
+}
 
+void RightToLeft_Scanhole(void)
+{
+if( Y_Axis_PositionControl >= Y1_ScanHole )
+	{
+	switch (State_ScanHole_Y)
+	{
+	case 0:
+		Y_Axis_PositionControl = Y_Axis_PositionControl - 30;
+		Y_Axis_bDirection = MOTOR_STEP_ABLE;
+		vMotorStepControl_Status(StepMotorX,MOTOR_STEP_STOP);
+		vMotorStepControl_Status(StepMotorY,MOTOR_STEP_REVERSE);
+		vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
+		State_ScanHole_Y = 1;
+	break;
+	case 1:
+		if(Y_Axis_PulseControl == Cnt_Pulse_Y)
+		{
+		Y_Axis_bDirection = MOTOR_STEP_STOP;
+		State_ScanHole_Y  = 0;
+		}
+	break;
+	default:
+	break;
+	}
+	}
+else 
+	{
+	State_ScanHole_X ++;
+	}
+}
+enumbool bFlag_Scanhold_Finish = eFALSE;
+void X_Scanhole(void)
+{
+if(X_Axis_PositionControl <= X2_ScanHole)
+	{
+	X_Axis_PositionControl = X_Axis_PositionControl + 30;
+	X_Axis_bDirection = MOTOR_STEP_ABLE;
+	vMotorStepControl_Status(StepMotorX,MOTOR_STEP_FORWARD);
+	vMotorStepControl_Status(StepMotorY,MOTOR_STEP_STOP);
+	vMotorStepControl_Status(StepMotorZ,MOTOR_STEP_STOP);
+	State_ScanHole_X++;
+	}
+else 
+	{
+	X_Axis_bDirection = MOTOR_STEP_STOP;
+	Y_Axis_bDirection = MOTOR_STEP_STOP;
+	Z_Axis_bDirection = MOTOR_STEP_STOP;
+    bFlag_Scanhold_Finish = eTRUE;
+	}
+
+}
 
 /*--------------------------Error_Process----------------------------------------*/
 enumbool bFlag_Error_Process = eFALSE;

@@ -50,13 +50,17 @@ void vFLASH_UpdateData(void);
 void vGetEncoderValue_X(void);
 void EXTI1_IRQHandler(void);
 void EXTI2_IRQHandler(void);
+void EXTILine15_Config(void);
 void EXTILine1_Config(void);
 void EXTILine2_Config(void);
+void EXTI15_10_IRQHandler(void);
 /*ENCODER OF AXIS Y*/
 void EXTI3_IRQHandler(void);
 void EXTI4_IRQHandler(void);
 void EXTILine3_Config(void);
 void EXTILine4_Config(void);
+void EXTILine5_Config(void);
+void EXTI9_5_IRQHandler(void);
 void vGetEncoderValue_Y(void);
 
 /*-----------------------------------------------------------------------------*/
@@ -86,25 +90,29 @@ extern enumbool bFlag_GoHOME_X ;
 extern enumbool bFlag_GoHOME_Y ;
 extern enumbool bFlag_GoHOME_Z ;
 
-extern uint32 bFlag_ReleaseCutter;
-extern uint32 bFlag_GetCutter ;
+extern uint32 State_ReleaseCutter;
+extern uint32 State_GetCutter ;
 
 /*-----------------------------------------------------------------------------*/
 //---------------------------------RESET CUTTER---------------------------------//
 /*---------------------------------------------------------------------------*/
-void vInitReleaseCutter(void);
-void vInitGetCutter(void);
+void GetCutter_Machine(void);
+void ReleaseCutter_Machine(void);
 /*-----------------------------------------------------------------------------*/
 //---------------------------------RUN TO POINT--------------------------------//
 /*---------------------------------------------------------------------------*/
 void Run_To_Point(void);
-extern uint32 bFlag_RunToPoint ;
+extern uint32 State_RunToPoint ;
 /*-----------------------------------------------------------------------------*/
 //---------------------------------SCANHOLE--------------------------------//
 /*---------------------------------------------------------------------------*/
 void ScanHole (void);
-extern uint32 bFlag_ScanHole_Y;
-extern uint32 bFlag_ScanHole_X;
+extern uint32 State_ScanHole_Y;
+extern uint32 State_ScanHole_X;
+extern enumbool bFlag_Scanhold_Finish;
+void LeftToRight_Scanhole(void);
+void RightToLeft_Scanhole(void);
+void X_Scanhole(void);
 
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & IO FUNCTION PROTOTYPE------------------//

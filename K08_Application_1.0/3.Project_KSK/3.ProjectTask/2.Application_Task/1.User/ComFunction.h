@@ -89,13 +89,14 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
-    P2TCMD_Control_X_axis     = 0x10,
-    P2TCMD_Control_Y_axis     = 0x11,
-    P2TCMD_Control_Z_axis     = 0x21,
+    P2TCMD_Control_X_axis     = 0x02,
+    P2TCMD_Control_Y_axis     = 0x03,
+    P2TCMD_Control_Z_axis     = 0x04,
    	P2TCMD_FEEDBACK		      = 0x41,
-    P2TCMD_Control_Motor	  = 0x51,
-
-
+    P2TCMD_AXIS_PROCESS	  	  = 0x01,
+	P2TCMD_StateButtonStop1   = 0x05,
+	P2TCMD_StateButtonPause1  = 0x06,
+  
     /*Common command*/
     P2TCMD_CLOSE = 0x01,
     P2TCMD_CONNECT = 0x02,
@@ -116,8 +117,8 @@ typedef enum {
 	GetCutter		= 0x03,
 	RunForScan	 	= 0x04,
 	RunToPoint    	= 0x05,
-	Stop		  	= 0x06,
-    Ready         	= 0x07,
+	Stop		  	= 0x07,
+    Ready         	= 0x06,
 }state_process;
 
 typedef enum {
@@ -145,17 +146,23 @@ typedef struct{
 	enumbool			bFlag_Process_Update;
 }Buffer_Motor_Control_Process;
 extern Buffer_Motor_Control_Process  BUFFER_MOTOR_CONTROL_PROCESS;
-/* Step Motor */
+
 typedef struct{
-uint16				PositionControl;				//Recieve
-uint16				PositionGet;					//Send
-uint8				Speed;							//Recieve			
-state_step_motor 	bDirection;						//Recieve
+uint16				PositionControl;				                                      	//Recieve from master
+uint16				PositionGet;					                                     	//Send to master
+uint8				Speed;																	//Recieve from master			
+state_step_motor 	bDirection;																//Recieve from master
 }Buffer_Control_Axis;
 extern Buffer_Control_Axis BUFFER_CONTROL_X_AXIS;
 extern Buffer_Control_Axis BUFFER_CONTROL_Y_AXIS;
 extern Buffer_Control_Axis BUFFER_CONTROL_Z_AXIS;
 
+/*Receive Status Button From Master*/
+typedef struct{
+uint8 bflag_Stop;                                    										//Receive from master
+uint8 bflag_Pause; 																			//Receive from master	
+}buffer_StateButton;
+extern buffer_StateButton BUFFER_STATEBUTTON ;
 
 
 /*--------------------------------------------------------------------*/
@@ -173,8 +180,8 @@ void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE,
 void vFeedBack_info_sys(void);
 
 /* MAKE DATA*/
-void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
 
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PARA1, uint32 PARA2, uint32 PARA3, uint32 PARA4, uint32 PARA5, uint32 PARA6);
 void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
 void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
 void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);

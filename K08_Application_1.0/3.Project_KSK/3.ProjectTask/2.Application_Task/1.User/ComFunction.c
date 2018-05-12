@@ -81,8 +81,8 @@ Buffer_Control_Axis BUFFER_CONTROL_X_AXIS;
 Buffer_Control_Axis BUFFER_CONTROL_Y_AXIS;
 Buffer_Control_Axis BUFFER_CONTROL_Z_AXIS;
 
-
-
+/*Receive status button from Master*/
+buffer_StateButton BUFFER_STATEBUTTON;
 /*--------------------------------------------------------------------*/
 //-------------------USER COMMUNICATION FUNCTION---------------------//
 /*------------------------------------------------------------------*/
@@ -182,43 +182,40 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
           	case P2TCMD_INFO :
               vFeedBack_info_sys();
             break;
+			//Recieve Data from Master - USART1 
           	case P2TCMD_Control_X_axis :
-              /* CODE MAU GHI DU LIEU VAO BUFFER DATA */
               BUFFER_CONTROL_X_AXIS.bDirection					= UART_BUFFER_RX[iUART_CMD];
  			  BUFFER_CONTROL_X_AXIS.PositionControl				= UART_BUFFER_RX[iUART_DATA];
     		  BUFFER_CONTROL_X_AXIS.Speed						= UART_BUFFER_RX[iUART_DATA+2];
-			 
-              /* END CODE MAU GHI DU LIEU VAO BUFFER */
             break;
-		  	case P2TCMD_Control_Y_axis :
-              /* CODE MAU GHI DU LIEU VAO BUFFER DATA */
-		
+			//Recieve Data from Master - USART1 
+		  	case P2TCMD_Control_Y_axis :	
         	  BUFFER_CONTROL_Y_AXIS.bDirection					= UART_BUFFER_RX[iUART_CMD];
  			  BUFFER_CONTROL_Y_AXIS.PositionControl				= UART_BUFFER_RX[iUART_DATA];
               BUFFER_CONTROL_Y_AXIS.Speed						= UART_BUFFER_RX[iUART_DATA+2];
-			
-              /* END CODE MAU GHI DU LIEU VAO BUFFER */
             break;
+			//Recieve Data from Master - USART1 
 			case P2TCMD_Control_Z_axis :
-              /* CODE MAU GHI DU LIEU VAO BUFFER DATA */
-			
               BUFFER_CONTROL_Z_AXIS.bDirection					= UART_BUFFER_RX[iUART_CMD];
  			  BUFFER_CONTROL_Z_AXIS.PositionControl				= UART_BUFFER_RX[iUART_DATA];
     		  BUFFER_CONTROL_Z_AXIS.Speed						= UART_BUFFER_RX[iUART_DATA+2];
-			 
-              /* END CODE MAU GHI DU LIEU VAO BUFFER */
             break;   
-          	case P2TCMD_Control_Motor:
+			//Recieve Data from Master - USART1
+          	case P2TCMD_AXIS_PROCESS:
 			  BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis        =  UART_BUFFER_RX[iUART_CMD];
  			  BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE;
+			break;
+			case P2TCMD_StateButtonStop1:
+			  BUFFER_STATEBUTTON.bflag_Stop = UART_BUFFER_RX[iUART_DATA];
+			break;
+			case P2TCMD_StateButtonPause1:
+			  BUFFER_STATEBUTTON.bflag_Pause = UART_BUFFER_RX[iUART_DATA];
+			break;
           default :
           break;
           }
-              
-        
 //          UART_BUFFER_RX_HEAD[UART_BUFFER_RX_HEAD_INDEX]=iIndex;                        
 //          UART_BUFFER_RX_HEAD_INDEX++;
-          break;
           
       }/*END IF*/
   }
@@ -351,41 +348,41 @@ void UART_MakeData_Tail(uint8 *UART_BUFFER_TX)
 }
 
 /* Ham ghep noi data, phan biet data 8 bit hay 16 bit*/
-void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6)
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PARA1, uint32 PARA2, uint32 PARA3, uint32 PARA4, uint32 PARA5, uint32 PARA6)
 {    
   UART_MakeData_Head(UART_BUFFER_TX,CMD_TYPE);
-  
+  UART_MakeData_8bit(UART_BUFFER_TX,iUART_CMD,CMD);
   //PARA 1-2
   if(PARA2!=0)
   {
-      UART_MakeData_8bit(UART_BUFFER_TX,12, PARA1);
-      UART_MakeData_8bit(UART_BUFFER_TX,13, PARA2);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA, PARA1);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA+1, PARA2);
   }
   else
   {
-      UART_MakeData_16bit(UART_BUFFER_TX,12, PARA1);
+      UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA, PARA1);
   }
   
   //PARA 3-4
   if(PARA4!=0)
   {
-      UART_MakeData_8bit(UART_BUFFER_TX,14, PARA3);
-      UART_MakeData_8bit(UART_BUFFER_TX,15, PARA4);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA+2, PARA3);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA+3, PARA4);
   }
   else
   {
-      UART_MakeData_16bit(UART_BUFFER_TX,14, PARA3);
+      UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+2, PARA3);
   }
   
   //PARA 5-6
     if(PARA6!=0)
   {
-      UART_MakeData_8bit(UART_BUFFER_TX,16, PARA5);
-      UART_MakeData_8bit(UART_BUFFER_TX,17, PARA6);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA+4, PARA5);
+      UART_MakeData_8bit(UART_BUFFER_TX,iUART_DATA+5, PARA6);
   }
   else
   {
-      UART_MakeData_16bit(UART_BUFFER_TX,16, PARA5);
+      UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+4, PARA5);
   }
   
   UART_MakeData_Tail(UART_BUFFER_TX);
@@ -430,10 +427,10 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16
 uint8 CntUartBufferTx;
 
 typedef enum {
-    Bf_Control_X_Axis  = 0x00,
-    Bf_Control_Y_Axis  = 0x01,
-	Bf_Control_Z_Axis  = 0x02,
-	Bf_Control_Process = 0x03,
+    Bf_Control_X_Axis  = 0x16,
+    Bf_Control_Y_Axis  = 0x17,
+	Bf_Control_Z_Axis  = 0x18,
+	Bf_Control_Process = 0x15,
 }state_make_uart_buffer_tx;
 
 
@@ -459,9 +456,12 @@ void vMakeBufferTXTask( void *pvParameters )
           OS_vTaskDelayUntil(&xLastWakeTime,xUser_Task_Frequency);
 
           /*TAO DU LIEU TEST */
-          uint16 PARA1 ;
-		  uint16 PARA2 ;
- 		 
+		  uint32 PARA32_1 ;
+		  uint32 PARA32_2 ;
+		  
+		  uint8 PARA8_CMD_TYPE;
+		  uint8 PARA8_CMD;
+
           /*VALUE AXIS X*/
              
               BUFFER_CONTROL_X_AXIS.PositionGet	= X_Axis_PositionGet;
@@ -475,29 +475,32 @@ void vMakeBufferTXTask( void *pvParameters )
           switch (CntUartBufferTx)
           {
               case Bf_Control_X_Axis :
-                  PARA1 = BUFFER_CONTROL_X_AXIS.PositionGet;
-                  UART_MakeData(UART1_BUFFER_TX,0,PARA1,0,0,0,0,0);
+				  PARA8_CMD_TYPE = P2TCMD_Control_X_axis ;
+                  PARA32_1 = BUFFER_CONTROL_X_AXIS.PositionGet;
+                  UART_MakeData(UART1_BUFFER_TX,P2TCMD_Control_X_axis,PARA32_1,0,0,0,0,0,0);
                   UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
               break;
 
               case Bf_Control_Y_Axis :
-                  PARA1 = BUFFER_CONTROL_Y_AXIS.PositionGet;
-                  UART_MakeData(UART1_BUFFER_TX,0,PARA1,0,0,0,0,0);
+            	  PARA8_CMD_TYPE = P2TCMD_Control_Y_axis;
+                  PARA32_1 = BUFFER_CONTROL_Y_AXIS.PositionGet;
+                  UART_MakeData(UART1_BUFFER_TX,P2TCMD_Control_Y_axis,PARA32_1,0,0,0,0,0,0);
                   UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
               break;
      		  case Bf_Control_Z_Axis :
-                  PARA1 = BUFFER_CONTROL_Z_AXIS.PositionGet;
-                  UART_MakeData(UART1_BUFFER_TX,0,PARA1,0,0,0,0,0);
+				  PARA8_CMD_TYPE = P2TCMD_Control_Z_axis;
+                  PARA32_1 = BUFFER_CONTROL_Z_AXIS.PositionGet;
+                  UART_MakeData(UART1_BUFFER_TX,P2TCMD_Control_Z_axis,PARA32_1,0,0,0,0,0,0);
                   UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
               break;
 			  case Bf_Control_Process:
 				if(BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update==eTRUE)
 				{
-				BUFFER_MOTOR_CONTROL_PROCESS.Error_Process;
-				}
-                PARA1 = BUFFER_MOTOR_CONTROL_PROCESS.Error_Process;
-				UART_MakeData(UART1_BUFFER_TX,0,PARA1,0,0,0,0,0);
+				PARA8_CMD_TYPE = P2TCMD_AXIS_PROCESS;
+                PARA32_1 = BUFFER_MOTOR_CONTROL_PROCESS.Error_Process;
+				UART_MakeData(UART1_BUFFER_TX,P2TCMD_AXIS_PROCESS,PARA32_1,0,0,0,0,0,0);
                 UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX);
+				}
 			  break;
               default:
               break;
