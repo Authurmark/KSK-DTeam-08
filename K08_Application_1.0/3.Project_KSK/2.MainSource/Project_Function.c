@@ -278,10 +278,10 @@ void vInitPWMFunction(void)
         
         /* PWM will control DC motor */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-//	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; 
-//	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable; 
-	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
+	TIM_OCInitStructure.TIM_OutputState 	= TIM_OutputState_Enable; 
+	TIM_OCInitStructure.TIM_OCPolarity  	= TIM_OCPolarity_High;
+	TIM_OCInitStructure.TIM_OutputNState 	= TIM_OutputNState_Enable; 
+	TIM_OCInitStructure.TIM_OCNPolarity 	= TIM_OCNPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
         
         /* Config Thanh ghi tuong ung voi cac chan PWM*/
@@ -305,13 +305,12 @@ void vInitPWMFunction(void)
 
 	/* Init IO for PWM function */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	GPIO_InitTypeDef  GPIO_InitStructure;
-        
+	GPIO_InitTypeDef  GPIO_InitStructure; 
 	/* Configure PB0 PB1 in output pushpull mode */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 ;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);  
+	GPIO_Init(GPIOB, &GPIO_InitStructure); 
 }
 
 void vChangeDutyCycleOC1(uint8_t bDutyPercent)
@@ -329,10 +328,10 @@ void vMotorControl( uint8 bDutyMotor,state_DC_Spindle bDirection)
 	{
 		    case SPINDLE_FORWARD:
                     MOTOR_1_DUTY(bDutyMotor);
-                    MOTOR_2_DUTY(0);
+                    MOTOR_2_DUTY(2);
             break;
             case SPINDLE_REVERSE:
-                    MOTOR_1_DUTY(0);
+                    MOTOR_1_DUTY(2);
                     MOTOR_2_DUTY(bDutyMotor);
             break;
             case SPINDLE_BREAK:
@@ -435,28 +434,17 @@ void vInit_DMA_ADC_Function(void)
 uint32 bFlag_Status_Spindle = 0;
 void Spindle_Home(void)
 {
-  switch (bFlag_Status_Spindle)
-  {
-  case 0:
- // vMotorControl(20,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
-    vMotorControl(20,SPINDLE_FORWARD);
-	if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4)== eFALSE)
+	BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 20;
+//    vMotorControl(BUFFER_CONTROL_DC_SPINDLE.Speed_DC,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
+    vMotorControl(20,SPINDLE_REVERSE);
+	if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4) == eFALSE)
 	{
-  	bFlag_Status_Spindle =1;
-    vMotorControl(0,SPINDLE_DISABLE);
+	  BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 0;
+	  bFlag_Status_Spindle =1;
+	  vMotorControl(BUFFER_CONTROL_DC_SPINDLE.Speed_DC,SPINDLE_DISABLE);
+	  BUFFER_ENCODERHOME.Flag_Home = 1;
+	  BUFFER_ENCODERHOME.Flag_Update = eTRUE;
 	}
-  break;
-  case 1:
-	BUFFER_ENCODERHOME.Flag_Home = 1;
-	BUFFER_ENCODERHOME.Flag_Update = eTRUE;
-	if(BUFFER_ENCODERHOME.Flag_Home == 1)
-	{
-	bFlag_Status_Spindle = 2;
-	}
-  break;
-  default:
-  break;
- }
 }
 
 void vInit_HomeEncoder(void)

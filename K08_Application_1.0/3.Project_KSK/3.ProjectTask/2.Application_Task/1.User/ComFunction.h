@@ -83,42 +83,44 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
-    P2TCMD_SPINDLE      	= 0x10,
-    P2TCMD_TEST         	= 0x11,
-	P2TCMD_FEEDBACK			= 0x21,
-    P2TCMD_Current_Measure	= 0x31,
+    P2TCMD_SPINDLE      		= 0x01,
+    P2TCMD_TEST         		= 0x11,
+	P2TCMD_FEEDBACK				= 0x21,
+    P2TCMD_Current_Measure		= 0x02,
+    P2TCMD_StateButtonStop2 	= 0x03,
+	P2TCMD_StateButtonPause2	= 0x04,
     
 
     /*Common command*/
-    P2TCMD_CLOSE = 0x01,
-    P2TCMD_CONNECT = 0x02,
+    P2TCMD_CLOSE 				= 0x01,
+    P2TCMD_CONNECT			 	= 0x02,
     
     /* COMMAND FOR RELAY */
-    P2TCMD_SET_RELAY_PARA = 0xC1,
-    P2TCMD_SET_LED_PARA = 0xC2,
-    P2TCMD_SET_RELAY_DIRECT = 0xC3,
-    P2TCMD_SET_LED_DIRECT = 0xC4,
+    P2TCMD_SET_RELAY_PARA 		= 0xC1,
+    P2TCMD_SET_LED_PARA 		= 0xC2,
+    P2TCMD_SET_RELAY_DIRECT 	= 0xC3,
+    P2TCMD_SET_LED_DIRECT 		= 0xC4,
     
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
 /**************************************************************/
 typedef enum{
-	E_OverLoad		= 0x01,
-	E_OverTime		= 0x02,
+	E_OverLoad		= 0x01,        														//send to master
+	E_OverTime		= 0x02,       														//send to master
 }bError_Process;
 
 /* Control DC Spindle */
 typedef struct{
-  state_process         bProcess;
-  uint8                 Speed_DC;
-  bError_Process		Error_Process;
-  state_DC_Spindle      bDC_Driection;
+  state_process         bProcess;														// receive from master        
+  uint8                 Speed_DC;														// send to master
+  bError_Process		Error_Process;													// send to master
+  state_DC_Spindle      bDC_Driection;													// receive from master  
 }Buffer_Control_DC_Spindle;
 extern Buffer_Control_DC_Spindle BUFFER_CONTROL_DC_SPINDLE;
 /* Encoder Home Value */
 typedef struct{
-   uint8         Flag_Home;
+   uint8         Flag_Home;																// send to master							
    enumbool      Flag_Update;
 }Buffer_EncoderHome;
 extern Buffer_EncoderHome  BUFFER_ENCODERHOME;
@@ -128,11 +130,18 @@ extern Buffer_EncoderHome  BUFFER_ENCODERHOME;
 #define NUM_MEMBER_ADC_Current_Measure          10
 typedef struct{
   uint16        Buffer_ADC_Current_Measure[NUM_MEMBER_ADC_Current_Measure];
-  uint16        Current_Value;
-  uint16        Current_Max;
+  uint16        Current_Value;															// send to master										
+  uint16        Current_Max;															// receive from master 
   enumbool      Flag_Update;
 }Buffer_Current_Measure;
 extern Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
+
+/*Receive Status Button From Master*/
+typedef struct{
+uint8 bflag_Stop;                                      									//receive from master 
+uint8 bflag_Pause; 																		//receive from master 
+}buffer_StateButton;
+extern buffer_StateButton BUFFER_STATEBUTTON ;
 
 /*--------------------------------------------------------------------*/
 //-----------------------FUNCTION PROTOTYPE--------------------------//
@@ -149,7 +158,7 @@ void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE,
 void vFeedBack_info_sys(void);
 
 /* MAKE DATA*/
-void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
 
 void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
 void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
