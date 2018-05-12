@@ -35,9 +35,20 @@ void vUserTask( void *pvParameters );
 
 /* Init Parameter For System */
 void vInitCutter(void);
+/*UARST FOR MASTER*/
+#define i_MAX_UART          500
+extern uint8 UART1_BUFFER_RX[i_MAX_UART];
+extern uint8 UART1_BUFFER_TX[i_MAX_UART];
 
+extern uint8 UART2_BUFFER_RX[i_MAX_UART];
+extern uint8 UART2_BUFFER_TX[i_MAX_UART];
 
+/*control Button and Led*/
+#define ReadyLed    			GPIO_Pin_4
+#define WorkingLed              GPIO_Pin_5
+#define PauseLed                GPIO_Pin_6
 
+#define Led                     GPIOA
 
 
 

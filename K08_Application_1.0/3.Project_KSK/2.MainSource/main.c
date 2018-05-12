@@ -101,10 +101,10 @@ void main(void)
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
         /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
-
-
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
+	/* Init FeedBack Detect OverTime */
+	vInitFeedBackDetectOverTime();
     while(1);
 #else /* Not use OS */
 	while(1)
@@ -133,12 +133,15 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
+  Control_PauseButton();
+  Control_StopButton();
 
+ 
   vComDataProcess_USART1();
   vComDataProcess_USART2();
   vComDataProcess_USART3();
   
-//  vFeedBackDetectOverTime();
+  //vFeedBackDetectOverTime();
 }
 
 

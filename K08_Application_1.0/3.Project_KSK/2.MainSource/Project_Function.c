@@ -25,6 +25,7 @@
 #include "USART3_AppCall_Function.h"
 #include "IO_Function.h"
 #include "IO_Kernel_Function.h"
+#include "ComFunction.h"
 
 /* Global Variable, system Information */
 Struct_System_Information 		StrSystemInfo;
@@ -161,8 +162,6 @@ void vProject_Init()
 		vInit_BUTTON();
 		/*Control Air Valve*/
 		vInit_SetAirVale();
-		/*interrupt for pausebutton*/
-		EXTILine15_Config();
 		/* Update Flash Data */
 		//vFLASH_UpdateData();
 	/* Load config from flash and update */
@@ -315,8 +314,8 @@ uint8 Cnt_TimeHold_LS2;
 enumbool bLaserSensor_1()
 {
   //Scan status pin
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eTRUE)                 Cnt_TimeHold_LS1=Cnt_TimeHold_LS1+1;                    //1 stick = 10ms
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eFALSE)                Cnt_TimeHold_LS1=0;
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eTRUE)                 Cnt_TimeHold_LS1 = Cnt_TimeHold_LS1+1;                    //1 stick = 10ms
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eFALSE)                Cnt_TimeHold_LS1 = 0;
  
   //Define status pin
   if(Cnt_TimeHold_LS1>=2)               return eTRUE;   
@@ -326,8 +325,8 @@ enumbool bLaserSensor_1()
 enumbool bLaserSensor_2()
 {
   //Scan status pin
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eTRUE)                 Cnt_TimeHold_LS2=Cnt_TimeHold_LS2+1;                    //1 stick = 10ms
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eFALSE)                Cnt_TimeHold_LS2=0;
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eTRUE)                 Cnt_TimeHold_LS2 = Cnt_TimeHold_LS2+1;                    //1 stick = 10ms
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_2))==eFALSE)                Cnt_TimeHold_LS2 = 0;
  
   //Define status pin
   if(Cnt_TimeHold_LS2>=2)               return eTRUE;   
@@ -477,49 +476,44 @@ void vInit_BUTTON(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15 ;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);  
 }
-/*---------------------------CONFIG GPIO FOR PAUSEBUTTON------------------------------*/
-void EXTILine15_Config(void)
+/*-------------------------------Control PauseButton---------------------------------*/
+enumbool bStatus_PauseButton = eFALSE;
+void Control_PauseButton(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  NVIC_InitTypeDef  NVIC_InitStructure;
-  EXTI_InitTypeDef  EXTI_InitStructure;
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD ;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15; 
-  GPIO_Init(GPIOB, &GPIO_InitStructure); 
-  
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOB,GPIO_PinSource15);
-  
-  EXTI_InitStructure.EXTI_Line = EXTI_Line15;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;  
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-  
-    
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+  switch(State_PauseButton)
+  {
+  case eTRUE:		
+	  bStatus_PauseButton = eTRUE;
+	  BUFFER_STATEBUTTON.bflag_Pause = 1;
+  break;
+  case eFALSE:									
+	  bStatus_PauseButton = eFALSE;
+  break;
+  default:
+  break;
+  }
 }
-
-void EXTI15_10_IRQHandler(void)
+/*-------------------------------Control StopButton---------------------------------*/
+enumbool bStatus_StopButton = eFALSE;
+void Control_StopButton(void)
 {
- if(EXTI_GetITStatus(EXTI_Line15) != RESET)
+	switch (State_StopButton)
 	{
-	 EXTI_ClearITPendingBit(EXTI_Line15);
-	 GPIO_SetBits(GPIOA,GPIO_Pin_6);
+	case eTRUE:
+		bStatus_StopButton = eTRUE;
+		BUFFER_STATEBUTTON.bflag_Stop = 1;
+	break;
+	case eFALSE:
+		bStatus_StopButton = eFALSE;
+	break;
+   	default:
+	break;
 	}
+
 }
-
-
 #endif /* _Project_Function__C */

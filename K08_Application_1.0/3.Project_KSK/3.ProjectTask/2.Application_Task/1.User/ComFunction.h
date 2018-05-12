@@ -174,8 +174,12 @@ extern structIO_Manage_Output bLEDConfigCommand;
 #define TEST_1  0x01
 #define TEST_2  0x02
 
-
-
+/*Buffer Data for Pause/Run and stop*/
+typedef struct{
+uint8 bflag_Stop;                                    //send trang thái nut nhan Stop and Pause/Run cho slave1 và slave2
+uint8 bflag_Pause; 	
+}buffer_StateButton;
+extern buffer_StateButton BUFFER_STATEBUTTON ;
 
 
 

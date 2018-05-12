@@ -128,25 +128,25 @@ void vIO_Kernel_Task( void *pvParameters )
 	}
 }
 /*--------- DETECT BUTTON ---------------*/
-uint8 Cnt_TimeHold_StopButton[2];
-enumbool State_StopButton[2];
+uint32 Cnt_TimeHold_StopButton;
+enumbool State_StopButton;
 
-uint8 Cnt_TimeHold_PauseButton[2];
-enumbool State_PauseButton[2];
+uint32 Cnt_TimeHold_PauseButton;
+enumbool State_PauseButton;
 
 
 void Detect_StopButton(void)
 {
 	/*----------------------------------------------StopButton---------------------------------------------------*/
-	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eTRUE)					 Cnt_TimeHold_StopButton[0]++;
-	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eFALSE)					 Cnt_TimeHold_StopButton[0]=0;
-	if(Cnt_TimeHold_StopButton[0] >= 2)							 							 State_StopButton[0] = eTRUE;
-	if(Cnt_TimeHold_StopButton[0] < 2)														 State_StopButton[0] = eFALSE;
+	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eTRUE)					 Cnt_TimeHold_StopButton = Cnt_TimeHold_StopButton+1;
+	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eFALSE)					 Cnt_TimeHold_StopButton = 0;
+	if(Cnt_TimeHold_StopButton >= 2)							 							 State_StopButton = eTRUE;
+	if(Cnt_TimeHold_StopButton < 2)														     State_StopButton = eFALSE;
 		/*----------------------------------------------PauseButton---------------------------------------------------*/
-	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eTRUE)					 Cnt_TimeHold_PauseButton[0]++;
-	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eFALSE)					 Cnt_TimeHold_PauseButton[0]=0;
-	if(Cnt_TimeHold_PauseButton[0] >= 2)							 					     State_PauseButton[0] = eTRUE;
-	if(Cnt_TimeHold_PauseButton[0] < 2)														 State_PauseButton[0] = eFALSE;
+	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eTRUE)					 Cnt_TimeHold_PauseButton = Cnt_TimeHold_PauseButton+1;
+	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eFALSE)					 Cnt_TimeHold_PauseButton = 0;
+	if(Cnt_TimeHold_PauseButton >= 2)							 					         State_PauseButton = eTRUE;
+	if(Cnt_TimeHold_PauseButton < 2)														 State_PauseButton = eFALSE;
 }
 
 

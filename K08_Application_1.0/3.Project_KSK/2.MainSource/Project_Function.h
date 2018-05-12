@@ -74,11 +74,14 @@ void vInit_SetAirVale(void);
 /*-----------------------------------------------------------------------------*/
 //------------------------   -CONFIG LED AND BUTTON---------------------------//
 /*---------------------------------------------------------------------------*/
+extern enumbool bStatus_PauseButton;
+extern enumbool bStatus_StopButton;
 void vInit_LED(void);
 void vInit_LED_DeBug(void);
 void vInit_BUTTON(void);
-void EXTILine15_Config(void);
-void EXTI15_10_IRQHandler(void);
+void Control_PauseButton(void);
+void Control_StopButton(void);
+
 
 
 /*-----------------------------------------------------------------------------*/
@@ -92,10 +95,10 @@ extern structIO_Manage_Output strRELAY_1, strRELAY_2, strRELAY_3;
 extern structIO_Manage_Output strLED_1, strBELL, strTRUNK;
 extern IO_Struct pRS485_DIR;
 /*EXTERN BUTTON*/
-extern uint8 Cnt_TimeHold_StopButton[2];
-extern enumbool State_StopButton[2];
-extern uint8 Cnt_TimeHold_PauseButton[2];
-extern enumbool State_PauseButton[2];
+extern uint32 Cnt_TimeHold_StopButton;
+extern enumbool State_StopButton;
+extern uint32 Cnt_TimeHold_PauseButton;
+extern enumbool State_PauseButton;
 
 
 /* extern adc value */

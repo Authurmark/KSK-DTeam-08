@@ -51,6 +51,8 @@ typedef enum
         eST_User_Task_PWM                       = 7,
         eST_User_Task_DMA_ADC                   = 8,
         eST_User_Task_Encoder                   = 9,
+		eST_User_Task_StopButton                = 10,
+	
 		
         eST_User_Task_UN 						= 0xff,
         
@@ -128,10 +130,8 @@ timer tIO_SpindleUpInHole;
 enumbool bFlag_FinishCheckHole  = eFALSE;
 uint8    Status_SpindleCheckProcess =0;     
 
-/*BFLAG FOR STATUS LED*/
-enumbool bFlag_Ready_Led	 	= eFALSE;
-enumbool bFLag_Working_Led		= eFALSE;
-enumbool bFlag_Pause_Led    	= eFALSE;        
+
+       
 
 
 
@@ -181,28 +181,28 @@ void vUserTaskMainProcess(void)
 			{
 				bFlag_1st_Case = eFALSE;
                                 
-                                BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_Reset;
-                                BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
-                                eFlag_Process_Finish=eFALSE;
-                                
-                                //Get Ready for System
-                                vInitCutter();
-                                //Get Ready for Axis Control
-                                
-                                //Get Ready for Spindle Control
-                                vSetAirVale(SpindleResetHome);
-								
-								
-                                BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
-                                BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
+				BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Reset;
+				BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
+				eFlag_Process_Finish = eFALSE;
+				BUFFER_STATEBUTTON.bflag_Stop = 0;
+				
+				//Get Ready for System
+				vInitCutter();
+				//Get Ready for Axis Control
+				
+				//Get Ready for Spindle Control
+				vSetAirVale(SpindleResetHome);
+				
+				BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
+				BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
  
 			}
 			else
 			{
-                                BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Ready;
-                                eState_User_Task = eST_User_Task_IDLE;
-                                bFlag_1st_Case = eTRUE;
-								bFlag_Ready_Led = eTRUE;	
+				BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Ready;
+				eState_User_Task = eST_User_Task_IDLE;
+				bFlag_1st_Case = eTRUE;
+								
 			}
 		break;
                 
@@ -219,409 +219,460 @@ void vUserTaskMainProcess(void)
 			if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE; 
-				if(bFlag_Ready_Led == eTRUE)
-				{
-				GPIO_SetBits(GPIOA,GPIO_Pin_4);
-				} 
+				GPIO_SetBits(Led,ReadyLed);
 			}
 			else
 			{
-                          //when process finish and PC recieve feedback status process, system comback to Idle
-                          //PC send new command, and BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eTRUE;
-                          //In this time, we will handle the system
-						  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eTRUE;
-                          if(BUFFER_MACHINE_CONTROL.eFlag_Process_Update==eTRUE)
-                          {
-							  BUFFER_MACHINE_CONTROL.bProcess_Control_Machine = PMachine_ResetHome;
-                              switch(BUFFER_MACHINE_CONTROL.bProcess_Control_Machine)
-                              {
-                                  case PMachine_ResetHome:
-                                    eState_User_Task=eST_User_Task_ResetHome;
-                                    eFlag_Process_Finish=eFALSE;
-                                    bFlag_1st_Case = eTRUE;
-									bFLag_Working_Led = eTRUE;
-									bFlag_Ready_Led = eFALSE;
-//                                  GPIO_SetBits(GPIOA,GPIO_Pin_11);
-//									GPIO_SetBits(GPIOA,GPIO_Pin_12);
-//									GPIO_SetBits(GPIOA,GPIO_Pin_15);
-                                  break;
-                                    
-                                  case PMachine_ResetCutter:
-                                    eState_User_Task = eST_User_Task_ResetCutter;
-                                    eFlag_Process_Finish = eFALSE;
-                                    bFlag_1st_Case = eTRUE;
-									bFLag_Working_Led = eTRUE;
-									bFlag_Ready_Led = eFALSE;
-                                  break;
-                                    
-                                  case PMachine_ScanHole:
-                                    eState_User_Task = eST_User_Task_ScanHole;
-                                    eFlag_Process_Finish = eFALSE;
-                                    bFlag_1st_Case = eTRUE;
-									bFLag_Working_Led = eTRUE;
-									bFlag_Ready_Led = eFALSE;
-                                  break;
-                                    
-                                  case PMachine_ThreadChecker:
-                                    eState_User_Task = eST_User_Task_ThreadChecker;
-                                    eFlag_Process_Finish=eFALSE;
-                                    bFlag_1st_Case    = eTRUE;
-									bFLag_Working_Led = eTRUE;
-									bFlag_Ready_Led   = eFALSE;
-                                  break;
-                                                                     
-                                  default :
-                                  break;
-                              }
-                          }
-                        }
+				//when process finish and PC recieve feedback status process, system comback to Idle
+				//PC send new command, and BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eTRUE;
+				//In this time, we will handle the system
+
+//				BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eTRUE;
+				if(BUFFER_MACHINE_CONTROL.eFlag_Process_Update==eTRUE)
+				{
+//					BUFFER_MACHINE_CONTROL.bProcess_Control_Machine = PMachine_ResetHome;
+					switch(BUFFER_MACHINE_CONTROL.bProcess_Control_Machine)
+					{
+						case PMachine_ResetHome:
+						  eState_User_Task=eST_User_Task_ResetHome;
+						  eFlag_Process_Finish=eFALSE;
+						  bFlag_1st_Case = eTRUE;
+						  //Led Status 
+						  GPIO_ResetBits(Led,ReadyLed);
+//						  GPIO_SetBits(GPIOA,GPIO_Pin_11);
+//						  GPIO_SetBits(GPIOA,GPIO_Pin_12);
+//						  GPIO_SetBits(GPIOA,GPIO_Pin_15);
+						break;
+						  
+						case PMachine_ResetCutter:
+						  eState_User_Task = eST_User_Task_ResetCutter;
+						  eFlag_Process_Finish = eFALSE;
+						  bFlag_1st_Case = eTRUE;
+						  // Led Status
+						  GPIO_ResetBits(Led,ReadyLed);
+						break;
+						  
+						case PMachine_ScanHole:
+						  eState_User_Task = eST_User_Task_ScanHole;
+						  eFlag_Process_Finish = eFALSE;
+						  bFlag_1st_Case = eTRUE;
+						  // Led Status
+						  GPIO_ResetBits(Led,ReadyLed);
+						break;
+						  
+						case PMachine_ThreadChecker:
+						  eState_User_Task = eST_User_Task_ThreadChecker;
+						  eFlag_Process_Finish=eFALSE;
+						  bFlag_1st_Case    = eTRUE;
+						  // Led Status
+						  GPIO_ResetBits(Led,ReadyLed);
+						break;
+														   
+						default :
+						break;
+					}
+				}
+            }
 		break;
                 
                 
                 
                 
                 
-                case eST_User_Task_ResetHome:
-                  if(bFlag_1st_Case==eTRUE)
-                  {
-                          bFlag_1st_Case = eFALSE;
-                          BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
-                          
-                          //Control X,Y,Z
-                          BUFFER_AXIS_PROCESS.bProcess=RESETHOME;
-                          BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-                          
-                          //Control Spindle Motor
-                          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;
-                          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-                          
-                          #ifdef USE_DEBUG_MASTER
-                            BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-                          #endif /*USE_DEBUG_MASTER*/
-                  }
-                  else
-                  {
-						  // STOP BUTTON
-						  if(State_StopButton[0] == eTRUE)
-							{
-								eState_User_Task = eST_User_Task_IDLE;
-								bFlag_1st_Case==eTRUE;
-							}
-                          else
-							{
-						  //Turn on Working_Led
-						  if(bFLag_Working_Led == eTRUE)
-							{
-								GPIO_SetBits(GPIOA,GPIO_Pin_5);
-							}
-                          //Feedback Status Process Machine to PC
-                          BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetHome;
-                    
-                          //Condition Process Finished
-                          if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-                            if(BUFFER_ENCODER.Flag_Home==eTRUE)
-                            {
-                                    #ifdef USE_DEBUG_MASTER
-                                        BUFFER_ENCODER.Flag_Home=eFALSE;     
-                                    #endif /*USE_DEBUG_MASTER*/
-                                        
-                                    eFlag_Process_Finish=eTRUE;
-                            }
-                          
-                          
-                          
-                          
-                          //Back to eST_User_Task_IDLE, when process finish
-                          if (eFlag_Process_Finish==eTRUE)
-                          {
-                            BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-                            eState_User_Task = eST_User_Task_IDLE;
-							bFLag_Working_Led == eFALSE;
-							bFlag_Ready_Led = eTRUE;
-                          }
-                          //Back to eST_User_Task_IDLE, when reset
-                          if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-                          {
-                            eState_User_Task = eST_User_Task_INIT;
-                          }
-						}
-                  }
-                break;
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                case eST_User_Task_ResetCutter:
-                  if(bFlag_1st_Case==eTRUE)
-                  {
-                          bFlag_1st_Case = eFALSE;
-                          BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
-                                                 
-                          //Control Spindle Motor
-                          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;             //after reset home for spindle, break DC Spindle
-                          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-                          #ifdef USE_DEBUG_MASTER
-                            BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-                          #endif /*USE_DEBUG_MASTER*/
-                  }
-                  else
-                  {
-						  // STOP BUTTON
-						  if(State_StopButton[0] == eTRUE)
-							{
-								eState_User_Task=eST_User_Task_IDLE;
-							}
-						  else
-							{
-						  //Turn on Working_Led
-						  if(bFLag_Working_Led == eTRUE)
-							{
-								GPIO_SetBits(GPIOA,GPIO_Pin_5);
-							}    
-                          //Control X,Y,Z
-                          if(BUFFER_ENCODER.Flag_Home==eTRUE)
-                          {
-                            #ifdef USE_DEBUG_MASTER
-                                BUFFER_ENCODER.Flag_Home=eFALSE;     
-                            #endif /*USE_DEBUG_MASTER*/
-                            vReleaseCutter();
-                            BUFFER_AXIS_PROCESS.bProcess=RELEASECUTTER;
-                            BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-                          }
-                          
-                          //Feedback Status Process Machine to PC
-                          BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetCutter;
-                                              
-           
-                          //Condition Process Finished
-                          if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-                            eFlag_Process_Finish=eTRUE;
-                        
-                          
-                          
-                          
-                          
-                          //Back to eST_User_Task_IDLE, when process finish
-                          if (eFlag_Process_Finish==eTRUE)
-                          {
-                            BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-                            eState_User_Task=eST_User_Task_IDLE;
-							bFLag_Working_Led == eFALSE;
-							bFlag_Ready_Led = eTRUE;
-                          }
-                          //Back to eST_User_Task_IDLE, when reset
-                          if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-                          {
-                            
-                            eState_User_Task=eST_User_Task_INIT;
-                          }
-					 }
-                  }
-                break;
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                case eST_User_Task_ScanHole:
-                  if(bFlag_1st_Case==eTRUE)
-                  {
-                          bFlag_1st_Case = eFALSE;
-                          BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
-                                                 
-                          //Control X,Y,Z
-                          BUFFER_AXIS_PROCESS.bProcess=RUNTOSCAN;
-                          BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-                          
-                          #ifdef USE_DEBUG_MASTER
-                            BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-                          #endif /*USE_DEBUG_MASTER*/
-                  }
-                  else
-                  {
-					  // STOP BUTTON
-					  if(State_StopButton[0] == eTRUE)
+		case eST_User_Task_ResetHome:
+		  if(bFlag_1st_Case==eTRUE)
+		  {
+				  GPIO_SetBits(Led,WorkingLed);
+				  bFlag_1st_Case = eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+				  
+				  //Control X,Y,Z
+				  BUFFER_AXIS_PROCESS.bProcess=RESETHOME;
+				  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+				  
+				  //Control Spindle Motor
+				  BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;
+				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+				  
+				  #ifdef USE_DEBUG_MASTER
+					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+				  #endif /*USE_DEBUG_MASTER*/
+		  }
+		  else
+		  {		
+	
+				  // STOP BUTTON
+				  switch(bStatus_StopButton)
+				  {
+				  case eTRUE:
+						eState_User_Task = eST_User_Task_StopButton;
+				  break;
+				  case eFALSE:
+						switch (bStatus_PauseButton)
 						{
-							eState_User_Task=eST_User_Task_IDLE;
-						}
-					  else
-						{
-						  //Turn on Working_Led
-						  if(bFLag_Working_Led == eTRUE)
-							{
-								GPIO_SetBits(GPIOA,GPIO_Pin_5);
-							} 
-                          //Scan Thread Hole
-                          if(bDetectThreadHole())
-                            BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data]=eTRUE;
-                     
+						case eTRUE:
+							GPIO_SetBits(Led,PauseLed);
+							GPIO_ResetBits(Led,WorkingLed);	
+						break;
+						case eFALSE:
+							//status of led
+							GPIO_SetBits(Led,WorkingLed);
+							GPIO_ResetBits(Led,PauseLed);
+						  //Feedback Status Process Machine to PC
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetHome;
 
-                          //Feedback Status Process Machine to PC
-                          BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ScanHole;
-                                              
-           
-                          //Condition Process Finished
-                          if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-                            eFlag_Process_Finish=eTRUE;
-                        
-                          
-                          
-                          
-                          
-                          //Back to eST_User_Task_IDLE, when process finish
-                          if (eFlag_Process_Finish==eTRUE)
-                          {
-                            BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-                            eState_User_Task=eST_User_Task_IDLE;
-							bFLag_Working_Led == eFALSE;
-							bFlag_Ready_Led = eTRUE;
-                          }
-                          //Back to eST_User_Task_IDLE, when reset
-                          if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-                          {
-                            
-                            eState_User_Task=eST_User_Task_INIT;
-                          }
-					 }
-                  }
-                break;
+							//Condition Process Finished
+							if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+							  if(BUFFER_ENCODER.Flag_Home==eTRUE)
+							  {
+									  #ifdef USE_DEBUG_MASTER
+										  BUFFER_ENCODER.Flag_Home=eFALSE;     
+									  #endif /*USE_DEBUG_MASTER*/
+										  
+									  eFlag_Process_Finish=eTRUE;
+							  }
+							
+							
+							
+							
+							//Back to eST_User_Task_IDLE, when process finish
+							if (eFlag_Process_Finish==eTRUE)
+							{
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  eState_User_Task = eST_User_Task_IDLE;
+							}
+							//Back to eST_User_Task_IDLE, when reset
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							{
+							  eState_User_Task = eST_User_Task_INIT;
+							}
+					  break;
+					  default:
+					  break;
+					  }
+			   break;
+			   default:
+			   break;
+			   }
+		  }
+		break;
+                
+                
+                
+                
+                
+                
+                
+                
+                
+		case eST_User_Task_ResetCutter:
+		  if(bFlag_1st_Case==eTRUE)
+		  {
+				  GPIO_SetBits(Led,WorkingLed);
+				  bFlag_1st_Case = eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+										 
+				  //Control Spindle Motor
+				  BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RESET;             //after reset home for spindle, break DC Spindle
+				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+				  #ifdef USE_DEBUG_MASTER
+					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+				  #endif /*USE_DEBUG_MASTER*/
+
+		  }
+		  else
+		  {
+				  
+				  // STOP BUTTON
+				  switch(bStatus_StopButton)
+				  {
+				  case eTRUE:
+						eState_User_Task = eST_User_Task_StopButton;
+				  break;
+				  case eFALSE:
+						switch (bStatus_PauseButton)
+						{
+						case eTRUE:
+							GPIO_SetBits(Led,PauseLed);
+							GPIO_ResetBits(Led,WorkingLed);	
+						break;
+						case eFALSE:
+							//status of led
+							GPIO_SetBits(Led,WorkingLed);
+							GPIO_ResetBits(Led,PauseLed);
+							//Control X,Y,Z
+							if(BUFFER_ENCODER.Flag_Home==eTRUE)
+							{
+							  #ifdef USE_DEBUG_MASTER
+								  BUFFER_ENCODER.Flag_Home=eFALSE;     
+							  #endif /*USE_DEBUG_MASTER*/
+							  vReleaseCutter();
+							  BUFFER_AXIS_PROCESS.bProcess=RELEASECUTTER;
+							  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+							}
+							
+							//Feedback Status Process Machine to PC
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetCutter;
+												
+			 
+							//Condition Process Finished
+							if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+							  eFlag_Process_Finish=eTRUE;
+						  
+							
+							
+							
+							
+							//Back to eST_User_Task_IDLE, when process finish
+							if (eFlag_Process_Finish==eTRUE)
+							{
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  eState_User_Task=eST_User_Task_IDLE;
+							}
+							//Back to eST_User_Task_IDLE, when reset
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							{
+							  
+							  eState_User_Task=eST_User_Task_INIT;
+							}
+						break;
+						default:
+						break;
+					    }
+				 break;
+				 default:
+				 break;
+			 	}
+		  }
+		break;
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+		case eST_User_Task_ScanHole:
+		  if(bFlag_1st_Case==eTRUE)
+		  {
+				  bFlag_1st_Case = eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+										 
+				  //Control X,Y,Z
+				  BUFFER_AXIS_PROCESS.bProcess=RUNTOSCAN;
+				  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+				  
+				  #ifdef USE_DEBUG_MASTER
+					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+				  #endif /*USE_DEBUG_MASTER*/
+
+		  }
+		  else
+		  {
+			  // STOP BUTTON
+			  switch (bStatus_StopButton)
+			  {
+			  case eTRUE:
+					eState_User_Task = eST_User_Task_StopButton;
+			  break;
+			  case eFALSE:
+					switch (bStatus_PauseButton)
+					{
+					case eTRUE:
+						GPIO_SetBits(Led,PauseLed);
+						GPIO_ResetBits(Led,WorkingLed);	
+					break;
+					case eFALSE:
+						//status of led
+						GPIO_SetBits(Led,WorkingLed);
+						GPIO_ResetBits(Led,PauseLed);
+						//Scan Thread Hole
+						if(bDetectThreadHole())
+						  BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data]=eTRUE;
+				   
+
+						//Feedback Status Process Machine to PC
+						BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ScanHole;
+											
+		 
+						//Condition Process Finished
+						if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+						  eFlag_Process_Finish=eTRUE;
+					  
+						
+						
+						
+						
+						//Back to eST_User_Task_IDLE, when process finish
+						if (eFlag_Process_Finish==eTRUE)
+						{
+						  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+						  eState_User_Task=eST_User_Task_IDLE;
+						}
+						//Back to eST_User_Task_IDLE, when reset
+						if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine == PMachine_Reset)
+						{
+						  
+						  eState_User_Task=eST_User_Task_INIT;
+						}
+					break;
+					default:
+					break;
+					}
+				break;
+				default:
+				break;
+				}
+		  }
+		break;
                 
       
              
                 
                 
-                case eST_User_Task_ThreadChecker:
-                  if(bFlag_1st_Case==eTRUE)
-                  {
-                          bFlag_1st_Case = eFALSE;
-                          BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
-                                                 
-                          //Control X,Y,Z
-                          Status_CheckThreadProcess = Status_ChangeCutter;
-                          bFlag_1st_Go=eTRUE;
-                          
-                          timer_set(&tIO_SpindleUpInHole, Time_SpindleUpInHole ,CLOCK_TYPE_MS); /*700ms */
-                          
-                          #ifdef USE_DEBUG_MASTER
-                            BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-                          #endif /*USE_DEBUG_MASTER*/
-                  }
-                  else
-                  {
-					  // STOP BUTTON
-					  if(State_StopButton[0] == eTRUE)
+		case eST_User_Task_ThreadChecker:
+		  if(bFlag_1st_Case==eTRUE)
+		  {
+				  bFlag_1st_Case = eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+										 
+				  //Control X,Y,Z
+				  Status_CheckThreadProcess = Status_ChangeCutter;
+				  bFlag_1st_Go=eTRUE;
+				  
+				  timer_set(&tIO_SpindleUpInHole, Time_SpindleUpInHole ,CLOCK_TYPE_MS); /*700ms */
+				  
+				  #ifdef USE_DEBUG_MASTER
+					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+				  #endif /*USE_DEBUG_MASTER*/
+		  }
+		  else
+		  {
+			  // STOP BUTTON
+			  switch(bStatus_StopButton)
+			  {
+			  case eTRUE:
+					eState_User_Task = eST_User_Task_StopButton;
+			  break;
+			  case eFALSE:
+					switch (bStatus_PauseButton)
+					{
+					case eTRUE:
+						GPIO_SetBits(Led,PauseLed);
+						GPIO_ResetBits(Led,WorkingLed);	
+					break;
+					case eFALSE:
+						//status of led
+						GPIO_SetBits(Led,WorkingLed);
+						GPIO_ResetBits(Led,PauseLed);
+						//Read Hole Data follow iIdex_hole_check
+						switch (Status_CheckThreadProcess)
 						{
-							eState_User_Task=eST_User_Task_IDLE;
+							case Status_ChangeCutter :
+							   //What things to do
+								  //1st : Change cutter
+								  if(bFlag_1st_Go==eTRUE && BUFFER_HOLE_DATA.Dia_Hole[BUFFER_MACHINE_CONTROL.iIdex_hole_check] != BUFFER_MACHINE_CONTROL.sHold_Cutter)
+									{
+									  bChangeCutter = eTRUE;
+									  sChangeCutter = sReleaseCutter;
+									  bFlag_1st_Go  = eFALSE; 
+									}
+									if(bChangeCutter==eTRUE)
+									{
+									  vStepChangeCutterProcess();
+									}
+								//Conditions Change State :
+									if(bChangeCutter==eFALSE)
+									  Status_CheckThreadProcess = Status_RuntoHole;
+							  break;
+							  
+							case Status_RuntoHole :
+							  //What things to do
+								  //2nd : Control X,Y runtopoint
+								  BUFFER_X_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_X[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
+								  BUFFER_X_AXIS_CONTROL.bFlag_Update=eTRUE;
+								  BUFFER_Y_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_Y[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
+								  BUFFER_Y_AXIS_CONTROL.bFlag_Update=eTRUE;
+								  
+								  BUFFER_AXIS_PROCESS.bProcess=RUNTOPOINT;
+								  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+								  
+								  BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
+								  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+								  
+							   //Conditions Change State :
+								  if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+								  {
+									Status_CheckThreadProcess=Status_CheckThread;
+									Status_SpindleCheckProcess=sSpindle_GetReady;
+									#ifdef USE_DEBUG_MASTER
+									  BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+									#endif /*USE_DEBUG_MASTER*/
+				
+								  }
+							break;
+							  
+							case Status_CheckThread :
+								  //3rd : + control air valve - IO output
+								  //3rd : + review Current Measure to define quality of hole
+								  //3rd : + run follow steps
+								  vStepSpindleCheckHoleProcess();
+								  //Conditions Change State :
+								  if(Status_SpindleCheckProcess == sSpindle_Finish)
+									Status_CheckThreadProcess = Status_FinishThreadProcess;
+							 break;
+							  
+							case Status_FinishThreadProcess :
+								  eFlag_Process_Finish=eTRUE;
+							break;
+							  
+							default :
+							break;
+							  
 						}
-					   else
-						{
-						  //Turn on Working_Led
-						  if(bFLag_Working_Led == eTRUE)
-							{
-								GPIO_SetBits(GPIOA,GPIO_Pin_5);
-							}
-                          //Read Hole Data follow iIdex_hole_check
-                          switch (Status_CheckThreadProcess)
-                          {
-                              case Status_ChangeCutter :
-                                 //What things to do
-                                    //1st : Change cutter
-                                    if(bFlag_1st_Go==eTRUE && BUFFER_HOLE_DATA.Dia_Hole[BUFFER_MACHINE_CONTROL.iIdex_hole_check] != BUFFER_MACHINE_CONTROL.sHold_Cutter)
-                                      {
-                                        bChangeCutter = eTRUE;
-                                        sChangeCutter = sReleaseCutter;
-                                        bFlag_1st_Go  = eFALSE; 
-                                      }
-                                      if(bChangeCutter==eTRUE)
-                                      {
-                                        vStepChangeCutterProcess();
-                                      }
-                                  //Conditions Change State :
-                                      if(bChangeCutter==eFALSE)
-                                        Status_CheckThreadProcess = Status_RuntoHole;
-                                break;
-                                
-                              case Status_RuntoHole :
-                                //What things to do
-                                    //2nd : Control X,Y runtopoint
-                                    BUFFER_X_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_X[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
-                                    BUFFER_X_AXIS_CONTROL.bFlag_Update=eTRUE;
-                                    BUFFER_Y_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_Y[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
-                                    BUFFER_Y_AXIS_CONTROL.bFlag_Update=eTRUE;
-                                    
-                                    BUFFER_AXIS_PROCESS.bProcess=RUNTOPOINT;
-                                    BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-                                    
-                                    BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
-                                    BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-                                    
-                                 //Conditions Change State :
-                                    if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-                                    {
-                                      Status_CheckThreadProcess=Status_CheckThread;
-                                      Status_SpindleCheckProcess=sSpindle_GetReady;
-                                      #ifdef USE_DEBUG_MASTER
-                                        BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-                                      #endif /*USE_DEBUG_MASTER*/
-                  
-                                    }
-                                break;
-                                
-                              case Status_CheckThread :
-                                    //3rd : + control air valve - IO output
-                                    //3rd : + review Current Measure to define quality of hole
-                                    //3rd : + run follow steps
-                                    vStepSpindleCheckHoleProcess();
-                                    //Conditions Change State :
-                                    if(Status_SpindleCheckProcess == sSpindle_Finish)
-                                      Status_CheckThreadProcess = Status_FinishThreadProcess;
-                                break;
-                                
-                              case Status_FinishThreadProcess :
-                                    eFlag_Process_Finish=eTRUE;
-                                break;
-                                
-                              default :
-                                break;
-                                
-                          }
-                        
-    
-                          //Feedback Status Process Machine to PC
-                          BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ThreadChecker;
-                                              
-           
-                          //Condition Process Finished
+				
 
-                        
-                          
-                          //Back to eST_User_Task_IDLE, when process finish
-                          if (eFlag_Process_Finish==eTRUE)
-                          {
-                            BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-                            eState_User_Task=eST_User_Task_IDLE;
-							bFLag_Working_Led == eFALSE;
-							bFlag_Ready_Led = eTRUE;
-                          }
-                          //Back to eST_User_Task_IDLE, when reset
-                          if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-                          {
-                            eState_User_Task=eST_User_Task_INIT;
-                          }
-						}
-                  }
-                break;
-                
+							//Feedback Status Process Machine to PC
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ThreadChecker;
+												
+			 
+							//Condition Process Finished
+
+						  
+							
+							//Back to eST_User_Task_IDLE, when process finish
+							if (eFlag_Process_Finish==eTRUE)
+							{
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  eState_User_Task=eST_User_Task_IDLE;
+							}
+							//Back to eST_User_Task_IDLE, when reset
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							{
+							  eState_User_Task=eST_User_Task_INIT;
+							}
+					  break;
+					  default:
+					  break;
+					  }
+			 break;
+			 default:
+			 break;
+			 }
+		  }
+		break;
+		case eST_User_Task_StopButton:
+			BUFFER_STATEBUTTON.bflag_Stop = 1;
+			eState_User_Task  = eST_User_Task_IDLE;
+			bFlag_1st_Case = eTRUE;
+			GPIO_ResetBits(Led,WorkingLed); 
+   			memset(UART1_BUFFER_TX,0,i_MAX_UART);
+			memset(UART2_BUFFER_TX,0,i_MAX_UART);
+		break;
+			
                 //<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//
 		case eST_User_Task_LOGGING:
 			if(bFlag_1st_Case==eTRUE)
@@ -748,6 +799,7 @@ void vSetAirVale(state_control_air_value bProcess)
  		GPIO_SetBits(sCoil_3,sCoil_3_ResetHome);
 		GPIO_ResetBits(sCoil_2,sCoil_2_ResetHome);
         GPIO_ResetBits(sCoil_1,sCoil_1_ResetHome);
+		
  		
     break;
 
@@ -765,7 +817,7 @@ void vStepChangeCutterProcess()
       //What things to do
       BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;
       BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-      if(BUFFER_ENCODER.Flag_Home==eTRUE)
+      if(BUFFER_ENCODER.Flag_Home == eTRUE)
       {
             vReleaseCutter();
             BUFFER_AXIS_PROCESS.bProcess=RELEASECUTTER;
