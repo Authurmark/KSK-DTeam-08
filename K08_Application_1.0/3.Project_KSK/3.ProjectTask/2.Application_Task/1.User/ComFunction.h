@@ -87,8 +87,8 @@ typedef enum Cmd_Type {
     P2TCMD_TEST         		= 0x11,
 	P2TCMD_FEEDBACK				= 0x21,
     P2TCMD_Current_Measure		= 0x02,
-    P2TCMD_StateButtonStop2 	= 0x03,
-	P2TCMD_StateButtonPause2	= 0x04,
+    P2TCMD_StateButton 			= 0x03,
+	
     
 
     /*Common command*/
@@ -116,6 +116,7 @@ typedef struct{
   uint8                 Speed_DC;														// send to master
   bError_Process		Error_Process;													// send to master
   state_DC_Spindle      bDC_Driection;													// receive from master  
+  enumbool 				bFlag_Process_Info;
 }Buffer_Control_DC_Spindle;
 extern Buffer_Control_DC_Spindle BUFFER_CONTROL_DC_SPINDLE;
 /* Encoder Home Value */
@@ -156,6 +157,8 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
 /* FEEDBACK HANDLE */
 void UART_Comm_Feedback_Command_Content(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint16 CODE);
 void vFeedBack_info_sys(void);
+void vInitFeedBackDetectOverTime(void);
+void vFeedBackDetectOverTime(void);
 
 /* MAKE DATA*/
 void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);

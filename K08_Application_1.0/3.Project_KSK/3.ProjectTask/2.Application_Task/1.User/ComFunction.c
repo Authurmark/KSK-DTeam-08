@@ -194,16 +194,15 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
               BUFFER_CONTROL_DC_SPINDLE.Speed_DC             =UART_BUFFER_RX[iUART_DATA];
               BUFFER_CONTROL_DC_SPINDLE.bDC_Driection        =UART_BUFFER_RX[iUART_DATA+1];
               UART_Comm_Feedback_Command_Content(UART_BUFFER_TX,0,FBCODE_OK);
+			  BUFFER_CONTROL_DC_SPINDLE.bFlag_Process_Info	 =eTRUE;
             break;
 			//Recieve Data from Master - USART2
           	case P2TCMD_Current_Measure:
                BUFFER_CURRENT_MEASURE.Current_Max			 = UART_BUFFER_RX[iUART_DATA];
                BUFFER_CURRENT_MEASURE.Flag_Update            = eTRUE;
 			break;
-			case P2TCMD_StateButtonStop2:
+			case P2TCMD_StateButton:
 			   BUFFER_STATEBUTTON.bflag_Stop = UART_BUFFER_RX[iUART_DATA];
-			break;
-			case P2TCMD_StateButtonPause2:
 			   BUFFER_STATEBUTTON.bflag_Pause = UART_BUFFER_RX[iUART_DATA];
 			break;
           	case P2TCMD_TEST:
@@ -302,7 +301,35 @@ void vFeedBack_info_sys(void)
 
 
 
+timer t_DetectOverTime_Spindle_Control;
+uint8 cnt_timeover_Spindle_Control;
 
+void vInitFeedBackDetectOverTime(void)
+{
+  timer_set(&t_DetectOverTime_Spindle_Control,   50 ,CLOCK_TYPE_MS);         /*50ms */
+}
+
+void vFeedBackDetectOverTime(void)
+{
+  //Detect Axis Process Error OverTime
+  if(timer_expired(&t_DetectOverTime_Spindle_Control))
+  {
+    timer_restart(&t_DetectOverTime_Spindle_Control);
+    if(BUFFER_CONTROL_DC_SPINDLE.bFlag_Process_Info	 == eTRUE)
+    {
+      BUFFER_CONTROL_DC_SPINDLE.bFlag_Process_Info = eFALSE;
+    }
+    else
+    {
+      cnt_timeover_Spindle_Control++;
+      if(cnt_timeover_Spindle_Control > 5)                           /*200ms*/
+        {
+          //Detect Error OverTime
+		  BUFFER_CONTROL_DC_SPINDLE.Error_Process = E_OverTime;
+        }  
+    }
+  }
+}
 
 
 
@@ -400,6 +427,7 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint16 PAR
   
   UART_MakeData_Tail(UART_BUFFER_TX);
 }
+
 
 
 

@@ -484,7 +484,8 @@ void vInit_Error_Process(void)
  if(Current_Value >> BUFFER_CURRENT_MEASURE.Current_Max) 
  { 
  BUFFER_CONTROL_DC_SPINDLE.Error_Process = E_OverLoad;
- bFlag_Error_Process = eTRUE;	
+ bFlag_Error_Process = eTRUE;
+ vMotorControl(0,SPINDLE_DISABLE);	
  }
 }
 
