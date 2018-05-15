@@ -93,6 +93,7 @@ extern enumbool bFlag_GoHOME_Z ;
 extern uint32 State_ReleaseCutter;
 extern uint32 State_GetCutter ;
 
+extern enumbool bState_Enstop1; 
 /*-----------------------------------------------------------------------------*/
 //---------------------------------RESET CUTTER---------------------------------//
 /*---------------------------------------------------------------------------*/
@@ -153,21 +154,21 @@ typedef enum sStepMotor
 	StepMotorZ		  = 0x02,
 }sStepMotor;
 
-extern uint8 Pin_Endstop [6];
-extern uint8 Cnt_TimeHold_EndStop_X_1 [6];
-extern enumbool State_EndStop_X_1 [6];
-extern uint8 Cnt_TimeHold_EndStop_X_2 [6];
-extern enumbool State_EndStop_X_2 [6];
+extern uint8 Pin_Endstop ;
+extern uint8 Cnt_TimeHold_EndStop_X_1 ;
+extern enumbool State_EndStop_X_1 ;
+extern uint8 Cnt_TimeHold_EndStop_X_2 ;
+extern enumbool State_EndStop_X_2 ;
 
-extern uint8 Cnt_TimeHold_EndStop_Y_1 [6];
-extern enumbool State_EndStop_Y_1 [6];
-extern uint8 Cnt_TimeHold_EndStop_Y_2 [6];
-extern enumbool State_EndStop_Y_2 [6];
+extern uint8 Cnt_TimeHold_EndStop_Y_1 ;
+extern enumbool State_EndStop_Y_1 ;
+extern uint8 Cnt_TimeHold_EndStop_Y_2 ;
+extern enumbool State_EndStop_Y_2 ;
 
-extern uint8 Cnt_TimeHold_EndStop_Z_1 [6];
-extern enumbool State_EndStop_Z_1 [6];
-extern uint8 Cnt_TimeHold_EndStop_Z_2 [6];
-extern enumbool State_EndStop_Z_2[6];
+extern uint8 Cnt_TimeHold_EndStop_Z_1;
+extern enumbool State_EndStop_Z_1;
+extern uint8 Cnt_TimeHold_EndStop_Z_2 ;
+extern enumbool State_EndStop_Z_2;
 
 #define EndStopX_1		0
 #define EndStopX_2		0

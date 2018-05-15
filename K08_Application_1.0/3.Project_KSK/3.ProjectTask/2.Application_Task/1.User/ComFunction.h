@@ -94,8 +94,7 @@ typedef enum Cmd_Type {
     P2TCMD_Control_Z_axis     = 0x04,
    	P2TCMD_FEEDBACK		      = 0x41,
     P2TCMD_AXIS_PROCESS	  	  = 0x01,
-	P2TCMD_StateButtonStop1   = 0x05,
-	P2TCMD_StateButtonPause1  = 0x06,
+	P2TCMD_StateButton        = 0x05,
   
     /*Common command*/
     P2TCMD_CLOSE = 0x01,
@@ -144,6 +143,7 @@ typedef struct{
 	state_process		bProcess_Axis;
 	eError_Process		Error_Process;
 	enumbool			bFlag_Process_Update;
+	enumbool       		bFlag_Process_Info;	
 }Buffer_Motor_Control_Process;
 extern Buffer_Motor_Control_Process  BUFFER_MOTOR_CONTROL_PROCESS;
 
@@ -151,7 +151,8 @@ typedef struct{
 uint16				PositionControl;				                                      	//Recieve from master
 uint16				PositionGet;					                                     	//Send to master
 uint8				Speed;																	//Recieve from master			
-state_step_motor 	bDirection;																//Recieve from master
+state_step_motor 	bDirection;	
+ enumbool       	bFlag_Process_Info;														//Recieve from master
 }Buffer_Control_Axis;
 extern Buffer_Control_Axis BUFFER_CONTROL_X_AXIS;
 extern Buffer_Control_Axis BUFFER_CONTROL_Y_AXIS;
@@ -186,7 +187,9 @@ void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
 void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
 void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);
 void UART_MakeData_Tail(uint8 *UART_BUFFER_TX);
-
+/*Detect FeedBack*/
+void vInitFeedBackDetectOverTime(void);
+void vFeedBackDetectOverTime(void);
 /* TX BUFFER HANDLE*/
 extern uint8 CntUartBufferTx;
 void vMakeBufferTXTask( void *pvParameters );

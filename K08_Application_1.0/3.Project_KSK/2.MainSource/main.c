@@ -153,6 +153,7 @@ void vApplicationIdleHook(void)
 {
   vMotorStepControl();
   vInit_Error_Process();
+  vFeedBackDetectOverTime();
 
   vComDataProcess_USART1();
   vComDataProcess_USART2();

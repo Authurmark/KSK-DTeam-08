@@ -150,7 +150,7 @@ void vUserTaskMainProcess(void)
                 BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE;
               if (BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE)
 			   {
-				BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis = ReleaseCutter;
+				BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis = RunForScan;
             	switch(BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis)
 				{
 					case ResetHome:
@@ -230,12 +230,9 @@ void vUserTaskMainProcess(void)
 						  bFlag_GoHOME_X = eTRUE; 
 						  bFlag_GoHOME_Y = eTRUE;
 						  bFlag_GoHOME_Z = eTRUE;
+						  bState_Enstop1 = eTRUE;
 						  }
 						  if(bFlag_Error_Process == eTRUE) eState_User_Task=eST_User_Task_IDLE;
-
-						  //Back to eST_User_Task_IDLE, when reset
-//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//						  eState_User_Task=eST_User_Task_INIT;
 					break;
 					case 1:
 					
@@ -277,9 +274,6 @@ void vUserTaskMainProcess(void)
 						  //Back to eST_User_Task_IDLE, when finished process
 						  if(State_ReleaseCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;
 						  if(bFlag_Error_Process == eTRUE)  			eState_User_Task=eST_User_Task_IDLE;		
-						  //Back to eST_User_Task_IDLE, when reset
-//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//						  eState_User_Task=eST_User_Task_INIT;
 					break;
 					case 1:
 					break;
@@ -318,9 +312,6 @@ void vUserTaskMainProcess(void)
 						  //Back to eST_User_Task_IDLE, when finished process
 						   if(State_GetCutter == 8)              	eState_User_Task = eST_User_Task_IDLE;	
 						   if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;	
-						  //Back to eST_User_Task_IDLE, when reset
-//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//						  eState_User_Task=eST_User_Task_INIT;
 					break;
 					case 1:
 					
@@ -360,9 +351,6 @@ void vUserTaskMainProcess(void)
 						  //Back to eST_User_Task_IDLE, when finished process
 						  if (bFlag_Scanhold_Finish == eTRUE)	    eState_User_Task=eST_User_Task_IDLE;
 						  if(bFlag_Error_Process == eTRUE) 		eState_User_Task=eST_User_Task_IDLE;
-						  //Back to eST_User_Task_IDLE, when reset
-//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//						  eState_User_Task=eST_User_Task_INIT;
 					break;
 					case 1:
 
@@ -402,9 +390,7 @@ void vUserTaskMainProcess(void)
 						  //Back to eST_User_Task_IDLE, when finished process
 						  if (State_RunToPoint == 4)				 eState_User_Task=eST_User_Task_IDLE;
 						  if(bFlag_Error_Process == eTRUE) 		 eState_User_Task=eST_User_Task_IDLE;
-						  //Back to eST_User_Task_IDLE, when reset
-//						  if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
-//						  eState_User_Task=eST_User_Task_INIT;
+
 					break;
 					case 1:
 

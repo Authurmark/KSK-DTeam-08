@@ -204,11 +204,10 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
           	case P2TCMD_AXIS_PROCESS:
 			  BUFFER_MOTOR_CONTROL_PROCESS.bProcess_Axis        =  UART_BUFFER_RX[iUART_CMD];
  			  BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Update = eTRUE;
+			  BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Info	= eTRUE;
 			break;
-			case P2TCMD_StateButtonStop1:
+			case P2TCMD_StateButton:
 			  BUFFER_STATEBUTTON.bflag_Stop = UART_BUFFER_RX[iUART_DATA];
-			break;
-			case P2TCMD_StateButtonPause1:
 			  BUFFER_STATEBUTTON.bflag_Pause = UART_BUFFER_RX[iUART_DATA];
 			break;
           default :
@@ -285,10 +284,40 @@ void vFeedBack_info_sys(void)
     UART1_Send_STRING("FIRMWARE: ");
     UART1_Send_BUF(StrConfigPara.FW_Version,sizeof(StrConfigPara.FW_Version));
     UART1_Send_STRING("\r\n");
+
+
 }
 
+timer t_DetectOverTime_Axis_Process;
+uint8 cnt_timeover_Axis_Process;
 
 
+void vInitFeedBackDetectOverTime(void)
+{
+  timer_set(&t_DetectOverTime_Axis_Process,   50 ,CLOCK_TYPE_MS);         /*50ms */
+}
+
+void vFeedBackDetectOverTime(void)
+{
+  //Detect Axis Process Error OverTime
+  if(timer_expired(&t_DetectOverTime_Axis_Process))
+  {
+    timer_restart(&t_DetectOverTime_Axis_Process);
+    if(BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Info	= eTRUE)
+    {
+      BUFFER_MOTOR_CONTROL_PROCESS.bFlag_Process_Info	= eFALSE;
+    }
+    else
+    {
+      cnt_timeover_Axis_Process++;
+      if(cnt_timeover_Axis_Process>5)                           /*200ms*/
+        {
+          //Detect Error OverTime
+		  BUFFER_MOTOR_CONTROL_PROCESS.Error_Process = E_OverTime;
+        }  
+    }
+  }
+}
 
 
 
@@ -315,6 +344,18 @@ void vFeedBack_info_sys(void)
 1. DUNG CHO FEEDBACK DU LIEU VE DOI TUONG NHAN
 2. DUNG DE TAO DATAFRAME CHO DU LIEU CAN TRUYEN
 **/
+
+
+
+
+
+
+
+
+
+
+
+
 
 void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE)
 {
@@ -361,6 +402,8 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PAR
   else
   {
       UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA, PARA1);
+	  UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+1, PARA2);
+	
   }
   
   //PARA 3-4
@@ -372,6 +415,7 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PAR
   else
   {
       UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+2, PARA3);
+	  UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+3, PARA4);
   }
   
   //PARA 5-6
@@ -383,12 +427,15 @@ void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PAR
   else
   {
       UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+4, PARA5);
+	  UART_MakeData_16bit(UART_BUFFER_TX,iUART_DATA+5, PARA6);
   }
   
   UART_MakeData_Tail(UART_BUFFER_TX);
 }
 
-
+//UART_MakeData8bit
+//UART_MakeData16bit
+//UART_MakeData32bit
 
 
 
