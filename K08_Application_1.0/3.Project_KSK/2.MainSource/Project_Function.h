@@ -74,13 +74,21 @@ void vInit_SetAirVale(void);
 /*-----------------------------------------------------------------------------*/
 //------------------------   -CONFIG LED AND BUTTON---------------------------//
 /*---------------------------------------------------------------------------*/
-extern enumbool bStatus_PauseButton;
-extern enumbool bStatus_StopButton;
 void vInit_LED(void);
 void vInit_LED_DeBug(void);
 void vInit_BUTTON(void);
-void Control_PauseButton(void);
-void Control_StopButton(void);
+void Control_LED_SYSTEM(uint8 State_LED_SYSTEM);
+
+#define ReadyLed    			GPIO_Pin_4
+#define WorkingLed              GPIO_Pin_5
+#define PauseLed                GPIO_Pin_6
+
+#define Led                     GPIOA
+
+
+#define SYS_READY    0x01
+#define SYS_WORKING  0x02
+#define SYS_PAUSE    0x03
 
 
 

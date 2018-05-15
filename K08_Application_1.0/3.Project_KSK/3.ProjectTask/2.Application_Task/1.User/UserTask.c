@@ -219,7 +219,7 @@ void vUserTaskMainProcess(void)
 			if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE; 
-				GPIO_SetBits(Led,ReadyLed);
+				Control_LED_SYSTEM(SYS_READY);
 			}
 			else
 			{
@@ -238,7 +238,6 @@ void vUserTaskMainProcess(void)
 						  eFlag_Process_Finish=eFALSE;
 						  bFlag_1st_Case = eTRUE;
 						  //Led Status 
-						  GPIO_ResetBits(Led,ReadyLed);
 //						  GPIO_SetBits(GPIOA,GPIO_Pin_11);
 //						  GPIO_SetBits(GPIOA,GPIO_Pin_12);
 //						  GPIO_SetBits(GPIOA,GPIO_Pin_15);
@@ -248,24 +247,18 @@ void vUserTaskMainProcess(void)
 						  eState_User_Task = eST_User_Task_ResetCutter;
 						  eFlag_Process_Finish = eFALSE;
 						  bFlag_1st_Case = eTRUE;
-						  // Led Status
-						  GPIO_ResetBits(Led,ReadyLed);
 						break;
 						  
 						case PMachine_ScanHole:
 						  eState_User_Task = eST_User_Task_ScanHole;
 						  eFlag_Process_Finish = eFALSE;
 						  bFlag_1st_Case = eTRUE;
-						  // Led Status
-						  GPIO_ResetBits(Led,ReadyLed);
 						break;
 						  
 						case PMachine_ThreadChecker:
 						  eState_User_Task = eST_User_Task_ThreadChecker;
 						  eFlag_Process_Finish=eFALSE;
 						  bFlag_1st_Case    = eTRUE;
-						  // Led Status
-						  GPIO_ResetBits(Led,ReadyLed);
 						break;
 														   
 						default :
@@ -282,7 +275,7 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_ResetHome:
 		  if(bFlag_1st_Case==eTRUE)
 		  {
-				  GPIO_SetBits(Led,WorkingLed);
+				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
 				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
 				  
@@ -302,22 +295,20 @@ void vUserTaskMainProcess(void)
 		  {		
 	
 				  // STOP BUTTON
-				  switch(bStatus_StopButton)
+				  if(State_StopButton == eTRUE)
 				  {
-				  case eTRUE:
 						eState_User_Task = eST_User_Task_StopButton;
-				  break;
-				  case eFALSE:
-						switch (bStatus_PauseButton)
+				  }
+				  else
+				  {
+						if(State_PauseButton == eTRUE)
 						{
-						case eTRUE:
-							GPIO_SetBits(Led,PauseLed);
-							GPIO_ResetBits(Led,WorkingLed);	
-						break;
-						case eFALSE:
+							Control_LED_SYSTEM(SYS_PAUSE);
+						}
+						else
+						{
 							//status of led
-							GPIO_SetBits(Led,WorkingLed);
-							GPIO_ResetBits(Led,PauseLed);
+							Control_LED_SYSTEM(SYS_WORKING);
 						  //Feedback Status Process Machine to PC
 							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetHome;
 
@@ -346,15 +337,9 @@ void vUserTaskMainProcess(void)
 							{
 							  eState_User_Task = eST_User_Task_INIT;
 							}
-					  break;
-					  default:
-					  break;
-					  }
-			   break;
-			   default:
-			   break;
-			   }
-		  }
+					     }
+			    	}
+		  		}
 		break;
                 
                 
@@ -368,7 +353,7 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_ResetCutter:
 		  if(bFlag_1st_Case==eTRUE)
 		  {
-				  GPIO_SetBits(Led,WorkingLed);
+				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
 				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
 										 
@@ -384,22 +369,20 @@ void vUserTaskMainProcess(void)
 		  {
 				  
 				  // STOP BUTTON
-				  switch(bStatus_StopButton)
+				  if(State_StopButton == eTRUE)
 				  {
-				  case eTRUE:
 						eState_User_Task = eST_User_Task_StopButton;
-				  break;
-				  case eFALSE:
-						switch (bStatus_PauseButton)
+				  }
+				  else
+				  {
+						if(State_PauseButton == eTRUE)
 						{
-						case eTRUE:
-							GPIO_SetBits(Led,PauseLed);
-							GPIO_ResetBits(Led,WorkingLed);	
-						break;
-						case eFALSE:
+							Control_LED_SYSTEM(SYS_PAUSE);
+						}
+						else
+						{
 							//status of led
-							GPIO_SetBits(Led,WorkingLed);
-							GPIO_ResetBits(Led,PauseLed);
+							Control_LED_SYSTEM(SYS_WORKING);
 							//Control X,Y,Z
 							if(BUFFER_ENCODER.Flag_Home==eTRUE)
 							{
@@ -435,15 +418,9 @@ void vUserTaskMainProcess(void)
 							  
 							  eState_User_Task=eST_User_Task_INIT;
 							}
-						break;
-						default:
-						break;
 					    }
-				 break;
-				 default:
-				 break;
-			 	}
-		  }
+			 		}
+		  		}
 		break;
                 
                 
@@ -458,6 +435,7 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_ScanHole:
 		  if(bFlag_1st_Case==eTRUE)
 		  {
+				 Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
 				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
 										 
@@ -473,22 +451,20 @@ void vUserTaskMainProcess(void)
 		  else
 		  {
 			  // STOP BUTTON
-			  switch (bStatus_StopButton)
+			  if (State_StopButton == eTRUE)
 			  {
-			  case eTRUE:
 					eState_User_Task = eST_User_Task_StopButton;
-			  break;
-			  case eFALSE:
-					switch (bStatus_PauseButton)
+			  }
+			  else
+				  {
+					if(State_PauseButton == eTRUE)
 					{
-					case eTRUE:
-						GPIO_SetBits(Led,PauseLed);
-						GPIO_ResetBits(Led,WorkingLed);	
-					break;
-					case eFALSE:
+						Control_LED_SYSTEM(SYS_PAUSE);	
+					}
+					else
+					{
 						//status of led
-						GPIO_SetBits(Led,WorkingLed);
-						GPIO_ResetBits(Led,PauseLed);
+						Control_LED_SYSTEM(SYS_WORKING);
 						//Scan Thread Hole
 						if(bDetectThreadHole())
 						  BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data]=eTRUE;
@@ -518,15 +494,9 @@ void vUserTaskMainProcess(void)
 						  
 						  eState_User_Task=eST_User_Task_INIT;
 						}
-					break;
-					default:
-					break;
-					}
-				break;
-				default:
-				break;
-				}
-		  }
+						}
+				     }
+		  		}
 		break;
                 
       
@@ -536,6 +506,7 @@ void vUserTaskMainProcess(void)
 		case eST_User_Task_ThreadChecker:
 		  if(bFlag_1st_Case==eTRUE)
 		  {
+				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
 				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
 										 
@@ -552,22 +523,20 @@ void vUserTaskMainProcess(void)
 		  else
 		  {
 			  // STOP BUTTON
-			  switch(bStatus_StopButton)
+			  if(State_StopButton == eTRUE)
 			  {
-			  case eTRUE:
 					eState_User_Task = eST_User_Task_StopButton;
-			  break;
-			  case eFALSE:
-					switch (bStatus_PauseButton)
+			  }
+			  else
+				{
+					if(State_PauseButton == eTRUE)
 					{
-					case eTRUE:
-						GPIO_SetBits(Led,PauseLed);
-						GPIO_ResetBits(Led,WorkingLed);	
-					break;
-					case eFALSE:
+						Control_LED_SYSTEM(SYS_PAUSE);
+					}
+					else
+					{
 						//status of led
-						GPIO_SetBits(Led,WorkingLed);
-						GPIO_ResetBits(Led,PauseLed);
+						Control_LED_SYSTEM(SYS_WORKING);
 						//Read Hole Data follow iIdex_hole_check
 						switch (Status_CheckThreadProcess)
 						{
@@ -654,15 +623,10 @@ void vUserTaskMainProcess(void)
 							{
 							  eState_User_Task=eST_User_Task_INIT;
 							}
-					  break;
-					  default:
-					  break;
-					  }
-			 break;
-			 default:
-			 break;
-			 }
-		  }
+
+					  	}
+			 		}
+		  		}
 		break;
 		case eST_User_Task_StopButton:
 			BUFFER_STATEBUTTON.bflag_Stop = 1;

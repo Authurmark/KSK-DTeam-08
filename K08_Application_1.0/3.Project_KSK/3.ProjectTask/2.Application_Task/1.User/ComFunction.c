@@ -633,66 +633,66 @@ void vFeedBackDetectOverTime(void)
   }
 
   
-  //Detect X Axis Control Error OverTime
-  if(timer_expired(&t_DetectOverTime_X_Axis_Control))
-  {
-    timer_restart(&t_DetectOverTime_X_Axis_Control);
-    if(BUFFER_X_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
-      BUFFER_X_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
-    else
-    {
-      cnt_timeover_X_Axis_Control++;
-      if(cnt_timeover_X_Axis_Control>5)                           /*200ms*/
-        {
-          //Detect Error OverTime
-		  BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
-		  
-        }  
-    }
-  }
-  
-  
-  
-  
-  //Detect Y Axis Control Error OverTime
-  if(timer_expired(&t_DetectOverTime_Y_Axis_Control))
-  {
-    timer_restart(&t_DetectOverTime_Y_Axis_Control);
-    if(BUFFER_Y_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
-      BUFFER_Y_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
-    else
-    {
-      cnt_timeover_Y_Axis_Control++;
-      if(cnt_timeover_Y_Axis_Control>5)                           /*200ms*/
-        {
-          //Detect Error OverTime
-			BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
-        }  
-    }
-  }
-  
-  
-  
-  
-  
-  
-  //Detect Z Axis Control Error OverTime
-  if(timer_expired(&t_DetectOverTime_Z_Axis_Control))
-  {
-    timer_restart(&t_DetectOverTime_Z_Axis_Control);
-    if(BUFFER_Z_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
-      BUFFER_Z_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
-    else
-    {
-      cnt_timeover_Z_Axis_Control++;
-      if(cnt_timeover_Z_Axis_Control>5)                           /*200ms*/
-        {
-          //Detect Error OverTime
-		  BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
-        }  
-    }
-  }
-  
+//  //Detect X Axis Control Error OverTime
+//  if(timer_expired(&t_DetectOverTime_X_Axis_Control))
+//  {
+//    timer_restart(&t_DetectOverTime_X_Axis_Control);
+//    if(BUFFER_X_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
+//      BUFFER_X_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
+//    else
+//    {
+//      cnt_timeover_X_Axis_Control++;
+//      if(cnt_timeover_X_Axis_Control>5)                           /*200ms*/
+//        {
+//          //Detect Error OverTime
+//		  BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
+//		  
+//        }  
+//    }
+//  }
+//  
+//  
+//  
+//  
+//  //Detect Y Axis Control Error OverTime
+//  if(timer_expired(&t_DetectOverTime_Y_Axis_Control))
+//  {
+//    timer_restart(&t_DetectOverTime_Y_Axis_Control);
+//    if(BUFFER_Y_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
+//      BUFFER_Y_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
+//    else
+//    {
+//      cnt_timeover_Y_Axis_Control++;
+//      if(cnt_timeover_Y_Axis_Control>5)                           /*200ms*/
+//        {
+//          //Detect Error OverTime
+//			BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
+//        }  
+//    }
+//  }
+//  
+//  
+//  
+//  
+//  
+//  
+//  //Detect Z Axis Control Error OverTime
+//  if(timer_expired(&t_DetectOverTime_Z_Axis_Control))
+//  {
+//    timer_restart(&t_DetectOverTime_Z_Axis_Control);
+//    if(BUFFER_Z_AXIS_CONTROL.bFlag_Process_Info==eTRUE)
+//      BUFFER_Z_AXIS_CONTROL.bFlag_Process_Info=eFALSE;
+//    else
+//    {
+//      cnt_timeover_Z_Axis_Control++;
+//      if(cnt_timeover_Z_Axis_Control>5)                           /*200ms*/
+//        {
+//          //Detect Error OverTime
+//		  BUFFER_MACHINE_CONTROL.bErrorMachine = eMachine_OverTime;
+//        }  
+//    }
+//  }
+//  
 }
 
 
@@ -833,6 +833,10 @@ uint8 CntUartBufferTx;
 
 uint8 PARA8_CMD_TYPE;
 uint8 PARA8_CMD;
+uint32 PARA32_1;
+uint32 PARA32_2;
+uint32 PARA32_3;
+uint32 PARA32_4;
 
 uint16 PARA16_1 ;
 uint16 PARA16_2 ;
@@ -859,8 +863,7 @@ typedef enum {
     Bf_X_Axis_Control           = 0x02,
     Bf_Y_Axis_Control           = 0x03,
     Bf_Z_Axis_Control           = 0x04,
-	Bf_StateButtonStop1   		= 0x05,
-	Bf_StateButtonPause1		= 0x06
+	Bf_StateButton1   			= 0x05,
 }state_make_uart1_buffer_tx;
 
 //USART 2 - send to Slave2
@@ -868,9 +871,7 @@ typedef enum {
     Bf2_ConfigParamater         = 0x00,
     Bf_Control_DC_Spindle       = 0x01,
     Bf_Current_Measure          = 0x02,
-	Bf_StateButtonStop2   		= 0x03,
-	Bf_StateButtonPause2		= 0x04,
-	
+	Bf_StateButton2   			= 0x03,
 }state_make_uart2_buffer_tx;
 
 
@@ -896,7 +897,7 @@ void vMakeBufferTXTask( void *pvParameters )
           OS_vTaskDelayUntil(&xLastWakeTime,xUser_Task_Frequency);
 
           
-          CntUartBufferTx = (CntUartBufferTx+1)%7;
+          CntUartBufferTx = (CntUartBufferTx+1)%6;
           //USART 3 - send to PC
           switch (CntUartBufferTx)
           {
@@ -1000,20 +1001,25 @@ void vMakeBufferTXTask( void *pvParameters )
                   }
               break; 
 				
-			  case Bf_StateButtonStop1 :
-					  PARA16_1 = BUFFER_STATEBUTTON.bflag_Stop;
-					  UART_MakeData(UART1_BUFFER_TX,0,0,PARA16_1,0,0,0,0,0);
-					  UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX); 
-			  break;  
-			  
-			  case Bf_StateButtonPause1:
-					  PARA16_1 = BUFFER_STATEBUTTON.bflag_Pause;
-					  UART_MakeData(UART1_BUFFER_TX,0,0,PARA16_1,0,0,0,0,0);
-					  UART1_Send_BUF(UART1_BUFFER_TX,i_UART_TX); 
+			  case Bf_StateButton1 :
+				 if(BUFFER_STATEBUTTON.Flag_Stop_Update == eTRUE)
+					{
+					  BUFFER_STATEBUTTON.Flag_Stop_Update == eFALSE;
+					  PARA8_1 = BUFFER_STATEBUTTON.bflag_Stop;
+					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA8_1,0,0,0,0,0);
+					  UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);
+					}
+				if(BUFFER_STATEBUTTON.Flag_Pause_Update == eTRUE)
+					{
+					  BUFFER_STATEBUTTON.Flag_Pause_Update == eFALSE;
+					  PARA8_1 = BUFFER_STATEBUTTON.bflag_Pause;
+					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA8_1,0,0,0,0,0);
+					  UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX); 
+					} 
+
 			  break;
-         
-              default :
-              break;
+			  default :
+			  break;
           }
           
           //USART 2 - send to Slave2
@@ -1041,17 +1047,23 @@ void vMakeBufferTXTask( void *pvParameters )
                   }
               break;
               
-			  case Bf_StateButtonStop2:
-					  PARA16_1 = BUFFER_STATEBUTTON.bflag_Stop;
-					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA16_1,0,0,0,0,0);
+			  case Bf_StateButton2:
+				 if(BUFFER_STATEBUTTON.Flag_Stop_Update == eTRUE)
+					{
+					  BUFFER_STATEBUTTON.Flag_Stop_Update == eFALSE;
+					  PARA8_1 = BUFFER_STATEBUTTON.bflag_Stop;
+					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA8_1,0,0,0,0,0);
 					  UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX);
-			  break;
-			  case Bf_StateButtonPause2:
-					  PARA16_1 = BUFFER_STATEBUTTON.bflag_Pause;
-					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA16_1,0,0,0,0,0);
+					}
+				if(BUFFER_STATEBUTTON.Flag_Pause_Update == eTRUE)
+					{
+					  BUFFER_STATEBUTTON.Flag_Pause_Update == eFALSE;
+					  PARA8_1 = BUFFER_STATEBUTTON.bflag_Pause;
+					  UART_MakeData(UART2_BUFFER_TX,0,0,PARA8_1,0,0,0,0,0);
 					  UART2_Send_BUF(UART2_BUFFER_TX,i_UART_TX); 
+					}
 			  break;
-	
+			
               default :
               break;
           }

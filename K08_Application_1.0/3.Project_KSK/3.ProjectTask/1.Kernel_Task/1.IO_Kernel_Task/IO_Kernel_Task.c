@@ -25,6 +25,7 @@ hardware function.
 #include "IO_Kernel_Task.h"
 #include "IO_Kernel_Function.h"
 #include "Time_Manage_Function.h"
+#include "ComFunction.h"
 
 /* Global Variable */
 timer tIO_Input_Task, tIO_Output_Task;
@@ -134,19 +135,32 @@ enumbool State_StopButton;
 uint32 Cnt_TimeHold_PauseButton;
 enumbool State_PauseButton;
 
+enumbool bStatus_StopButton = eFALSE;
+enumbool bStatus_PauseButton = eFALSE;
 
 void Detect_StopButton(void)
 {
 	/*----------------------------------------------StopButton---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eTRUE)					 Cnt_TimeHold_StopButton = Cnt_TimeHold_StopButton+1;
 	if((GPIO_ReadInputDataBit(Port_StopButton, Pin_StopButton))== eFALSE)					 Cnt_TimeHold_StopButton = 0;
-	if(Cnt_TimeHold_StopButton >= 2)							 							 State_StopButton = eTRUE;
+	if(Cnt_TimeHold_StopButton >= 2)	
+	{						 							 		
+		  State_StopButton = eTRUE;
+		  BUFFER_STATEBUTTON.Flag_Stop_Update =  eTRUE;
+		  BUFFER_STATEBUTTON.bflag_Stop = 1;
+	}
 	if(Cnt_TimeHold_StopButton < 2)														     State_StopButton = eFALSE;
 		/*----------------------------------------------PauseButton---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eTRUE)					 Cnt_TimeHold_PauseButton = Cnt_TimeHold_PauseButton+1;
 	if((GPIO_ReadInputDataBit(Port_PauseButton, Pin_PauseButton))== eFALSE)					 Cnt_TimeHold_PauseButton = 0;
-	if(Cnt_TimeHold_PauseButton >= 2)							 					         State_PauseButton = eTRUE;
+	if(Cnt_TimeHold_PauseButton >= 2)
+	{														 
+	 	  State_PauseButton = eTRUE;
+		  BUFFER_STATEBUTTON.Flag_Pause_Update = eTRUE;
+		  BUFFER_STATEBUTTON.bflag_Pause = 1;
+	}
 	if(Cnt_TimeHold_PauseButton < 2)														 State_PauseButton = eFALSE;
+	
 }
 
 

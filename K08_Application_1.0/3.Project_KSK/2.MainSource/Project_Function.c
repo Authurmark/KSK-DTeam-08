@@ -154,7 +154,7 @@ void vProject_Init()
         /* Init Linear Scale Function*/
         vInitLinearScale();
 //        /* Init FeedBack Detect OverTime */
-//        vInitFeedBackDetectOverTime();
+        vInitFeedBackDetectOverTime();
         /*Init Detect LED function*/
       	vInit_LED();
 		vInit_LED_DeBug();
@@ -457,6 +457,33 @@ void vInit_LED(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);  
 }
+ 
+void Control_LED_SYSTEM(uint8 State_LED_SYSTEM)
+{
+	switch(State_LED_SYSTEM)
+	{
+		case SYS_READY:
+			GPIO_SetBits(Led,ReadyLed);
+			GPIO_ResetBits(Led,PauseLed);
+			GPIO_ResetBits(Led,WorkingLed);	
+		break;
+
+		case SYS_WORKING:
+			GPIO_ResetBits(Led,ReadyLed);
+			GPIO_ResetBits(Led,PauseLed);
+			GPIO_SetBits(Led,WorkingLed);	
+		break;
+
+		case SYS_PAUSE:
+			GPIO_ResetBits(Led,ReadyLed);
+			GPIO_SetBits(Led,PauseLed);
+			GPIO_ResetBits(Led,WorkingLed);	
+		break;
+	}
+}
+
+
+
 /*---------------------------CONFIG GPIO FOR LED DEBUG------------------------------*/
 void vInit_LED_DeBug(void)
 {
@@ -481,39 +508,7 @@ void vInit_BUTTON(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOB, &GPIO_InitStructure);  
 }
-/*-------------------------------Control PauseButton---------------------------------*/
-enumbool bStatus_PauseButton = eFALSE;
-void Control_PauseButton(void)
-{
-  switch(State_PauseButton)
-  {
-  case eTRUE:		
-	  bStatus_PauseButton = eTRUE;
-	  BUFFER_STATEBUTTON.bflag_Pause = 1;
-  break;
-  case eFALSE:									
-	  bStatus_PauseButton = eFALSE;
-  break;
-  default:
-  break;
-  }
-}
-/*-------------------------------Control StopButton---------------------------------*/
-enumbool bStatus_StopButton = eFALSE;
-void Control_StopButton(void)
-{
-	switch (State_StopButton)
-	{
-	case eTRUE:
-		bStatus_StopButton = eTRUE;
-		BUFFER_STATEBUTTON.bflag_Stop = 1;
-	break;
-	case eFALSE:
-		bStatus_StopButton = eFALSE;
-	break;
-   	default:
-	break;
-	}
 
-}
+
+
 #endif /* _Project_Function__C */

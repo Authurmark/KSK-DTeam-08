@@ -177,7 +177,9 @@ extern structIO_Manage_Output bLEDConfigCommand;
 /*Buffer Data for Pause/Run and stop*/
 typedef struct{
 uint8 bflag_Stop;                                    //send trang thái nut nhan Stop and Pause/Run cho slave1 và slave2
-uint8 bflag_Pause; 	
+uint8 bflag_Pause; 
+enumbool Flag_Stop_Update;	
+enumbool Flag_Pause_Update;
 }buffer_StateButton;
 extern buffer_StateButton BUFFER_STATEBUTTON ;
 
@@ -361,7 +363,7 @@ typedef struct{
   uint16                        Axis_PositionControl;           //send    to   Slave1
   uint8                         Axis_Speed;                     //send    to   Slave1
   state_axis_direction          Axis_bDirection;                //send    to   Slave1
-  uint16                        Axis_PositionGet;               //recieve from Slave1
+  uint32                        Axis_PositionGet;               //recieve from Slave1
   enumbool                      bFlag_Process_Info;
   enumbool                      bFlag_Update;
 }Buffer_Control_Axis;
