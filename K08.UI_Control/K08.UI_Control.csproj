@@ -32,11 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="69024-bunifu_ui_v1.52">
-      <HintPath>..\..\UI Design Layout\UI Material Design\69024-bunifu_ui_v1.52.dll</HintPath>
-    </Reference>
     <Reference Include="Bunifu_UI_v1.5.3">
-      <HintPath>..\..\UI Design Layout\UI Material Design\Bunifu_UI_v1.5.3.dll</HintPath>
+      <HintPath>..\packages\Bunifu\Bunifu_UI_v1.5.3.dll</HintPath>
     </Reference>
     <Reference Include="MaterialSkin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialSkin.0.2.1\lib\MaterialSkin.dll</HintPath>

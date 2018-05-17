@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using MaterialSkin.Controls;
 using MaterialSkin.Animations;
 using MaterialSkin;
-using Bunifu;
-using BunifuAnimatorNS;
 
 namespace K08.UI_Control
 {

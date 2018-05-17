@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainPanelControl));
             MaterialSkin.Controls.MaterialFlatButton materialFlatButton3;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainPanelControl));
             this.pnTitle = new System.Windows.Forms.Panel();
             this.btMiniSize = new System.Windows.Forms.Button();
             this.btMaxSize = new System.Windows.Forms.Button();
@@ -273,6 +273,23 @@
             this.pnProcess.SuspendLayout();
             this.pnContent.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // materialFlatButton3
+            // 
+            materialFlatButton3.AutoSize = true;
+            materialFlatButton3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            materialFlatButton3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            materialFlatButton3.Depth = 0;
+            materialFlatButton3.Font = new System.Drawing.Font("Century Gothic", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            materialFlatButton3.Location = new System.Drawing.Point(19, 195);
+            materialFlatButton3.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            materialFlatButton3.MouseState = MaterialSkin.MouseState.HOVER;
+            materialFlatButton3.Name = "materialFlatButton3";
+            materialFlatButton3.Primary = false;
+            materialFlatButton3.Size = new System.Drawing.Size(76, 36);
+            materialFlatButton3.TabIndex = 47;
+            materialFlatButton3.Text = "Compute";
+            materialFlatButton3.UseVisualStyleBackColor = true;
             // 
             // pnTitle
             // 
@@ -2321,23 +2338,6 @@
             this.label57.Size = new System.Drawing.Size(169, 23);
             this.label57.TabIndex = 27;
             this.label57.Text = "Calibrate Extrinic";
-            // 
-            // materialFlatButton3
-            // 
-            materialFlatButton3.AutoSize = true;
-            materialFlatButton3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            materialFlatButton3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            materialFlatButton3.Depth = 0;
-            materialFlatButton3.Font = new System.Drawing.Font("Century Gothic", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            materialFlatButton3.Location = new System.Drawing.Point(19, 195);
-            materialFlatButton3.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            materialFlatButton3.MouseState = MaterialSkin.MouseState.HOVER;
-            materialFlatButton3.Name = "materialFlatButton3";
-            materialFlatButton3.Primary = false;
-            materialFlatButton3.Size = new System.Drawing.Size(76, 36);
-            materialFlatButton3.TabIndex = 47;
-            materialFlatButton3.Text = "Compute";
-            materialFlatButton3.UseVisualStyleBackColor = true;
             // 
             // label56
             // 
