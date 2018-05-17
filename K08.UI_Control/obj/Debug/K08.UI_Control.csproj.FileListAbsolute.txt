@@ -1,0 +1,27 @@
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.exe.config
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.exe
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.pdb
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\bin\Debug\MaterialSkin.dll
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csprojAssemblyReference.cache
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.Properties.Resources.resources
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csproj.GenerateResource.cache
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csproj.CoreCompileInputs.cache
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csproj.CopyComplete
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.exe
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.pdb
+H:\Programming - Working\K08.DesignUI\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.MainPanelControl.resources
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.exe.config
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.exe
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\K08.UI_Control.pdb
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\MaterialSkin.dll
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csprojResolveAssemblyReference.cache
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.MainPanelControl.resources
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.Properties.Resources.resources
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csproj.GenerateResource.Cache
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.csproj.CoreCompileInputs.cache
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.exe
+D:\K08.UI_Control\K08.UI_Control\obj\Debug\K08.UI_Control.pdb
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\Bunifu_UI_v1.5.3.dll
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\MetroFramework.Design.dll
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\MetroFramework.dll
+D:\K08.UI_Control\K08.UI_Control\bin\Debug\MetroFramework.Fonts.dll
