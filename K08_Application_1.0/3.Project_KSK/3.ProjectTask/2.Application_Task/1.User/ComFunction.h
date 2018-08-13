@@ -95,18 +95,19 @@ hardware function.
 typedef enum Cmd_Type {
     P2TCMD_TEST                 = 0xA0,
     
-    P2TCMD_SPINDLE              = 0x10,
+    P2TCMD_SPINDLE              = 0x08,
     P2TCMD_MACHINE              = 0x12,
     P2TCMD_HOLE_DATA            = 0x13,
-    P2TCMD_ENCODER_HOME         = 0x14,
-    P2TCMD_AXIS_PROCESS         = 0x15,
+    P2TCMD_ENCODER_HOME         = 0x10,
     
-    P2TCMD_X_AXIS_CONTROL       = 0x16,
-    P2TCMD_Y_AXIS_CONTROL       = 0x17,
-    P2TCMD_Z_AXIS_CONTROL       = 0x18,
+    P2TCMD_AXIS_PROCESS         = 0x01,
+    P2TCMD_X_AXIS_CONTROL       = 0x02,
+    P2TCMD_Y_AXIS_CONTROL       = 0x03,
+    P2TCMD_Z_AXIS_CONTROL       = 0x04,
     
-    P2TCM_CURRENT_MEASURE       = 0x19,
-
+    P2TCM_CURRENT_MEASURE       = 0x09,
+    P2TCM_StateButton1          = 0X20,
+    P2TCM_StateButton2          = 0X21,
     
     P2TCM_FEEDBACK_DATA         = 0xA1,
     P2TCM_ERROR_GET             = 0xA2,
@@ -141,8 +142,9 @@ void vComDivideBlockData(uint8 *UART_BUFFER_RX, uint8 *UART_BUFFER_TX,UART_Struc
 void UART_Comm_Feedback_Command_Content(UART_Struct pUSART_USE,uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE,uint8 CMD, uint16 CODE);
 void vFeedBack_info_sys(void);
 
-extern void vInitFeedBackDetectOverTime(void);
-extern void vFeedBackDetectOverTime(void);
+extern void InitDetectOverTime(void);
+extern void DetectOverTime(void);
+
 
 /* MAKE DATA*/
 void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
@@ -314,8 +316,12 @@ typedef enum {
 }bErrorMotor;
 
 typedef enum {
-    eAxis_InProcess     =0x01,
-    eAxis_Finsish       =0x02,
+    eAxis_InProcess               = 0x01,
+    eAxis_Finsish_Resethome       = 0x02,
+    eAxis_Finsish_Scanhole        = 0x03,
+    eAxis_Finsish_Runtopoint      = 0x04,
+    eAxis_Finsish_Releasecutter   = 0x05,
+    eAxis_Finsish_Getcutter       = 0x06,      
 }bFeedBackAxis;
 
 typedef enum {
@@ -328,7 +334,7 @@ typedef enum {
 
 typedef struct {
   state_axis_process    bProcess;                               //send    to   Slave1
-  bFeedBackAxis         bFeedBackAxis;                          //recieve from Slave1
+  bFeedBackAxis         bFeedBack;                          //recieve from Slave1
   bErrorMotor           bError;                                 //recieve from Slave1
   enumbool              Flag_Update;                            //tick Flag when bProcess change
   enumbool              bFlag_Process_Info; 
@@ -344,13 +350,9 @@ extern Buffer_Axis_Process BUFFER_AXIS_PROCESS;
 
 
 
-
-
-
-
 /* Control X-Y-Z Axis */
 #define Z_CheckThread   50
-#define Z_SafePosition  100
+#define Z_SafePosition  20
 
 typedef enum {
     AXIS_FORWARD = 0x01,
@@ -393,6 +395,7 @@ typedef enum {
     SPINDLE_BREAK   = 0x03,
     SPINDLE_DISABLE = 0x04,
 }state_DC_Spindle;
+
 
 typedef enum {
     eSpindle_OverLoad = 0x01,
@@ -442,9 +445,8 @@ extern Buffer_Current_Measure BUFFER_CURRENT_MEASURE;
 
 
 /* Encoder Home Value */
-
 typedef struct{
-  enumbool      Flag_Home;                                      //recieve from Slave1
+  enumbool      Flag_Home  ;                                      //recieve from Slave2
   enumbool      bFlag_Process_Info;
 }Buffer_Encoder;
 

@@ -42,20 +42,20 @@
 	#define IO_KERNEL_TASK_PRIORITY			( tskIDLE_PRIORITY + 4 )
 	/* Application Task priorities. */
 	#define USER_TASK_PRIORITY			( tskIDLE_PRIORITY + 2 )//20-08: 3
-        /* Send buffer task prorities*/
-        #define MAKE_BUFFER_TX_TASK_PRORITY             ( tskIDLE_PRIORITY + 1 )
+    /* Send buffer task prorities*/
+    #define MAKE_BUFFER_TX_TASK_PRORITY             ( tskIDLE_PRIORITY + 1 )
 
 	/* Kernel Task Stack size */
 	#define IO_KERNEL_TASK_STACK_SIZE		( ( unsigned short ) 64 )
 	/* The check task uses the sprintf function so requires a little more stack. */
 	#define USER_TASK_STACK_SIZE			( ( unsigned short ) 128 )
         /* Kernel Task Stack size */
-	#define MAKE_BUFFER_TX_TASK_STACK_SIZE		( ( unsigned short ) 64 )
+	#define MAKE_BUFFER_TX_TASK_STACK_SIZE		( ( unsigned short ) 256 )
 
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
-        extern void vMakeBufferTXTask (void *pvParameters);
+    extern void vMakeBufferTXTask (void *pvParameters);
     
 	/* Variable for Handler */
 	xTaskHandle xIO_Task_Handle;
@@ -65,7 +65,7 @@
         
 	xTaskHandle xUser_Task_Handle;
         
-        xTaskHandle xMakeBufferTXTask_Handle;
+    xTaskHandle xMakeBufferTXTask_Handle;
         
 	enumbool xFlag_User_Task_Still_Running = eTRUE, xFlag_User_Task_Init_Done = eFALSE, xFlag_User_Task_Process_Check = eTRUE;
     
@@ -99,7 +99,7 @@ void main(void)
 	OS_xTaskCreate(vIO_Kernel_Task, "IO_KERNEL_TASK", IO_KERNEL_TASK_STACK_SIZE, NULL, IO_KERNEL_TASK_PRIORITY, &xIO_Task_Handle );
 	/* Create Application Task */
 	OS_xTaskCreate(vUserTask, "MAIN_USER_TASK", USER_TASK_STACK_SIZE, NULL, USER_TASK_PRIORITY, &xUser_Task_Handle);
-        /* Create MakeBufferTX Task */
+    /* Create MakeBufferTX Task */
 	OS_xTaskCreate(vMakeBufferTXTask, "MAKE_BUFFER_TX_TASK", MAKE_BUFFER_TX_TASK_STACK_SIZE, NULL, MAKE_BUFFER_TX_TASK_PRORITY, &xMakeBufferTXTask_Handle);
 	/* Start the scheduler. */
 	OS_vTaskScheduler();
@@ -128,17 +128,14 @@ void vApplicationIdleHook(void);
   1.Ham goi thuc thi Control Step motor
   2.Ham goi thuc thi xu ly RX Data
 **/
-
+uint8 cnt =0;
 void vApplicationIdleHook(void)
 {
- 
 
- 
-  vComDataProcess_USART1();
-  vComDataProcess_USART2();
-  vComDataProcess_USART3();
-  
-  vFeedBackDetectOverTime();
+    vComDataProcess_USART1();
+    vComDataProcess_USART2();
+    vComDataProcess_USART3();
+//  DetectOverTime();
 }
 
 

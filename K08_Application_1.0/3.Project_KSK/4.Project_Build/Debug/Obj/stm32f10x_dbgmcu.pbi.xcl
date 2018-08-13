@@ -1,58 +1,58 @@
-"D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c"
+"E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\src\stm32f10x_dbgmcu.c"
 -std=c11
 -ferror-limit=0
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\1.Config_kernel
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\1.Config_kernel
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\2.MainSource
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\2.MainSource
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\IAR
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\3.ST_Lib\CM3\IAR
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\3.Utilities
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\3.Utilities
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\..\..\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\CMSIS\Include
 -I
@@ -60,57 +60,57 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\inc\c
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\1.Config_kernel
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\1.Config_kernel
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\2.MainSource
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\2.MainSource
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\3.ProjectTask\1.Kernel_Task\1.IO_Kernel_Task
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\STM32F10x_StdPeriph_Driver\inc
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\DeviceSupport\ST\STM32F10x
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\IAR
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\3.ST_Lib\CM3\IAR
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\3.Utilities
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\3.Utilities
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\IO_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Timer_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\USART_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\SPI_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\RTC_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\DMA_ADC_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\2.MCU_Functions\Watchdog_Function
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\1.nRF24L01+
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\3.SI_4432
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\4.LCD_OLED
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\1.Hardware_Driver\5.Accelometer
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\1.Ext_Functions\2.Network_Layer\1.RF_MeshNet
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3
 -I
-D:\du an R&D1\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
+E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\arm\CMSIS\Include
 -D__CHAR_BITS__=8

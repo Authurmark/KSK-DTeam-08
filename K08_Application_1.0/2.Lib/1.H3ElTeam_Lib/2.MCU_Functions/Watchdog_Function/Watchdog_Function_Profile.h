@@ -24,7 +24,7 @@
 
 /* Define Watchdog Function */
 /* Uncomment to use Watchdog, comment to disable*/
-#define USE_WATCHDOG
+	#define USE_WATCHDOG
 	/* Uncomment to use Independent Watchdog */
 	#define USE_IWDG
 	#ifdef USE_IWDG

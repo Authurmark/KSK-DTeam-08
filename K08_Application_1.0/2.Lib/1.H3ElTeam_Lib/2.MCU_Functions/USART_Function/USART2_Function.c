@@ -36,22 +36,22 @@ void USART2_Init( void )
 		#ifdef USE_DEFAULT_USART2_IO
 		#warning: USART2 function use GPIOA_GPIO_Pin_2 and GPIOA_GPIO_Pin_3
         /* Enable USART2 clock */
-		USART2_CLK_CMD(USART2_RCC,ENABLE);
-		/* Enable clock IO */
-        USART2_RX_CLK_CMD(USART2_RX_RCC_PORT,ENABLE);
-		USART2_TX_CLK_CMD(USART2_TX_RCC_PORT,ENABLE);
+           USART2_CLK_CMD(USART2_RCC,ENABLE);
+          /* Enable clock IO */
+           USART2_RX_CLK_CMD(USART2_RX_RCC_PORT,ENABLE);
+           USART2_TX_CLK_CMD(USART2_TX_RCC_PORT,ENABLE);
         
         /* Configure USART2 Rx as input floating */
-        GPIO_InitStructure.GPIO_Pin = USART2_RX_PIN;
-		GPIO_InitStructure.GPIO_Mode = USART2_RX_MODE;
-		GPIO_InitStructure.GPIO_Speed = USART2_RX_SPEED;
-        GPIO_Init( USART2_RX_PORT, &GPIO_InitStructure );
+           GPIO_InitStructure.GPIO_Pin     = USART2_RX_PIN;
+           GPIO_InitStructure.GPIO_Mode    = USART2_RX_MODE;
+           GPIO_InitStructure.GPIO_Speed   = USART2_RX_SPEED;
+           GPIO_Init( USART2_RX_PORT, &GPIO_InitStructure );
         
         /* Configure USART2 Tx as alternate function push-pull */
-        GPIO_InitStructure.GPIO_Pin = USART2_TX_PIN;
-        GPIO_InitStructure.GPIO_Speed = USART2_TX_SPEED;
-        GPIO_InitStructure.GPIO_Mode = USART2_TX_MODE;
-        GPIO_Init( USART2_TX_PORT, &GPIO_InitStructure );
+           GPIO_InitStructure.GPIO_Pin     = USART2_TX_PIN;
+           GPIO_InitStructure.GPIO_Speed   = USART2_TX_SPEED;
+           GPIO_InitStructure.GPIO_Mode    = USART2_TX_MODE;
+           GPIO_Init( USART2_TX_PORT, &GPIO_InitStructure );
 		#endif /* USE_DEFAULT_USART2_IO */
 
 		/* DeInit USART2 */
@@ -63,25 +63,27 @@ void USART2_Init( void )
 			
         #ifdef USE_TX_INTERRUPT_USART2
 		/* Enable IT TXE, use to get data bytes */
-        USART_ITConfig( USART2, USART_IT_TXE, ENABLE );
-        NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART2_TX_INTERRUPT_PRE_PRIORITY;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART2_TX_INTERRUPT_SUB_PRIORITY;
-        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+       // USART_ITConfig( USART2, USART_IT_TXE, ENABLE );
+        NVIC_InitStructure.NVIC_IRQChannel                                      = USART2_IRQn;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority                    = USART2_TX_INTERRUPT_PRE_PRIORITY;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority                           = USART2_TX_INTERRUPT_SUB_PRIORITY;
+        NVIC_InitStructure.NVIC_IRQChannelCmd                                   = ENABLE;
         NVIC_Init( &NVIC_InitStructure );
-		#endif
-		#ifdef USE_RX_INTERRUPT_USART2
+	#endif
+	#ifdef USE_RX_INTERRUPT_USART2
 		/* Enable IT RXNE, use to get data bytes */
         USART_ITConfig( USART2, USART_IT_RXNE, ENABLE );
-        NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART2_RX_INTERRUPT_PRE_PRIORITY;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART2_RX_INTERRUPT_SUB_PRIORITY;
-        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+        NVIC_InitStructure.NVIC_IRQChannel                                      = USART2_IRQn;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority                    = USART2_RX_INTERRUPT_PRE_PRIORITY;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority                           = USART2_RX_INTERRUPT_SUB_PRIORITY;
+        NVIC_InitStructure.NVIC_IRQChannelCmd                                   = ENABLE;
         NVIC_Init( &NVIC_InitStructure );
-		#endif
+	#endif
 
-		#ifdef USE_DMA_USART2
+	#ifdef USE_DMA_USART2
         /* Config DMA */
+        DMA_InitTypeDef DMA_USART2_TX_InitStructure;
+	DMA_InitTypeDef DMA_USART2_RX_InitStructure;
         /* DMA clock enable */
         RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
         
@@ -105,7 +107,7 @@ void USART2_Init( void )
         DMA_Cmd(DMA_USART2_RX_CHANNEL, ENABLE);
 		
 		/* While DMA transfer complete */
-		while(DMA_GetFlagStatus(DMA_USART2_TX_COMPLETE_FLAG)==RESET);
+		while(DMA_GetFlagStatus(DMA_USART2_TX_COMPLETE_FLAG) == RESET);
 		#endif /* USE_DMA_USART2 */
 	#endif /* USE_CMCIS_DRIVER */
 	
@@ -122,7 +124,7 @@ void USART2_Init( void )
 void USART2_Close( void )
 {
 	#ifdef USE_CMCIS_DRIVER
-	USART_DeInit(USART2);
+	       USART_DeInit(USART2);
 	#endif
 }
 
@@ -168,16 +170,16 @@ void USART2_StopReceive( void )
 /* Send 1 Byte to TX RingBuf */
 void USART2_Send_Byte_TX_RingBuf( unsigned char cChar )
 {
-	RINGBUF_Put(&USART2_TXRingBuff,cChar);
+    RINGBUF_Put(&USART2_TXRingBuff,cChar);
 }
 
 /* Get 1 Byte From RX RingBuf */
 enumbool USART2_Get_Byte_RX_RingBuf(  char *pChar  )
 {
 	if(RINGBUF_Get(&USART2_RXRingBuff,pChar)==0)/* Success */
-		return eTRUE;
+            return eTRUE;
 	else 
-		return eFALSE;
+            return eFALSE;
 }
 
 /* Interrupt handler function */
@@ -185,23 +187,23 @@ void USART2_IRQHandler( void )
 {
 #ifdef USE_USART2
 	#ifdef USE_FREERTOS
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-    #endif /* USE_FREERTOS */
+        portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+        #endif /* USE_FREERTOS */
 	static unsigned char cChar = 0xFF ;
 	#ifdef USE_CMCIS_DRIVER
 	/* RX Interrupt handler */
     if( USART_GetITStatus( USART2, USART_IT_RXNE ) == SET )
     {
         cChar = USART_ReceiveData( USART2 );
-		RINGBUF_Put(&USART2_RXRingBuff,cChar);
+	RINGBUF_Put(&USART2_RXRingBuff,cChar);
     }	
 	/* TX Interrupt handler */
     else if( USART_GetITStatus( USART2, USART_IT_TXE ) == SET )
     {
         /* Read from ringbuf, send if have any data */
-		if(RINGBUF_Get(&USART2_TXRingBuff,&cChar) == 0)
+	if(RINGBUF_Get(&USART2_TXRingBuff,&cChar) == 0)
         {
-			USART_SendData(USART2, cChar);
+            USART_SendData(USART2, cChar);
         }
         else /* Disable TXE when finish transfer */
         {
@@ -210,8 +212,8 @@ void USART2_IRQHandler( void )
     }
 	else cChar = USART_ReceiveData( USART2 );
 	#endif
-    #ifdef USE_FREERTOS
-    portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+        #ifdef USE_FREERTOS
+        portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 	#endif /* USE_FREERTOS */
 #endif
 }

@@ -31,7 +31,7 @@ void USART2_AppCall_Init(UART_Struct *pUART)
 	pUART->close 				= &USART2_Close;
 	pUART->start_send			= &USART2_StartSend;
 	pUART->stop_send			= &USART2_StopSend;
-	pUART->start_receive		= &USART2_StartReceive;
+	pUART->start_receive		        = &USART2_StartReceive;
 	pUART->stop_receive			= &USART2_StopReceive;
 	pUART->read_byte 			= &USART2_AppCall_GetByte;
 	pUART->send_byte 			= &USART2_AppCall_SendByte;
@@ -53,7 +53,7 @@ void USART2_AppCall_SendBuf( unsigned char *buf, uint16_t uNumberByteSend )
 	/* Put all content to Ringbuf TX */
 	for(utemp=0;utemp<uNumberByteSend;utemp++)
 	{
-		USART2_Send_Byte_TX_RingBuf(buf[utemp]);
+            USART2_Send_Byte_TX_RingBuf(buf[utemp]);
 	}
 	/* Start Send USART2 */
 	USART2_StartSend();
@@ -65,7 +65,7 @@ void USART2_AppCall_GetBuf( unsigned char *buf, uint16_t uNumberByteGet)
 	/* Get content from Ringbuf RX */
 	for(utemp=0;utemp<uNumberByteGet;utemp++)
 	{
-		USART2_Get_Byte_RX_RingBuf(&buf[utemp]);
+            USART2_Get_Byte_RX_RingBuf(&buf[utemp]);
 	}
 }
 /* USART2 AppCall Send Byte */

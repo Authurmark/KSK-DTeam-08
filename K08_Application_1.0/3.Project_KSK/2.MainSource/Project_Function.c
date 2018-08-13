@@ -64,7 +64,7 @@ void vMCU_Init_Hardware( void )
 	SystemCoreClockUpdate();
 	lSystemClock = SystemCoreClock;
 	/* Set the Vector Table base address at 0x08000000,  0x08005000 if have bootloader */
-	NVIC_SetVectorTable( NVIC_VectTab_FLASH, FW_FLASH_ADDR );
+	NVIC_SetVectorTable( NVIC_VectTab_FLASH,0);
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );	
 	/* Configure HCLK clock as SysTick clock source. */
 	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK );
@@ -73,13 +73,13 @@ void vMCU_Init_Hardware( void )
 	/* Setup USART1 for debug */
 	/* Init usart1 */
 	USART1_AppCall_Init(&pUSART1);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: USART1 Init Success!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: USART1 Init Success!\r\n");
         
         /* Init usart2 */
 	USART2_AppCall_Init(&pUSART2);
-	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
-	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
+//	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+//	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
         
         /* Init usart3 */
 	USART3_AppCall_Init(&pUSART3);
@@ -96,15 +96,15 @@ void vProject_Init()
 	/* Project config */
 	/* Disable Jtag to use PA15, PB3, PB4 */
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: GPIO JTAG Disable done!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: GPIO JTAG Disable done!\r\n");
 	GPIO_PinRemapConfig(GPIO_Remap_PD01, ENABLE);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: PD0 PD1 Remap done!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: PD0 PD1 Remap done!\r\n");
     
 	/* Config LED, for LED Tag Signal */
         #ifdef USE_LED_1
           extern IO_Struct pLED1;
           IO_LED1_Init(&pLED1);
-          USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
+//          USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
           /* Turn off LED */
           pLED1.write(OFF);
           pLED1.write(ON);
@@ -112,58 +112,40 @@ void vProject_Init()
 
 	
 	/* Config Button */
-        #ifdef USE_BUTTON_IO_1
-          extern IO_Struct pBUT_1;
-          IO_BUTTON_1_Init(&pBUT_1);
-        #endif
         
-        #ifdef USE_BUTTON_IO_2
-          extern IO_Struct pBUT_2;
-          IO_BUTTON_2_Init(&pBUT_2);
-        #endif
-        
-        #ifdef USE_BUTTON_IO_3
-          extern IO_Struct pBUT_3;
-          IO_BUTTON_3_Init(&pBUT_3);
-        #endif
+//          extern IO_Struct pBUT_1,pBUT_2,pBUT_3;
+//          IO_BUTTON_1_Init(&pBUT_1);
+//          IO_BUTTON_2_Init(&pBUT_2);
+//          IO_BUTTON_3_Init(&pBUT_3);
+//     
 	
 	/* Config Relay */
-	
-        #ifdef USE_RELAY_1
-          extern IO_Struct pRELAY_1;
-          IO_RELAY_1_Init(&pRELAY_1);
-          pRELAY_1.write(OFF);
-        #endif
-        
-	#ifdef USE_RELAY_2
-          extern IO_Struct pRELAY_2;
-          IO_RELAY_2_Init(&pRELAY_2);
-          pRELAY_2.write(OFF);
-        #endif
-	
-        
-  	#ifdef USE_RELAY_3
-          extern IO_Struct pRELAY_3;
-          IO_RELAY_3_Init(&pRELAY_3);
-          pRELAY_3.write(OFF);
-        #endif      
+//          extern IO_Struct pRELAY_1,pRELAY_2,pRELAY_3;
+//          IO_RELAY_1_Init(&pRELAY_1);
+//          pRELAY_1.write(OFF);
+//          IO_RELAY_2_Init(&pRELAY_2);
+//          pRELAY_2.write(OFF);
+//          IO_RELAY_3_Init(&pRELAY_3);
+//          pRELAY_3.write(OFF);
+       
 	
         /* Init Detect Thread Hole function*/
         vInit_DetectHole();
         
         /* Init Linear Scale Function*/
-        vInitLinearScale();
-//        /* Init FeedBack Detect OverTime */
-        vInitFeedBackDetectOverTime();
+          EXTILine7_Config();
+          vInit_LinearScale_BPulse();
+//       /* Init FeedBack Detect OverTime */
+        InitDetectOverTime();
         /*Init Detect LED function*/
       	vInit_LED();
-		vInit_LED_DeBug();
-  		/*Init Detect BUTTON function*/
-		vInit_BUTTON();
-		/*Control Air Valve*/
-		vInit_SetAirVale();
-		/* Update Flash Data */
-		//vFLASH_UpdateData();
+        vInit_LED_DeBug();
+        /*Init Detect BUTTON function*/
+        vInit_BUTTON();
+        /*Control Air Valve*/
+        vInit_SetAirVale();
+        /* Update Flash Data */
+        //vFLASH_UpdateData();
 	/* Load config from flash and update */
 	FLASH_Unlock();
 	vFLASH_User_Read(0,USER_INFO_FLASH_ADDR,(uint32_t*)StrConfig,FLASH_PAGE_SIZE);
@@ -174,23 +156,23 @@ void vProject_Init()
         /* Load firmware version and rewrite */
         pStrConfig = (Struct_Flash_Config_Parameter*)(StrConfig);
         /* Send Buf FW OLD version */
-        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: OLD FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
-        USART1_AppCall_SendBuf(pStrConfig->FW_Version, SIZE_FW_VERSION+1);
-        USART1_AppCall_SendString("\r\n");
+//        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: OLD FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
+//        USART1_AppCall_SendBuf(pStrConfig->FW_Version, SIZE_FW_VERSION+1);
+//        USART1_AppCall_SendString("\r\n");
         /* Send Buf FW Current version */
-        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: NEW FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
-        USART1_AppCall_SendBuf(StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
-        USART1_AppCall_SendString("\r\n");
+//        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: NEW FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
+//        USART1_AppCall_SendBuf(StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
+//        USART1_AppCall_SendString("\r\n");
         /* Check Firmare version */
         if(memcmp(&StrConfigPara.FW_Version,pStrConfig->FW_Version, SIZE_FW_VERSION+1)!=eFALSE)
         {
-            USART1_AppCall_SendString("[SYSTEM DEBUG]: Write New FW Version! \r\n");
+//            USART1_AppCall_SendString("[SYSTEM DEBUG]: Write New FW Version! \r\n");
             /* Only update firmware version */
             memcpy(pStrConfig->FW_Version, StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
             memcpy(&StrConfigPara,StrConfig,sizeof(StrConfigPara));
             vFLASH_UpdateData();
         }
-        USART1_AppCall_SendString("[SYSTEM DEBUG]: CHECK VERSION DONE! \r\n");
+//        USART1_AppCall_SendString("[SYSTEM DEBUG]: CHECK VERSION DONE! \r\n");
 	}
 	
     /* IWDG_Init: for reset system */
@@ -314,14 +296,13 @@ uint8 Cnt_TimeHold_LS2;
 enumbool bLaserSensor_1()
 {
   //Scan status pin
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eTRUE)                 Cnt_TimeHold_LS1 = Cnt_TimeHold_LS1+1;                    //1 stick = 10ms
-  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))==eFALSE)                Cnt_TimeHold_LS1 = 0;
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))== eTRUE)                 Cnt_TimeHold_LS1 = Cnt_TimeHold_LS1+1;                    //1 stick = 10ms
+  if((GPIO_ReadInputDataBit(GPIOB, Pin_LaserSensor_1))== eFALSE)                Cnt_TimeHold_LS1 = 0;
  
   //Define status pin
   if(Cnt_TimeHold_LS1>=2)               return eTRUE;   
   if(Cnt_TimeHold_LS1<2)                return eFALSE;
 }
-
 enumbool bLaserSensor_2()
 {
   //Scan status pin
@@ -335,12 +316,14 @@ enumbool bLaserSensor_2()
 
 enumbool bDetectThreadHole()
 {
-  if(bLaserSensor_1())
-//    if(bLaserSensor_2())
+bLaserSensor_1();
+bLaserSensor_2();
+  //if(bLaserSensor_1())
+  //  if(bLaserSensor_2())
       return eTRUE;
   
-  else
-    return eFALSE;
+//  else
+//    return eFALSE;
 }
 
 
@@ -362,17 +345,9 @@ enumbool bDetectThreadHole()
 */
 
 strBuffer_linearscale Buffer_LinearScale;
-
-void vInitLinearScale()
-{
-  EXTILine7_Config();
-  vInit_LinearScale_BPulse();
-}
 void vGetLinearScaleValue(void)
-{
-    //calculate pulse --> Spindle position value
-    //godown => value--  
-	Buffer_LinearScale.spindle_position = ( Buffer_LinearScale.pulse_cnt_LinearScale / 100);    
+{ 
+  Buffer_LinearScale.spindle_position = ( Buffer_LinearScale.pulse_cnt_LinearScale / 50);    
 }
 void EXTILine7_Config(void)
 {
@@ -391,13 +366,13 @@ void EXTILine7_Config(void)
   
   EXTI_InitStructure.EXTI_Line = EXTI_Line7;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;  
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;  
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);
   
     
   NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
@@ -419,14 +394,14 @@ void EXTI9_5_IRQHandler(void)
  if(EXTI_GetITStatus(EXTI_Line7) != RESET)
  {
   EXTI_ClearITPendingBit(EXTI_Line7);
-  if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7)== GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6))
-	{
-    Buffer_LinearScale.pulse_cnt_LinearScale ++;
-	}
+  if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7) == GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6))
+    {
+      Buffer_LinearScale.pulse_cnt_LinearScale ++;
+    }
   else
-	{
-    Buffer_LinearScale.pulse_cnt_LinearScale --;
-	}
+    { 
+      Buffer_LinearScale.pulse_cnt_LinearScale = Buffer_LinearScale.pulse_cnt_LinearScale - 1;
+    }
  }
 }
 

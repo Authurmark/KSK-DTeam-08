@@ -31,7 +31,7 @@ void USART3_AppCall_Init(UART_Struct *pUART)
 	pUART->close 				= &USART3_Close;
 	pUART->start_send			= &USART3_StartSend;
 	pUART->stop_send			= &USART3_StopSend;
-	pUART->start_receive		= &USART3_StartReceive;
+	pUART->start_receive		        = &USART3_StartReceive;
 	pUART->stop_receive			= &USART3_StopReceive;
 	pUART->read_byte 			= &USART3_AppCall_GetByte;
 	pUART->send_byte 			= &USART3_AppCall_SendByte;

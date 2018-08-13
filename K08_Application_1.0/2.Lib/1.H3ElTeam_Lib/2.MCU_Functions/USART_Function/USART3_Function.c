@@ -30,9 +30,9 @@ extern uint8_t USART3_TXBuff[DEFAULT_USART3_NUMBER_BYTES_TX_BUFFER];
 void USART3_Init( void )
 {
         #ifdef USE_USART3
-            #ifdef USE_CMCIS_DRIVER
-            NVIC_InitTypeDef NVIC_InitStructure;
-            GPIO_InitTypeDef GPIO_InitStructure;
+                #ifdef USE_CMCIS_DRIVER
+                    NVIC_InitTypeDef NVIC_InitStructure;
+                    GPIO_InitTypeDef GPIO_InitStructure;
                 
                 #ifdef USE_DEFAULT_USART3_IO
                       #warning: USART3 function use GPIOA_GPIO_Pin_9 and GPIOA_GPIO_Pin_10
@@ -43,15 +43,15 @@ void USART3_Init( void )
                       USART3_TX_CLK_CMD(USART3_TX_RCC_PORT,ENABLE);
 
                       /* Configure USART3 Rx as input floating */
-                      GPIO_InitStructure.GPIO_Pin = USART3_RX_PIN;
-                      GPIO_InitStructure.GPIO_Mode = USART3_RX_MODE;
-                      GPIO_InitStructure.GPIO_Speed = USART3_RX_SPEED;
+                      GPIO_InitStructure.GPIO_Pin       = USART3_RX_PIN;
+                      GPIO_InitStructure.GPIO_Mode      = USART3_RX_MODE;
+                      GPIO_InitStructure.GPIO_Speed     = USART3_RX_SPEED;
                       GPIO_Init( USART3_RX_PORT, &GPIO_InitStructure );
 
                       /* Configure USART3 Tx as alternate function push-pull */
-                      GPIO_InitStructure.GPIO_Pin = USART3_TX_PIN;
-                      GPIO_InitStructure.GPIO_Speed = USART3_TX_SPEED;
-                      GPIO_InitStructure.GPIO_Mode = USART3_TX_MODE;
+                      GPIO_InitStructure.GPIO_Pin       = USART3_TX_PIN;
+                      GPIO_InitStructure.GPIO_Speed     = USART3_TX_SPEED;
+                      GPIO_InitStructure.GPIO_Mode      = USART3_TX_MODE;
                       GPIO_Init( USART3_TX_PORT, &GPIO_InitStructure );
                 #endif /* USE_DEFAULT_USART3_IO */
 
@@ -65,24 +65,26 @@ void USART3_Init( void )
                 #ifdef USE_TX_INTERRUPT_USART3
                       /* Enable IT TXE, use to get data bytes */
                       USART_ITConfig( USART3, USART_IT_TXE, ENABLE );
-                      NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
-                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART3_TX_INTERRUPT_PRE_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART3_TX_INTERRUPT_SUB_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-                      NVIC_Init( &NVIC_InitStructure );
+                      NVIC_InitStructure.NVIC_IRQChannel                        = USART3_IRQn;
+                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority      = USART3_TX_INTERRUPT_PRE_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelSubPriority             = USART3_TX_INTERRUPT_SUB_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelCmd                     = ENABLE;
+                      NVIC_Init(&NVIC_InitStructure );
                 #endif
                 #ifdef USE_RX_INTERRUPT_USART3
                       /* Enable IT RXNE, use to get data bytes */
                       USART_ITConfig( USART3, USART_IT_RXNE, ENABLE );
-                      NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
-                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART3_RX_INTERRUPT_PRE_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART3_RX_INTERRUPT_SUB_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+                      NVIC_InitStructure.NVIC_IRQChannel                        = USART3_IRQn;
+                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority      = USART3_RX_INTERRUPT_PRE_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelSubPriority             = USART3_RX_INTERRUPT_SUB_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelCmd                     = ENABLE;
                       NVIC_Init( &NVIC_InitStructure );
                 #endif
 
                 #ifdef USE_DMA_USART3
                       /* Config DMA */
+                      DMA_InitTypeDef DMA_USART3_TX_InitStructure;
+                      DMA_InitTypeDef DMA_USART3_RX_InitStructure;
                       /* DMA clock enable */
                       RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
@@ -123,7 +125,7 @@ void USART3_Init( void )
 void USART3_Close( void )
 {
 	#ifdef USE_CMCIS_DRIVER
-	USART_DeInit(USART3);
+               USART_DeInit(USART3);
 	#endif
 }
 
@@ -132,7 +134,7 @@ void USART3_StartSend( void )
 {
 	#ifdef USE_CMCIS_DRIVER
 		#ifdef USE_TX_INTERRUPT_USART3
-		USART_ITConfig( USART3, USART_IT_TXE, ENABLE );
+                       USART_ITConfig( USART3, USART_IT_TXE, ENABLE );
 		#endif /* USE_TX_INTERRUPT_USART3 */
 	#endif /* USE_CMCIS_DRIVER */
 }
@@ -186,15 +188,15 @@ void USART3_IRQHandler( void )
 {
 #ifdef USE_USART3
 	#ifdef USE_FREERTOS
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-    #endif /* USE_FREERTOS */
+        portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+        #endif /* USE_FREERTOS */
 	static unsigned char cChar = 0xFF ;
 	#ifdef USE_CMCIS_DRIVER
 	/* RX Interrupt handler */
     if( USART_GetITStatus( USART3, USART_IT_RXNE ) == SET )
     {
         cChar = USART_ReceiveData( USART3 );
-		RINGBUF_Put(&USART3_RXRingBuff,cChar);
+	RINGBUF_Put(&USART3_RXRingBuff,cChar);
     }	
 	/* TX Interrupt handler */
     else if( USART_GetITStatus( USART3, USART_IT_TXE ) == SET )
@@ -202,7 +204,7 @@ void USART3_IRQHandler( void )
         /* Read from ringbuf, send if have any data */
 		if(RINGBUF_Get(&USART3_TXRingBuff,&cChar) == 0)
         {
-			USART_SendData(USART3, cChar);
+                USART_SendData(USART3, cChar);
         }
         else /* Disable TXE when finish transfer */
         {

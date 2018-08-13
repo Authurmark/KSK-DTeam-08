@@ -53,8 +53,8 @@ enumbool bDetectThreadHole(void);
 /*-----------------------------------------------------------------------------*/
 //--------------DEFINE FOR PROTOTYPE & ENCODER FUNCTION PROTOTYPE-------------//
 /*---------------------------------------------------------------------------*/
-#define SPINDLE_LINEARHOME      0x1388           //50mm
-#define SPINDLE_POSITION_CHECK  0x07D0           //20mm
+#define SPINDLE_POSITION_CHECK  36          //~35mm
+#define SPINDLE_LINEAR_POINT    26         //~25mm
 typedef struct {
   uint16        pulse_cnt_LinearScale;
   uint16        spindle_position;
@@ -62,7 +62,7 @@ typedef struct {
  
 extern strBuffer_linearscale Buffer_LinearScale;
 
-void vInitLinearScale(void);
+
 void vInit_LinearScale_BPulse(void);
 void EXTILine7_Config(void);
 void EXTI9_5_IRQHandler(void);

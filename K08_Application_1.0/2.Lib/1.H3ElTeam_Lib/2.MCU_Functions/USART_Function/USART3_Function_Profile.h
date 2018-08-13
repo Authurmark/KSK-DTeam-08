@@ -31,7 +31,7 @@
 	#define USE_TX_INTERRUPT_USART3
 	#define USE_RX_INTERRUPT_USART3
 	/* Uncomment to use DMA transmit, comment to disable*/
-	//#define USE_DMA_USART3  
+//	#define USE_DMA_USART3  
 	/* Define size of RX, TX buffer */
 	#define DEFAULT_USART3_NUMBER_BYTES_RX_BUFFER 400
 	#define DEFAULT_USART3_NUMBER_BYTES_TX_BUFFER 800
@@ -67,7 +67,7 @@
 	#endif /* USE_CLOCK_USART3 */
 
 	#ifdef USE_TX_INTERRUPT_USART3
-		#define USART3_TX_INTERRUPT_PRE_PRIORITY	2
+		#define USART3_TX_INTERRUPT_PRE_PRIORITY	1
 		#define USART3_TX_INTERRUPT_SUB_PRIORITY	1
 	#endif /* USE_TX_INTERRUPT_USART3 */
 		
@@ -86,5 +86,5 @@
 	extern DMA_InitTypeDef DMA_USART3_RX_InitStructure;
 	#endif /* USE_DMA_USART3 */
 #endif /* USE_USART3 */
-#endif/* USART3_Function_Profile */
+#endif /*USART3_Function_Profile */
 /************************************************************************************************************/

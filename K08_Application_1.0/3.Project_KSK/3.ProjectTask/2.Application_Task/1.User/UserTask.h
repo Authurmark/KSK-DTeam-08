@@ -47,17 +47,17 @@ extern uint8 UART2_BUFFER_TX[i_MAX_UART];
 /* Control Air Valves */
 void vReleaseCutter(void);
 void vGetCutter(void);
-#define sCoil_1				GPIOB
-#define sCoil_2           	GPIOB
-#define sCoil_3				GPIOB
+#define sCoil_1		    GPIOB
+#define sCoil_2             GPIOB
+#define sCoil_3		    GPIOB
 
-#define sCoil_1_GoDown		GPIO_Pin_3         
-#define sCoil_1_GoUp        GPIO_Pin_3
-#define sCoil_1_ResetHome   GPIO_Pin_3
+#define sCoil_1_GoDown	    GPIO_Pin_4         
+#define sCoil_1_GoUp        GPIO_Pin_4
+#define sCoil_1_ResetHome   GPIO_Pin_4
 
-#define sCoil_2_GoDown      GPIO_Pin_4         
-#define sCoil_2_GoUp        GPIO_Pin_4 
-#define sCoil_2_ResetHome   GPIO_Pin_4 
+#define sCoil_2_GoDown      GPIO_Pin_3         
+#define sCoil_2_GoUp        GPIO_Pin_3 
+#define sCoil_2_ResetHome   GPIO_Pin_3 
 
 #define sCoil_3_GoDown      GPIO_Pin_5      
 #define sCoil_3_GoUp        GPIO_Pin_5

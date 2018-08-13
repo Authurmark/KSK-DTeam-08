@@ -64,20 +64,20 @@ void USART1_Init( void )
                 #ifdef USE_TX_INTERRUPT_USART1
                       /* Enable IT TXE, use to get data bytes */
                       USART_ITConfig( USART1, USART_IT_TXE, ENABLE );
-                      NVIC_InitStructure.NVIC_IRQChannel =                      USART1_IRQn;
-                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART1_TX_INTERRUPT_PRE_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART1_TX_INTERRUPT_SUB_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelCmd =                   ENABLE;
+                      NVIC_InitStructure.NVIC_IRQChannel 				=	USART1_IRQn;
+                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 		= 	USART1_TX_INTERRUPT_PRE_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelSubPriority    			=	USART1_TX_INTERRUPT_SUB_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelCmd 				=	ENABLE;
                       NVIC_Init( &NVIC_InitStructure );
                 #endif
                       
                 #ifdef USE_RX_INTERRUPT_USART1
                       /* Enable IT RXNE, use to get data bytes */
                       USART_ITConfig( USART1, USART_IT_RXNE, ENABLE );
-                      NVIC_InitStructure.NVIC_IRQChannel =                      USART1_IRQn;
-                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 	USART1_RX_INTERRUPT_PRE_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelSubPriority = 		USART1_RX_INTERRUPT_SUB_PRIORITY;
-                      NVIC_InitStructure.NVIC_IRQChannelCmd =                   ENABLE;
+                      NVIC_InitStructure.NVIC_IRQChannel 				=	USART1_IRQn;
+                      NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 		= 	USART1_RX_INTERRUPT_PRE_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelSubPriority 			= 	USART1_RX_INTERRUPT_SUB_PRIORITY;
+                      NVIC_InitStructure.NVIC_IRQChannelCmd 				= 	ENABLE;
                       NVIC_Init( &NVIC_InitStructure );
                 #endif
 

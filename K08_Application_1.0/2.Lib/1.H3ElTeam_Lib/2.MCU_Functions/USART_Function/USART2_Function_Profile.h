@@ -31,16 +31,16 @@
 	#define USE_TX_INTERRUPT_USART2
 	#define USE_RX_INTERRUPT_USART2
 	/* Uncomment to use DMA transmit, comment to disable*/
-	//#define USE_DMA_USART2  
+//	#define USE_DMA_USART2  
 	/* Define size of RX, TX buffer */
-	#define DEFAULT_USART2_NUMBER_BYTES_RX_BUFFER 400
+	#define DEFAULT_USART2_NUMBER_BYTES_RX_BUFFER 800
 	#define DEFAULT_USART2_NUMBER_BYTES_TX_BUFFER 800
 	/* Uncomment to use TX_RINGBUF, comment to disable */
 	#define USE_TX_RINGBUF
 /* Define USART2 Function */	
 #ifdef USE_USART2
 	#define USART2_RCC			RCC_APB1Periph_USART2
-	#define USART2_CLK_CMD		RCC_APB1PeriphClockCmd
+	#define USART2_CLK_CMD		        RCC_APB1PeriphClockCmd
 
 	#ifdef	USE_DEFAULT_USART2_IO
 		#define USART2_RX_PORT		GPIOA
@@ -67,7 +67,7 @@
 	#endif /* USE_CLOCK_USART2 */
 
 	#ifdef USE_TX_INTERRUPT_USART2
-		#define USART2_TX_INTERRUPT_PRE_PRIORITY	2
+		#define USART2_TX_INTERRUPT_PRE_PRIORITY	1
 		#define USART2_TX_INTERRUPT_SUB_PRIORITY	1
 	#endif /* USE_TX_INTERRUPT_USART2 */
 		
@@ -86,5 +86,5 @@
 	extern DMA_InitTypeDef DMA_USART2_RX_InitStructure;
 	#endif /* USE_DMA_USART2 */
 #endif /* USE_USART2 */
-#endif/* USART2_Function_Profile */
+#endif /* USART2_Function_Profile */
 /************************************************************************************************************/

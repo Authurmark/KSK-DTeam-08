@@ -42,19 +42,19 @@ extern  uint32_t rotary_cntr;
 /* State of User Task */
 typedef enum
 {
-        eST_User_Task_INIT						= 1,
-        eST_User_Task_IDLE 						= 2,
-        eST_User_Task_LOGGING					= 3,
-        eST_User_Task_ERROR						= 4,
-        eST_User_Task_CHECKING_EVENT			= 5,
-        eST_User_Task_PC_CONNECT				= 6,
+        eST_User_Task_INIT			= 1,
+        eST_User_Task_IDLE 			= 2,
+        eST_User_Task_LOGGING			= 3,
+        eST_User_Task_ERROR			= 4,
+        eST_User_Task_CHECKING_EVENT		= 5,
+        eST_User_Task_PC_CONNECT		= 6,
         eST_User_Task_PWM                       = 7,
         eST_User_Task_DMA_ADC                   = 8,
         eST_User_Task_Encoder                   = 9,
-		eST_User_Task_StopButton                = 10,
+	eST_User_Task_StopButton                = 10,
 	
 		
-        eST_User_Task_UN 						= 0xff,
+        eST_User_Task_UN 			= 0xff,
         
         eST_User_Task_ResetHome                 =0x11,
         eST_User_Task_ResetCutter               =0x12,
@@ -87,7 +87,7 @@ eST_User_Task eState_User_Task;
 #define DEMO_CODE
 
 
-#define USE_DEBUG_MASTER
+//#define USE_DEBUG_MASTER
 
 
 
@@ -107,8 +107,8 @@ uint8 sChangeCutter;
 #define Status_CheckThread              3
 #define Status_FinishThreadProcess      4
 
-enumbool bFlag_1st_Go   =eFALSE;
-enumbool bFlag_TimeSet  =eFALSE;
+enumbool bFlag_1st_Go   = eFALSE;
+enumbool bFlag_TimeSet  = eFALSE;
 uint8 Status_CheckThreadProcess;
 
 
@@ -144,7 +144,7 @@ void vUserTask( void *pvParameters )
 {
 	/* Delay before begin task */
 	OS_vTaskDelay(50);
-        /* Set flag */
+    /* Set flag */
 	bFlag_1st_Case = eTRUE;
 	/* Set prequency */
 	portTickType xLastWakeTime;
@@ -153,7 +153,6 @@ void vUserTask( void *pvParameters )
 	
 	/* Init ok */
 	xFlag_User_Task_Init_Done= eTRUE;
-        
 
       /* Task process */
       for(;;)
@@ -164,14 +163,13 @@ void vUserTask( void *pvParameters )
           /* Set xFlag_User_Task_Still_Running */
           xFlag_User_Task_Still_Running = eTRUE;
           /* Process User Task */
-                    
           vUserTaskMainProcess();
       }
 }
 /*********************************************************************/
 
 
-
+ int i = 0;
 void vUserTaskMainProcess(void)
 {
 	switch(eState_User_Task)
@@ -181,20 +179,27 @@ void vUserTaskMainProcess(void)
 			{
 				bFlag_1st_Case = eFALSE;
                                 
+                                BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eFALSE;
+                                
 				BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Reset;
 				BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
+                                
 				eFlag_Process_Finish = eFALSE;
 				BUFFER_STATEBUTTON.bflag_Stop = 0;
 				
 				//Get Ready for System
 				vInitCutter();
 				//Get Ready for Axis Control
-				
+				Control_LED_SYSTEM(SYS_READY);
 				//Get Ready for Spindle Control
 				vSetAirVale(SpindleResetHome);
+
+
 				
 				BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
-				BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
+				BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eFALSE;
+                                
+                                Buffer_LinearScale.spindle_position =0;
  
 			}
 			else
@@ -202,7 +207,8 @@ void vUserTaskMainProcess(void)
 				BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_Ready;
 				eState_User_Task = eST_User_Task_IDLE;
 				bFlag_1st_Case = eTRUE;
-								
+                              
+                                  			
 			}
 		break;
                 
@@ -227,38 +233,33 @@ void vUserTaskMainProcess(void)
 				//PC send new command, and BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eTRUE;
 				//In this time, we will handle the system
 
-//				BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eTRUE;
-				if(BUFFER_MACHINE_CONTROL.eFlag_Process_Update==eTRUE)
+
+				if(BUFFER_MACHINE_CONTROL.eFlag_Process_Update == eTRUE)
 				{
-//					BUFFER_MACHINE_CONTROL.bProcess_Control_Machine = PMachine_ResetHome;
 					switch(BUFFER_MACHINE_CONTROL.bProcess_Control_Machine)
 					{
-						case PMachine_ResetHome:
-						  eState_User_Task=eST_User_Task_ResetHome;
-						  eFlag_Process_Finish=eFALSE;
-						  bFlag_1st_Case = eTRUE;
-						  //Led Status 
-//						  GPIO_SetBits(GPIOA,GPIO_Pin_11);
-//						  GPIO_SetBits(GPIOA,GPIO_Pin_12);
-//						  GPIO_SetBits(GPIOA,GPIO_Pin_15);
-						break;
+                                                case PMachine_ResetHome:
+                                                      eState_User_Task=eST_User_Task_ResetHome;
+                                                      eFlag_Process_Finish = eFALSE;
+                                                      bFlag_1st_Case = eTRUE;
+                                                break;
 						  
 						case PMachine_ResetCutter:
-						  eState_User_Task = eST_User_Task_ResetCutter;
-						  eFlag_Process_Finish = eFALSE;
-						  bFlag_1st_Case = eTRUE;
+                                                      eState_User_Task = eST_User_Task_ResetCutter;
+                                                      eFlag_Process_Finish = eFALSE;
+                                                      bFlag_1st_Case = eTRUE;
 						break;
 						  
 						case PMachine_ScanHole:
-						  eState_User_Task = eST_User_Task_ScanHole;
-						  eFlag_Process_Finish = eFALSE;
-						  bFlag_1st_Case = eTRUE;
+                                                      eState_User_Task = eST_User_Task_ScanHole;
+                                                      eFlag_Process_Finish = eFALSE;
+                                                      bFlag_1st_Case = eTRUE;
 						break;
 						  
-						case PMachine_ThreadChecker:
-						  eState_User_Task = eST_User_Task_ThreadChecker;
-						  eFlag_Process_Finish=eFALSE;
-						  bFlag_1st_Case    = eTRUE;
+                                                case PMachine_ThreadChecker:
+                                                      eState_User_Task = eST_User_Task_ThreadChecker;
+                                                      eFlag_Process_Finish=eFALSE;
+                                                      bFlag_1st_Case    = eTRUE;
 						break;
 														   
 						default :
@@ -277,23 +278,22 @@ void vUserTaskMainProcess(void)
 		  {
 				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
-				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
 				  
 				  //Control X,Y,Z
-				  BUFFER_AXIS_PROCESS.bProcess=RESETHOME;
-				  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+				  BUFFER_AXIS_PROCESS.bProcess = RESETHOME;
+				  BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
 				  
 				  //Control Spindle Motor
-				  BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;
-				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+				  BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RESET;
+				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
 				  
 				  #ifdef USE_DEBUG_MASTER
-					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+					BUFFER_AXIS_PROCESS.bFeedBackAxis = eAxis_InProcess;     
 				  #endif /*USE_DEBUG_MASTER*/
 		  }
 		  else
 		  {		
-	
 				  // STOP BUTTON
 				  if(State_StopButton == eTRUE)
 				  {
@@ -307,33 +307,34 @@ void vUserTaskMainProcess(void)
 						}
 						else
 						{
+
 							//status of led
 							Control_LED_SYSTEM(SYS_WORKING);
-						  //Feedback Status Process Machine to PC
-							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetHome;
+                                                        //Feedback Status Process Machine to PC
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_ResetHome;
 
 							//Condition Process Finished
-							if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-							  if(BUFFER_ENCODER.Flag_Home==eTRUE)
+							if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Resethome)
+							  if(BUFFER_ENCODER.Flag_Home == eTRUE)
 							  {
 									  #ifdef USE_DEBUG_MASTER
-										  BUFFER_ENCODER.Flag_Home=eFALSE;     
+										  BUFFER_ENCODER.Flag_Home = eFALSE;     
 									  #endif /*USE_DEBUG_MASTER*/
-										  
-									  eFlag_Process_Finish=eTRUE;
+									  eFlag_Process_Finish = eTRUE;
 							  }
 							
 							
 							
 							
 							//Back to eST_User_Task_IDLE, when process finish
-							if (eFlag_Process_Finish==eTRUE)
+							if (eFlag_Process_Finish == eTRUE)
 							{
-							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_FinishProcess;    //Feedback Status Process Machine to PC
 							  eState_User_Task = eST_User_Task_IDLE;
+                                                          bFlag_1st_Case = eTRUE;
 							}
 							//Back to eST_User_Task_IDLE, when reset
-							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine == PMachine_Reset)
 							{
 							  eState_User_Task = eST_User_Task_INIT;
 							}
@@ -355,13 +356,13 @@ void vUserTaskMainProcess(void)
 		  {
 				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
-				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
 										 
 				  //Control Spindle Motor
 				  BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RESET;             //after reset home for spindle, break DC Spindle
-				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+				  BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
 				  #ifdef USE_DEBUG_MASTER
-					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+                                  BUFFER_AXIS_PROCESS.bFeedBackAxis = eAxis_InProcess;     
 				  #endif /*USE_DEBUG_MASTER*/
 
 		  }
@@ -384,36 +385,38 @@ void vUserTaskMainProcess(void)
 							//status of led
 							Control_LED_SYSTEM(SYS_WORKING);
 							//Control X,Y,Z
-							if(BUFFER_ENCODER.Flag_Home==eTRUE)
+							if(BUFFER_ENCODER.Flag_Home == eTRUE)
 							{
 							  #ifdef USE_DEBUG_MASTER
-								  BUFFER_ENCODER.Flag_Home=eFALSE;     
+								  BUFFER_ENCODER.Flag_Home = eFALSE;     
 							  #endif /*USE_DEBUG_MASTER*/
 							  vReleaseCutter();
-							  BUFFER_AXIS_PROCESS.bProcess=RELEASECUTTER;
-							  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+							  BUFFER_AXIS_PROCESS.bProcess = RELEASECUTTER;
+							  BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
 							}
 							
 							//Feedback Status Process Machine to PC
-							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ResetCutter;
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_ResetCutter;
 												
 			 
 							//Condition Process Finished
-							if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-							  eFlag_Process_Finish=eTRUE;
-						  
+							if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Getcutter)
+							  eFlag_Process_Finish = eTRUE;
+                                                        if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Releasecutter)
+                                                          eFlag_Process_Finish = eTRUE;
 							
 							
 							
 							
 							//Back to eST_User_Task_IDLE, when process finish
-							if (eFlag_Process_Finish==eTRUE)
+							if (eFlag_Process_Finish == eTRUE)
 							{
-							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-							  eState_User_Task=eST_User_Task_IDLE;
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  eState_User_Task = eST_User_Task_IDLE;
+                                                          bFlag_1st_Case = eTRUE;
 							}
 							//Back to eST_User_Task_IDLE, when reset
-							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine == PMachine_Reset)
 							{
 							  
 							  eState_User_Task=eST_User_Task_INIT;
@@ -437,14 +440,14 @@ void vUserTaskMainProcess(void)
 		  {
 				 Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
-				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
 										 
 				  //Control X,Y,Z
-				  BUFFER_AXIS_PROCESS.bProcess=RUNTOSCAN;
-				  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+				  BUFFER_AXIS_PROCESS.bProcess = RUNTOSCAN;
+				  BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
 				  
 				  #ifdef USE_DEBUG_MASTER
-					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
+					BUFFER_AXIS_PROCESS.bFeedBackAxis = eAxis_InProcess;     
 				  #endif /*USE_DEBUG_MASTER*/
 
 		  }
@@ -467,32 +470,31 @@ void vUserTaskMainProcess(void)
 						Control_LED_SYSTEM(SYS_WORKING);
 						//Scan Thread Hole
 						if(bDetectThreadHole())
-						  BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data]=eTRUE;
+						  BUFFER_HOLE_DATA.Detect_Thread_Hole[BUFFER_HOLE_DATA.iIdex_hole_data] = eTRUE;
 				   
 
 						//Feedback Status Process Machine to PC
-						BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ScanHole;
-											
-		 
+						BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_ScanHole;
+												 
 						//Condition Process Finished
-						if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-						  eFlag_Process_Finish=eTRUE;
+						if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Scanhole)
+						  eFlag_Process_Finish = eTRUE;
 					  
 						
 						
 						
 						
 						//Back to eST_User_Task_IDLE, when process finish
-						if (eFlag_Process_Finish==eTRUE)
+						if (eFlag_Process_Finish == eTRUE)
 						{
 						  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-						  eState_User_Task=eST_User_Task_IDLE;
+						  eState_User_Task = eST_User_Task_IDLE;
+                                                  bFlag_1st_Case = eTRUE;
 						}
 						//Back to eST_User_Task_IDLE, when reset
 						if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine == PMachine_Reset)
 						{
-						  
-						  eState_User_Task=eST_User_Task_INIT;
+						  eState_User_Task = eST_User_Task_INIT;
 						}
 						}
 				     }
@@ -504,11 +506,11 @@ void vUserTaskMainProcess(void)
                 
                 
 		case eST_User_Task_ThreadChecker:
-		  if(bFlag_1st_Case==eTRUE)
+		  if(bFlag_1st_Case == eTRUE)
 		  {
 				  Control_LED_SYSTEM(SYS_WORKING);
 				  bFlag_1st_Case = eFALSE;
-				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update=eFALSE;
+				  BUFFER_MACHINE_CONTROL.eFlag_Process_Update = eFALSE;
 										 
 				  //Control X,Y,Z
 				  Status_CheckThreadProcess = Status_ChangeCutter;
@@ -516,9 +518,9 @@ void vUserTaskMainProcess(void)
 				  
 				  timer_set(&tIO_SpindleUpInHole, Time_SpindleUpInHole ,CLOCK_TYPE_MS); /*700ms */
 				  
-				  #ifdef USE_DEBUG_MASTER
-					BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-				  #endif /*USE_DEBUG_MASTER*/
+                                  BUFFER_CURRENT_MEASURE.Current_Max = 3180;
+                                  BUFFER_CURRENT_MEASURE.Flag_Update = eTRUE;
+                                        
 		  }
 		  else
 		  {
@@ -543,44 +545,41 @@ void vUserTaskMainProcess(void)
 							case Status_ChangeCutter :
 							   //What things to do
 								  //1st : Change cutter
-								  if(bFlag_1st_Go==eTRUE && BUFFER_HOLE_DATA.Dia_Hole[BUFFER_MACHINE_CONTROL.iIdex_hole_check] != BUFFER_MACHINE_CONTROL.sHold_Cutter)
+								  if(bFlag_1st_Go == eTRUE && BUFFER_HOLE_DATA.Dia_Hole[BUFFER_MACHINE_CONTROL.iIdex_hole_check] != BUFFER_MACHINE_CONTROL.sHold_Cutter)
 									{
 									  bChangeCutter = eTRUE;
 									  sChangeCutter = sReleaseCutter;
 									  bFlag_1st_Go  = eFALSE; 
 									}
-									if(bChangeCutter==eTRUE)
+									if(bChangeCutter == eTRUE)
 									{
 									  vStepChangeCutterProcess();
 									}
-								//Conditions Change State :
-									if(bChangeCutter==eFALSE)
+								 //Conditions Change State :
+									if(bChangeCutter == eFALSE)
 									  Status_CheckThreadProcess = Status_RuntoHole;
 							  break;
 							  
 							case Status_RuntoHole :
 							  //What things to do
 								  //2nd : Control X,Y runtopoint
-								  BUFFER_X_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_X[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
-								  BUFFER_X_AXIS_CONTROL.bFlag_Update=eTRUE;
-								  BUFFER_Y_AXIS_CONTROL.Axis_PositionControl=BUFFER_HOLE_DATA.Position_Y[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
-								  BUFFER_Y_AXIS_CONTROL.bFlag_Update=eTRUE;
+								  BUFFER_X_AXIS_CONTROL.Axis_PositionControl = BUFFER_HOLE_DATA.Position_X[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
+								  BUFFER_X_AXIS_CONTROL.bFlag_Update = eTRUE;
+								  BUFFER_Y_AXIS_CONTROL.Axis_PositionControl = BUFFER_HOLE_DATA.Position_Y[BUFFER_MACHINE_CONTROL.iIdex_hole_check];
+								  BUFFER_Y_AXIS_CONTROL.bFlag_Update = eTRUE;
 								  
-								  BUFFER_AXIS_PROCESS.bProcess=RUNTOPOINT;
-								  BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-								  
-								  BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
-								  BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+								  BUFFER_AXIS_PROCESS.bProcess = RUNTOPOINT;
+								  BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
+                                                                  
+								  BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_DISABLE;
+								  BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
+								  BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
 								  
 							   //Conditions Change State :
-								  if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+								  if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Runtopoint)
 								  {
-									Status_CheckThreadProcess=Status_CheckThread;
-									Status_SpindleCheckProcess=sSpindle_GetReady;
-									#ifdef USE_DEBUG_MASTER
-									  BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-									#endif /*USE_DEBUG_MASTER*/
-				
+									Status_CheckThreadProcess  = Status_CheckThread;
+									Status_SpindleCheckProcess = sSpindle_GetReady;
 								  }
 							break;
 							  
@@ -591,11 +590,11 @@ void vUserTaskMainProcess(void)
 								  vStepSpindleCheckHoleProcess();
 								  //Conditions Change State :
 								  if(Status_SpindleCheckProcess == sSpindle_Finish)
-									Status_CheckThreadProcess = Status_FinishThreadProcess;
+								  Status_CheckThreadProcess = Status_FinishThreadProcess;
 							 break;
 							  
 							case Status_FinishThreadProcess :
-								  eFlag_Process_Finish=eTRUE;
+								  eFlag_Process_Finish = eTRUE;
 							break;
 							  
 							default :
@@ -605,7 +604,7 @@ void vUserTaskMainProcess(void)
 				
 
 							//Feedback Status Process Machine to PC
-							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_ThreadChecker;
+							BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_ThreadChecker;
 												
 			 
 							//Condition Process Finished
@@ -613,15 +612,16 @@ void vUserTaskMainProcess(void)
 						  
 							
 							//Back to eST_User_Task_IDLE, when process finish
-							if (eFlag_Process_Finish==eTRUE)
+							if (eFlag_Process_Finish == eTRUE)
 							{
-							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine=PMachine_FinishProcess;    //Feedback Status Process Machine to PC
-							  eState_User_Task=eST_User_Task_IDLE;
+							  BUFFER_MACHINE_CONTROL.bProcess_Feedback_Machine = PMachine_FinishProcess;    //Feedback Status Process Machine to PC
+							  eState_User_Task = eST_User_Task_IDLE;
+                                                          bFlag_1st_Case = eTRUE;
 							}
 							//Back to eST_User_Task_IDLE, when reset
-							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine==PMachine_Reset)
+							if (BUFFER_MACHINE_CONTROL.bProcess_Control_Machine == PMachine_Reset)
 							{
-							  eState_User_Task=eST_User_Task_INIT;
+							  eState_User_Task = eST_User_Task_INIT;
 							}
 
 					  	}
@@ -636,60 +636,6 @@ void vUserTaskMainProcess(void)
    			memset(UART1_BUFFER_TX,0,i_MAX_UART);
 			memset(UART2_BUFFER_TX,0,i_MAX_UART);
 		break;
-			
-                //<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//
-		case eST_User_Task_LOGGING:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
-                
-                
-                
-		case eST_User_Task_ERROR:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
-                
-                
-                
-		case eST_User_Task_CHECKING_EVENT:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				eState_User_Task = eST_User_Task_IDLE;
-				bFlag_1st_Case = eTRUE;
-			}
-		break;
-                
-                
-		case eST_User_Task_PC_CONNECT:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
-                //<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//
-                
-
 		default:
 			eState_User_Task = eST_User_Task_INIT;
 			bFlag_1st_Case = eTRUE;
@@ -701,19 +647,19 @@ void vUserTaskMainProcess(void)
 
 void vInitCutter()
 {
-  BUFFER_MACHINE_CONTROL.PositionCutter_X[1]=320;
-  BUFFER_MACHINE_CONTROL.PositionCutter_X[2]=320;
-  BUFFER_MACHINE_CONTROL.PositionCutter_X[3]=320;
-  BUFFER_MACHINE_CONTROL.PositionCutter_X[4]=320;
-  BUFFER_MACHINE_CONTROL.PositionCutter_X[5]=320;
+  BUFFER_MACHINE_CONTROL.PositionCutter_X[1] = 320;
+  BUFFER_MACHINE_CONTROL.PositionCutter_X[2] = 320;
+  BUFFER_MACHINE_CONTROL.PositionCutter_X[3] = 320;
+  BUFFER_MACHINE_CONTROL.PositionCutter_X[4] = 320;
+  BUFFER_MACHINE_CONTROL.PositionCutter_X[5] = 320;
   
-  BUFFER_MACHINE_CONTROL.PositionCutter_Y[1]=40;
-  BUFFER_MACHINE_CONTROL.PositionCutter_Y[2]=70;
-  BUFFER_MACHINE_CONTROL.PositionCutter_Y[3]=100;
-  BUFFER_MACHINE_CONTROL.PositionCutter_Y[4]=130;
-  BUFFER_MACHINE_CONTROL.PositionCutter_Y[5]=170;
+  BUFFER_MACHINE_CONTROL.PositionCutter_Y[1] = 40;
+  BUFFER_MACHINE_CONTROL.PositionCutter_Y[2] = 70;
+  BUFFER_MACHINE_CONTROL.PositionCutter_Y[3] = 100;
+  BUFFER_MACHINE_CONTROL.PositionCutter_Y[4] = 130;
+  BUFFER_MACHINE_CONTROL.PositionCutter_Y[5] = 170;
   
-  BUFFER_MACHINE_CONTROL.sHold_Cutter=0x02;
+  BUFFER_MACHINE_CONTROL.sHold_Cutter = 0x02;
 }
 
 
@@ -747,31 +693,30 @@ void vSetAirVale(state_control_air_value bProcess)
 {
   switch(bProcess)
   {
-  case SpindleGoDown:
-		GPIO_SetBits(sCoil_1, sCoil_1_GoDown);
-        GPIO_ResetBits(sCoil_2,sCoil_2_GoDown);
+    case SpindleResetHome:
+		GPIO_ResetBits(sCoil_1, sCoil_1_GoDown);
+                GPIO_SetBits(sCoil_2,sCoil_2_GoDown);
  		GPIO_ResetBits(sCoil_3,sCoil_3_GoDown);
     break;
     
-  case SpindleGoUp:
-        GPIO_ResetBits(sCoil_1,sCoil_1_GoUp);
-		GPIO_SetBits(sCoil_2,sCoil_2_GoUp);
+    case SpindleGoDown:
+                GPIO_SetBits(sCoil_1,sCoil_1_GoUp);
+		GPIO_ResetBits(sCoil_2,sCoil_2_GoUp);
  		GPIO_ResetBits(sCoil_3,sCoil_3_GoUp);
     break;
     
-  case SpindleResetHome:
+    case SpindleGoUp:
  		GPIO_SetBits(sCoil_3,sCoil_3_ResetHome);
-		GPIO_ResetBits(sCoil_2,sCoil_2_ResetHome);
-        GPIO_ResetBits(sCoil_1,sCoil_1_ResetHome);
+                GPIO_ResetBits(sCoil_2,sCoil_2_ResetHome);
+                GPIO_SetBits(sCoil_1,sCoil_1_ResetHome);
 		
  		
     break;
 
-  default:
+    default:
     break;
   }
 }
-
 /*--------------Thread Checker Flowchart----------------*/
 void vStepChangeCutterProcess()
 {
@@ -784,15 +729,19 @@ void vStepChangeCutterProcess()
       if(BUFFER_ENCODER.Flag_Home == eTRUE)
       {
             vReleaseCutter();
-            BUFFER_AXIS_PROCESS.bProcess=RELEASECUTTER;
-            BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+            vSetAirVale(SpindleGoDown);
+            BUFFER_AXIS_PROCESS.bProcess = RELEASECUTTER;
+            BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
             //Conditions Change State :
-            if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+            if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Releasecutter)
             {
-              sChangeCutter=sGetCutter;
+              vSetAirVale(SpindleResetHome);
+              Buffer_LinearScale.pulse_cnt_LinearScale = 0;
+              
+              sChangeCutter = sGetCutter;
               #ifdef USE_DEBUG_MASTER
-                BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;
-                BUFFER_ENCODER.Flag_Home=eFALSE;  
+                BUFFER_AXIS_PROCESS.bFeedBackAxis = eAxis_InProcess;
+                BUFFER_ENCODER.Flag_Home = eFALSE;  
               #endif /*USE_DEBUG_MASTER*/
             }
       }
@@ -800,19 +749,24 @@ void vStepChangeCutterProcess()
     
     case sGetCutter :
       //What things to do
-      BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RESET;
-      BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-      if(BUFFER_ENCODER.Flag_Home==eTRUE)
-      {                
+      BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RESET;
+      BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
+      if(BUFFER_ENCODER.Flag_Home == eTRUE)
+      {      
+            vSetAirVale(SpindleGoDown);
             vGetCutter();
-            BUFFER_AXIS_PROCESS.bProcess=GETCUTTER;
-            BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
+            BUFFER_AXIS_PROCESS.bProcess = GETCUTTER;
+            BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
             //Conditions Change State :
-            if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+            if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Getcutter)
             {
-              sChangeCutter=sChangeCutterFinish;
+              
+              vSetAirVale(SpindleResetHome);
+              Buffer_LinearScale.pulse_cnt_LinearScale = 0;
+              
+              sChangeCutter = sChangeCutterFinish;
               #ifdef USE_DEBUG_MASTER
-                BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;
+                BUFFER_AXIS_PROCESS.bFeedBackAxis = eAxis_InProcess;
                 BUFFER_ENCODER.Flag_Home=eFALSE; 
               #endif /*USE_DEBUG_MASTER*/
             }
@@ -820,15 +774,15 @@ void vStepChangeCutterProcess()
     break;
       
     case sChangeCutterFinish :
-      bChangeCutter=eFALSE;
+      bChangeCutter = eFALSE;
     break;
       
     default:
-      bChangeCutter=eFALSE;
+      bChangeCutter = eFALSE;
     break;
     }
 }
-
+enumbool  Flag_status_code;
 void vStepSpindleCheckHoleProcess()
 {
   switch(Status_SpindleCheckProcess)
@@ -836,130 +790,138 @@ void vStepSpindleCheckHoleProcess()
     case sSpindle_GetReady:
           //What things to do
           vSetAirVale(SpindleResetHome);
-          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
-          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-          
+          Flag_status_code = eTRUE;
           //Conditions Change State :
-          Status_SpindleCheckProcess=sSpindle_Z_GoDown;
-      break;
+          Status_SpindleCheckProcess = sSpindle_Z_GoDown;
+    break;
       
     case sSpindle_Z_GoDown :
           //What things to do
-          BUFFER_Z_AXIS_CONTROL.Axis_PositionControl=Z_CheckThread;             //Z go to Z=50
-          BUFFER_Z_AXIS_CONTROL.bFlag_Update=eTRUE;
-          BUFFER_AXIS_PROCESS.bProcess=RUNTOPOINT;
-          BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-          
-          vSetAirVale(SpindleResetHome);
+            BUFFER_Z_AXIS_CONTROL.Axis_PositionControl = Z_CheckThread;             //Z go to Z=50
+            BUFFER_Z_AXIS_CONTROL.bFlag_Update = eTRUE;
+            BUFFER_AXIS_PROCESS.bProcess = RUNTOPOINT;
+            BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
+     
           //Conditions Change State :
-          if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
+          if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Runtopoint)
           {
-            Status_SpindleCheckProcess=sSpindle_Spindle_GoDown;
-            #ifdef USE_DEBUG_MASTER
-              BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-            #endif /*USE_DEBUG_MASTER*/
+            Status_SpindleCheckProcess = sSpindle_Spindle_GoDown;
           }
       
       break;
       
-    case sSpindle_Spindle_GoDown:
-          //What things to do
-          Buffer_LinearScale.spindle_position = SPINDLE_LINEARHOME;                           
-          
-          BUFFER_CONTROL_DC_SPINDLE.bDC_Driection=SPINDLE_FORWARD;              
-          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RORATY;
-          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+      case sSpindle_Spindle_GoDown:
+          vGetLinearScaleValue();
+          //What things to do 
+          if(Flag_status_code == eTRUE)
+          {
+          Flag_status_code = eFALSE;
+          BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_FORWARD;              
+          BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RORATY;
+          BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
+          }
           
           vSetAirVale(SpindleGoDown);                                          
       
           //Conditions Change State :
-          Status_SpindleCheckProcess=sSpindle_Checking;
-          bFlag_1st_Go=eTRUE;
+          if(Buffer_LinearScale.spindle_position >= SPINDLE_LINEAR_POINT)
+          {
+            Status_SpindleCheckProcess = sSpindle_Checking;
+            bFlag_1st_Go = eTRUE;
+            Flag_status_code =  eTRUE;
+
+          }
       
       break;
       
-    case sSpindle_Checking:
+      case sSpindle_Checking:
           //What things to do
           //In Slave2, it read Current Value, check with Current Max
           //If Current Value reach Current Max, Immediately, Slave2 change bDC_Driection control to Reverse Motor 
 //          if(timer_expired(&tIO_SpindleUpInHole))
 //            uint8 test = 1;
           
-          if(Buffer_LinearScale.spindle_position<=SPINDLE_POSITION_CHECK)
-            bFlag_FinishCheckHole=eTRUE;
-      
-          if(bFlag_1st_Go==eTRUE && bFlag_FinishCheckHole==eTRUE)
+          vGetLinearScaleValue();
+          
+          if(Buffer_LinearScale.spindle_position >= SPINDLE_POSITION_CHECK)
+            bFlag_FinishCheckHole = eTRUE;
+          
+          if(bFlag_1st_Go == eTRUE && bFlag_FinishCheckHole == eTRUE)
           {
             bFlag_1st_Go  = eFALSE;
-            BUFFER_CONTROL_DC_SPINDLE.bDC_Driection=SPINDLE_REVERSE;
-            
-            BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RORATY;
-            BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-            
             vSetAirVale(SpindleGoUp);
-            
+            if(Flag_status_code == eTRUE)
+            {
+            Flag_status_code = eFALSE;
+            BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_REVERSE;
+            BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RORATY;
+            BUFFER_CONTROL_DC_SPINDLE.Flag_Update  = eTRUE;
+            }
+          }
+          if(Buffer_LinearScale.spindle_position < SPINDLE_LINEAR_POINT)    // can chinh lai khi chay on dinh
+          {
             timer_restart(&tIO_SpindleUpInHole);
-            bFlag_TimeSet=eTRUE;    
+            bFlag_TimeSet = eTRUE;    
           }
           
-          if(BUFFER_CURRENT_MEASURE.Flag_QualityPoor==eTRUE)
+          if(BUFFER_CURRENT_MEASURE.Flag_QualityPoor == eTRUE)
           {
-            BUFFER_HOLE_DATA.Hole_Check_Value[BUFFER_HOLE_DATA.iIdex_hole_data]=POOR;
+            BUFFER_HOLE_DATA.Hole_Check_Value[BUFFER_HOLE_DATA.iIdex_hole_data] = POOR;
             
-            BUFFER_CONTROL_DC_SPINDLE.bDC_Driection=SPINDLE_REVERSE;
-            
-            BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RORATY;
-            BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+            BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_REVERSE;
+            BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RORATY;
+            BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
             
             vSetAirVale(SpindleGoUp);
             
             timer_restart(&tIO_SpindleUpInHole);
-            bFlag_TimeSet=eTRUE;
+            bFlag_TimeSet = eTRUE;
             
           }
           //Conditions Change State :
-          if((bFlag_TimeSet==eTRUE) && (timer_expired(&tIO_SpindleUpInHole)))
+          if((bFlag_TimeSet == eTRUE) && (timer_expired(&tIO_SpindleUpInHole)))
           {
-            Status_SpindleCheckProcess=sSpindle_Spindle_GoUp;
+            Status_SpindleCheckProcess = sSpindle_Spindle_GoUp;
           }
       
       break;
       
       
     case sSpindle_Spindle_GoUp:
+      
+          vGetLinearScaleValue();
           //What things to do
-          BUFFER_CONTROL_DC_SPINDLE.bDC_Driection=SPINDLE_REVERSE;
           
-          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_RORATY;
-          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
+//          BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_REVERSE;
+//          BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RORATY;
+//          BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
           
-          vSetAirVale(SpindleResetHome); 
+            vSetAirVale(SpindleResetHome); 
       
           //Conditions Change State :
-          if(Buffer_LinearScale.spindle_position>SPINDLE_LINEARHOME-5)
-            Status_SpindleCheckProcess=sSpindle_Z_GoUp;
-      
+//          if(Buffer_LinearScale.spindle_position > SPINDLE_LINEARHOME-5)
+            if(Buffer_LinearScale.spindle_position <= 10)
+            {
+                
+                BUFFER_CONTROL_DC_SPINDLE.bDC_Driection = SPINDLE_DISABLE;
+                BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_STOP;
+                BUFFER_CONTROL_DC_SPINDLE.Flag_Update = eTRUE;
+                Status_SpindleCheckProcess = sSpindle_Z_GoUp;
+            }
       break;
       
     case sSpindle_Z_GoUp:
-          //What things to do
-          BUFFER_Z_AXIS_CONTROL.Axis_PositionControl=Z_SafePosition;             //Z go to Z=100
-          BUFFER_Z_AXIS_CONTROL.bFlag_Update=eTRUE;
-          BUFFER_AXIS_PROCESS.bProcess=RUNTOPOINT;
-          BUFFER_AXIS_PROCESS.Flag_Update=eTRUE;
-      
-          vSetAirVale(SpindleResetHome); 
-          BUFFER_CONTROL_DC_SPINDLE.bProcess=SPINDLE_STOP;
-          BUFFER_CONTROL_DC_SPINDLE.Flag_Update=eTRUE;
-          
-          //Conditions Change State :
-          if(BUFFER_AXIS_PROCESS.bFeedBackAxis==eAxis_Finsish)
-          {
-            Status_SpindleCheckProcess=sSpindle_Finish;
-            #ifdef USE_DEBUG_MASTER
-              BUFFER_AXIS_PROCESS.bFeedBackAxis=eAxis_InProcess;     
-            #endif /*USE_DEBUG_MASTER*/
-          }
+             //What things to do
+            BUFFER_AXIS_PROCESS.bProcess = RESETHOME;
+            BUFFER_AXIS_PROCESS.Flag_Update = eTRUE;
+            
+            vSetAirVale(SpindleResetHome); 
+            
+            //Conditions Change State :
+            if(BUFFER_AXIS_PROCESS.bFeedBack == eAxis_Finsish_Resethome)
+            {
+              Status_SpindleCheckProcess = sSpindle_Finish;
+            }
       
       break;
       

@@ -784,7 +784,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\..\..\3.Project_KSK\2.MainSource\stm32f103x8_FWWithBootloader.icf</state>
+                    <state>E:\KSK Solution Viet Nam\du an R_D1\M.FLOWCHART\M.FLOWCHART\K08_Application_1.0\3.Project_KSK\2.MainSource\stm32f103x8_FWNonBoot.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
