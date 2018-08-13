@@ -21,8 +21,7 @@
 #include "Project_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
-#include "USART2_AppCall_Function.h"
-#include "USART3_AppCall_Function.h"
+//#include "USART2_AppCall_Function.h"
 #include "IO_Function.h"
 #include "IO_Kernel_Function.h"
 #include "ComFunction.h"
@@ -63,7 +62,7 @@ void vMCU_Init_Hardware( void )
 	SystemCoreClockUpdate();
 	lSystemClock = SystemCoreClock;
 	/* Set the Vector Table base address at 0x08000000,  0x08005000 if have bootloader */
-	NVIC_SetVectorTable( NVIC_VectTab_FLASH, FW_FLASH_ADDR );
+	NVIC_SetVectorTable( NVIC_VectTab_FLASH,0);
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );	
 	/* Configure HCLK clock as SysTick clock source. */
 	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK );
@@ -72,13 +71,13 @@ void vMCU_Init_Hardware( void )
 	/* Setup USART1 for debug */
 	/* Init usart1 */
 	USART1_AppCall_Init(&pUSART1);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: USART1 Init Success!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: USART1 Init Success!\r\n");
         
         /* Init usart2 */
-	USART2_AppCall_Init(&pUSART2);
-	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
-	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
+//	USART2_AppCall_Init(&pUSART2);
+//	USART2_AppCall_SendString("[SYSTEM DEBUG]: FW User Mode!\r\n");
+//	USART2_AppCall_SendString("[SYSTEM DEBUG]: USART2 Init Success!\r\n");
 	/* Config Clock AFIO, use for antenate function  */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 }
@@ -89,14 +88,14 @@ void vProject_Init()
 	/* Project config */
 	/* Disable Jtag to use PA15, PB3, PB4 */
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: GPIO JTAG Disable done!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: GPIO JTAG Disable done!\r\n");
 	GPIO_PinRemapConfig(GPIO_Remap_PD01, ENABLE);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: PD0 PD1 Remap done!\r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: PD0 PD1 Remap done!\r\n");
     
 	/* Config LED, for LED Tag Signal */
 	extern IO_Struct pLED1;
 	IO_LED1_Init(&pLED1);
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: LED done! \r\n");
 	/* Turn off LED */
 	pLED1.write(OFF);
 	pLED1.write(ON);
@@ -118,14 +117,16 @@ void vProject_Init()
 	
 	/* Init PWM function */
 	vInitPWMFunction();
-	USART1_AppCall_SendString("[SYSTEM DEBUG]: PWM Init success! \r\n");
+//	USART1_AppCall_SendString("[SYSTEM DEBUG]: PWM Init success! \r\n");
         
 	/* Init ADC function */
 	vInit_DMA_ADC_Function();
 	/* Init HomeEncoder function */
-     vInit_HomeEncoder();
+        vInit_HomeEncoder();
    	/* Update Flash Data */
 	//vFLASH_UpdateData();
+	/*DetectOverTime*/
+	vInitDetectOverTime();
 	/* Load config from flash and update */
 	FLASH_Unlock();
 	vFLASH_User_Read(0,USER_INFO_FLASH_ADDR,(uint32_t*)StrConfig,FLASH_PAGE_SIZE);
@@ -136,23 +137,23 @@ void vProject_Init()
         /* Load firmware version and rewrite */
         pStrConfig = (Struct_Flash_Config_Parameter*)(StrConfig);
         /* Send Buf FW OLD version */
-        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: OLD FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
-        USART1_AppCall_SendBuf(pStrConfig->FW_Version, SIZE_FW_VERSION+1);
-        USART1_AppCall_SendString("\r\n");
+//        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: OLD FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
+//        USART1_AppCall_SendBuf(pStrConfig->FW_Version, SIZE_FW_VERSION+1);
+//        USART1_AppCall_SendString("\r\n");
         /* Send Buf FW Current version */
-        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: NEW FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
-        USART1_AppCall_SendBuf(StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
-        USART1_AppCall_SendString("\r\n");
+//        USART1_AppCall_SendBuf("[SYSTEM DEBUG]: NEW FW Version: ",sizeof("[SYSTEM DEBUG]: OLD FW Version:"));
+//        USART1_AppCall_SendBuf(StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
+//        USART1_AppCall_SendString("\r\n");
         /* Check Firmare version */
         if(memcmp(&StrConfigPara.FW_Version,pStrConfig->FW_Version, SIZE_FW_VERSION+1)!=eFALSE)
         {
-            USART1_AppCall_SendString("[SYSTEM DEBUG]: Write New FW Version! \r\n");
+//            USART1_AppCall_SendString("[SYSTEM DEBUG]: Write New FW Version! \r\n");
             /* Only update firmware version */
             memcpy(pStrConfig->FW_Version, StrConfigPara.FW_Version, SIZE_FW_VERSION+1);
             memcpy(&StrConfigPara,StrConfig,sizeof(StrConfigPara));
             vFLASH_UpdateData();
         }
-        USART1_AppCall_SendString("[SYSTEM DEBUG]: CHECK VERSION DONE! \r\n");
+//        USART1_AppCall_SendString("[SYSTEM DEBUG]: CHECK VERSION DONE! \r\n");
 	}
 	
     /* IWDG_Init: for reset system */
@@ -270,32 +271,38 @@ void vInitPWMFunction(void)
 	TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef          TIM_OCInitStructure;    
 
-	TIM_TimeBaseStructure.TIM_Prescaler = 0;  
-	TIM_TimeBaseStructure.TIM_Period = 0xFFFF;   // 65535
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_Prescaler = 7199;  
+	TIM_TimeBaseStructure.TIM_Period = 70;   
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0x00;
+        TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
         
         /* PWM will control DC motor */
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	TIM_OCInitStructure.TIM_OCMode 		= TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState 	= TIM_OutputState_Enable; 
 	TIM_OCInitStructure.TIM_OCPolarity  	= TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_OutputNState 	= TIM_OutputNState_Enable; 
 	TIM_OCInitStructure.TIM_OCNPolarity 	= TIM_OCNPolarity_High;
-	TIM_OCInitStructure.TIM_Pulse = 0;
+        TIM_OCInitStructure.TIM_OCIdleState     = TIM_OCIdleState_Reset;
+        TIM_OCInitStructure.TIM_OCNIdleState    = TIM_OCNIdleState_Reset;
+        TIM_OCInitStructure.TIM_Pulse           = 0;
         
         /* Config Thanh ghi tuong ung voi cac chan PWM*/
+        
+        /*PWM Channel 1*/
 	TIM_OC1Init(TIM1, &TIM_OCInitStructure);  
 	TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
-        
-	TIM_OC2Init(TIM1, &TIM_OCInitStructure);
-	TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
-        
-	TIM_OC3Init(TIM1, &TIM_OCInitStructure);
-	TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
-        
+        TIM_SelectOCxM(TIM1,TIM_Channel_1,TIM_OCMode_PWM1);
+        TIM_CCxCmd(TIM1,TIM_Channel_1,TIM_CCx_Enable);
+        TIM_CCxNCmd(TIM1,TIM_Channel_1,TIM_CCxN_Enable);
+
+        /*PWM Channel 2*/
 	TIM_OC4Init(TIM1, &TIM_OCInitStructure);
 	TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);
+        TIM_SelectOCxM(TIM1,TIM_Channel_4,TIM_OCMode_PWM1);
+        TIM_CCxCmd(TIM1,TIM_Channel_4,TIM_CCx_Enable);
+        TIM_CCxNCmd(TIM1,TIM_Channel_4,TIM_CCxN_Enable);
         
 	TIM_ARRPreloadConfig(TIM1, ENABLE);
 
@@ -304,13 +311,15 @@ void vInitPWMFunction(void)
 	TIM_CtrlPWMOutputs(TIM1, ENABLE);
 
 	/* Init IO for PWM function */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 	GPIO_InitTypeDef  GPIO_InitStructure; 
-	/* Configure PB0 PB1 in output pushpull mode */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 ;
+	/* Configure PB13 PB14 in output pushpull mode */
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8 | GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure); 
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure); 
+        
+   
 }
 
 void vChangeDutyCycleOC1(uint8_t bDutyPercent)
@@ -319,23 +328,24 @@ void vChangeDutyCycleOC1(uint8_t bDutyPercent)
 }
 void vChangeDutyCycleOC2(uint8_t bDutyPercent)
 {
-	TIM1 -> CCR2 = (bDutyPercent*65535)/100;
+	TIM1 -> CCR4 = (bDutyPercent*65535)/100;
 }
 
 void vMotorControl( uint8 bDutyMotor,state_DC_Spindle bDirection)
 {
 	switch(bDirection)
 	{
-		    case SPINDLE_FORWARD:
-                    MOTOR_1_DUTY(bDutyMotor);
-                    MOTOR_2_DUTY(2);
+            case SPINDLE_FORWARD:
+                    MOTOR_1_DUTY(0);
+                    MOTOR_2_DUTY(bDutyMotor);
+
             break;
             case SPINDLE_REVERSE:
-                    MOTOR_1_DUTY(2);
-                    MOTOR_2_DUTY(bDutyMotor);
+                    MOTOR_1_DUTY(bDutyMotor);
+                    MOTOR_2_DUTY(0);
             break;
             case SPINDLE_BREAK:
- 					MOTOR_2_DUTY(bDutyMotor);
+                    MOTOR_2_DUTY(bDutyMotor);
                     MOTOR_1_DUTY(bDutyMotor);
             break;
             case SPINDLE_DISABLE:
@@ -434,15 +444,15 @@ void vInit_DMA_ADC_Function(void)
 uint32 bFlag_Status_Spindle = 0;
 void Spindle_Home(void)
 {
-	BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 20;
+//	BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 30;
 //    vMotorControl(BUFFER_CONTROL_DC_SPINDLE.Speed_DC,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
-    vMotorControl(20,SPINDLE_REVERSE);
+        vMotorControl(30,SPINDLE_FORWARD);
 	if(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_4) == eFALSE)
 	{
-	  BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 0;
-	  bFlag_Status_Spindle =1;
-	  vMotorControl(BUFFER_CONTROL_DC_SPINDLE.Speed_DC,SPINDLE_DISABLE);
-	  BUFFER_ENCODERHOME.Flag_Home = 1;
+//	  BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 0;
+	  bFlag_Status_Spindle = 1;
+	  vMotorControl(0,SPINDLE_DISABLE);
+	  BUFFER_ENCODERHOME.Flag_Home = eTRUE;
 	  BUFFER_ENCODERHOME.Flag_Update = eTRUE;
 	}
 }
@@ -450,7 +460,7 @@ void Spindle_Home(void)
 void vInit_HomeEncoder(void)
 {
   GPIO_InitTypeDef  GPIO_InitStructure;
-/*config pin B7 for Proximit Sensor */ 
+/*config pin B4 for Proximit Sensor */ 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
@@ -459,30 +469,33 @@ void vInit_HomeEncoder(void)
 }
 
 /********************************Current Measure Value**************************/
-uint8 iIndexCurrentMeasure=0;
-uint16 Current_Value = 0; 
+uint16_t iIndexCurrentMeasure	= 0;
+uint16_t Current_Value 		= 0; 
+
 void Current_Measure_Value(void)
 {
-  static uint16 iIndex;
-  static uint32 Sum_ADC = 0;
-  uint16 Buffer_ADC_Current_Measure[10];
-
+  static uint16_t iIndex = 0;
+  static uint32_t Sum_ADC = 0;
+  static uint32_t Buffer_ADC_Current_Measure[10];
   Buffer_ADC_Current_Measure[iIndexCurrentMeasure] = ADCConvertedValue;
+  
   iIndexCurrentMeasure=(iIndexCurrentMeasure+1)%10;
   for (iIndex=0;iIndex<10;iIndex++)
   {
-	Sum_ADC = Sum_ADC+ Buffer_ADC_Current_Measure[iIndex];
+    Sum_ADC = Buffer_ADC_Current_Measure[0] + Buffer_ADC_Current_Measure[1]+ Buffer_ADC_Current_Measure[2] + Buffer_ADC_Current_Measure[3] + Buffer_ADC_Current_Measure[4] +Buffer_ADC_Current_Measure[5] + Buffer_ADC_Current_Measure[6] + Buffer_ADC_Current_Measure[7] + Buffer_ADC_Current_Measure[8] + Buffer_ADC_Current_Measure[9];;
   }
   Current_Value = Sum_ADC/10;
+  BUFFER_CURRENT_MEASURE.Flag_Update = eTRUE;
 }
 
 /*--------------------------Error_Process----------------------------------------*/
 enumbool bFlag_Error_Process = eFALSE;
 int i = 0;
-void vInit_Error_Process(void)
+void Error_Process(void)
 {
  if(Current_Value >> BUFFER_CURRENT_MEASURE.Current_Max) 
  { 
+ BUFFER_CONTROL_DC_SPINDLE.bFlag_Error_Update = eTRUE;
  BUFFER_CONTROL_DC_SPINDLE.Error_Process = E_OverLoad;
  bFlag_Error_Process = eTRUE;
  vMotorControl(0,SPINDLE_DISABLE);	

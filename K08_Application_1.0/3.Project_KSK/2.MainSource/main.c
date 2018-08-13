@@ -22,7 +22,7 @@
 #include "IO_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
-#include "USART2_AppCall_Function.h"
+//#include "USART2_AppCall_Function.h"
 #include "Project_Function.h"
 #include "ComFunction.h"
 
@@ -137,12 +137,10 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
-  vInit_Error_Process();
-  
+  //Error_Process();
   vComDataProcess_USART1();
-  vComDataProcess_USART2();
-
-  
+//  vComDataProcess_USART2();
+  //vDetectOverTime();
 }
 
 

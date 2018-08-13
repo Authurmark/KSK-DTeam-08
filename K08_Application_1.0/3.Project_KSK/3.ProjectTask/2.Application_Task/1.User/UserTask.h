@@ -31,3 +31,10 @@ typedef enum
 }eUserState;
 /* Funtion Prototype */
 void vUserTask( void *pvParameters );
+
+#define i_MAX_UART          500
+extern uint8 UART1_BUFFER_RX[i_MAX_UART];
+extern uint8 UART1_BUFFER_TX[i_MAX_UART];
+
+extern uint8 UART2_BUFFER_RX[i_MAX_UART];
+extern uint8 UART2_BUFFER_TX[i_MAX_UART];

@@ -27,8 +27,8 @@ hardware function.
 #include "ComFunction.h"
 #include "Timer_Function.h"		
 
-/* Define */
-#define USER_TASK_FREQUENCY 10
+///* Define */
+//#define USER_TASK_FREQUENCY 10
 /* Global Variable */
 extern Struct_User_Information StrUserInfo;
 extern char StrConfig[FLASH_PAGE_SIZE];
@@ -44,14 +44,14 @@ typedef enum
 {
         eST_User_Task_INIT						= 1,
         eST_User_Task_IDLE 						= 2,
-        eST_User_Task_LOGGING					= 3,
+        eST_User_Task_LOGGING					        = 3,
         eST_User_Task_ERROR						= 4,
-        eST_User_Task_CHECKING_EVENT			= 5,
-        eST_User_Task_PC_CONNECT				= 6,
-    	eST_User_Task_SpindleRotary            	= 7,
-		eST_User_Task_SpindleReset				= 8,
-		eST_User_Task_Stop 						= 9,
-		eST_User_Task_Pause						= 10,
+        eST_User_Task_CHECKING_EVENT			                = 5,
+        eST_User_Task_PC_CONNECT				        = 6,
+    	eST_User_Task_SpindleRotary            	                        = 7,
+	eST_User_Task_SpindleReset				        = 8,
+	eST_User_Task_Stop 					        = 9,
+	eST_User_Task_Pause					        = 10,
 		
         eST_User_Task_UN 						= 0xff,
 }eST_User_Task;
@@ -89,13 +89,13 @@ void vUserTask( void *pvParameters )
 	bFlag_1st_Case = eTRUE;
 	/* Set prequency */
 	portTickType xLastWakeTime;
-	const portTickType xUser_Task_Frequency = USER_TASK_FREQUENCY;/* 10 tick slice */
+	const portTickType xUser_Task_Frequency = 10;/* 10 tick slice */
 	xLastWakeTime = xTaskGetTickCount();
 	
 	/* Init ok */
 	xFlag_User_Task_Init_Done= eTRUE;
         
-	
+
       /* Task process */
       for(;;)
       {	
@@ -106,15 +106,12 @@ void vUserTask( void *pvParameters )
           xFlag_User_Task_Still_Running = eTRUE;
           /* Process User Task */
           vUserTaskMainProcess();
+		  
       }
 }
 /*********************************************************************/
 
-uint32_t	ixIndex_ADC_Buffer;
-uint32_t	ADC_Buffer[10];
-static uint32_t sum_ADC = 0;
-static uint32_t value_ADC_tb = 0;
-
+uint32 number =0;
 void vUserTaskMainProcess(void)
 {
 	switch(eState_User_Task)
@@ -123,99 +120,115 @@ void vUserTaskMainProcess(void)
 			if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE;
+                                BUFFER_CONTROL_DC_SPINDLE.bFlag_Process_Update = eFALSE;
+                                BUFFER_CONTROL_DC_SPINDLE.bFlag_Error_Update = eFALSE;
+
 			}
 			else
 			{
-                eState_User_Task = eST_User_Task_IDLE;
-                bFlag_1st_Case = eTRUE;
+                              eState_User_Task = eST_User_Task_IDLE;
+                              bFlag_1st_Case = eTRUE;
 			}
 		break;
 		case eST_User_Task_IDLE:
 			if(bFlag_1st_Case==eTRUE)
 			{
 				bFlag_1st_Case = eFALSE;
-				
 			}
 			else
-			{
-//   			    BUFFER_CONTROL_DC_SPINDLE.bProcess = SPINDLE_RORATY;
+			{  
+                             if(BUFFER_CONTROL_DC_SPINDLE.bFlag_Process_Update == eTRUE)
+                             {
 				switch(BUFFER_CONTROL_DC_SPINDLE.bProcess)
 				{
-					case SPINDLE_RORATY:
+                                        case SPINDLE_ROTATY:
 					  eState_User_Task = eST_User_Task_SpindleRotary;
 					  bFlag_1st_Case   = eTRUE;
- 					  BUFFER_ENCODERHOME.Flag_Home = 0;
+ 					  BUFFER_ENCODERHOME.Flag_Home = eFALSE;
 					break;
 					case SPINDLE_RESET:
 					  eState_User_Task = eST_User_Task_SpindleReset;
 					  bFlag_1st_Case   = eTRUE;
 					  bFlag_Status_Spindle = 0;
 					break;
+                                        case SPINDLE_STOP:
+                                          
+                                        break;  
 					default:
 					break;
 				}
-            }
+                             }
+                        }
 		break;
+
         case eST_User_Task_SpindleRotary:
             if(bFlag_1st_Case==eTRUE)
 			{
 			 	bFlag_1st_Case = eFALSE;
+                                number =0;
+                                BUFFER_CURRENT_MEASURE.Flag_QualityPoor = eFALSE;
 			}
 			else
-			{  
-				switch (BUFFER_STATEBUTTON.bflag_Stop)
+			{
+				if (BUFFER_STATEBUTTON.bflag_Stop == 1)
 				{
-				case 1:
 					eState_User_Task = eST_User_Task_Stop;
-				break;
-				case 0:
-					switch(BUFFER_STATEBUTTON.bflag_Pause)
-					{
-					case 0:
-//						  BUFFER_CONTROL_DC_SPINDLE.Speed_DC = 20; 
-						  vMotorControl(20,SPINDLE_REVERSE);
-						  Current_Measure_Value();
-//						  if(Current_Value >= BUFFER_CURRENT_MEASURE.Current_Max)
-//						  vMotorControl(20,SPINDLE_REVERSE);
-					break;
-					case 1:
-
-					break;
-					default:
-					break;
-					}
-				break;
-				default:
-				break;
 				}
-		 	}
+				else
+				{
+					if(BUFFER_STATEBUTTON.bflag_Pause == 0)
+					{
+                                                  if(Current_Value < 3700 && number == 0)
+                                                  {
+//						  vMotorControl(20,SPINDLE_FORWARD);
+                                                  vMotorControl(20,BUFFER_CONTROL_DC_SPINDLE.bDC_Driection);
+						  Current_Measure_Value();
+                                                  }
+//						  if(Current_Value >= BUFFER_CURRENT_MEASURE.Current_Max)
+                                                  if(Current_Value >= 3700 )    
+                                                  {
+                                                    vMotorControl(20,SPINDLE_REVERSE);
+                                                    number = 1;                                                    
+                                                  }
+					}
+					else
+					{
+
+					}
+					
+				}
+		    }
 		break;
+
 		case eST_User_Task_SpindleReset:
 			if(bFlag_1st_Case==eTRUE)
 			{
 			 	bFlag_1st_Case = eFALSE;
 				BUFFER_ENCODERHOME.Flag_Update = eFALSE;
+                                BUFFER_ENCODERHOME.Flag_Home = eFALSE;
 			}
 			else
 			{	
-				switch(BUFFER_STATEBUTTON.bflag_Stop)
+				if(BUFFER_STATEBUTTON.bflag_Stop == 1)
 				{
-				case 1:
 					eState_User_Task = eST_User_Task_Stop;
-				break;
-				case 0:
+					vMotorControl(10,SPINDLE_BREAK);
+				}
+				else
+				{
 					switch(BUFFER_STATEBUTTON.bflag_Pause)
 					{
 					case 0:
-					if(BUFFER_ENCODERHOME.Flag_Home == 1)
-					{
-					eState_User_Task = eST_User_Task_IDLE;
-					}
-					else
-					{
-					Spindle_Home();
-					//if(bFlag_Error_Process == eTRUE)  eState_User_Task = eST_User_Task_IDLE;
-					}	
+						  if(BUFFER_ENCODERHOME.Flag_Home == eTRUE)
+						  {
+						  	eState_User_Task = eST_User_Task_INIT;
+                                                        bFlag_1st_Case = eTRUE;
+						  }
+						  else
+						  {
+						  	Spindle_Home();
+						  //if(bFlag_Error_Process == eTRUE)  eState_User_Task = eST_User_Task_IDLE;
+						  }	
 					break;
 					case 1:
 					
@@ -223,60 +236,16 @@ void vUserTaskMainProcess(void)
 					default:
 					break;
 					}
-				break;
-				default:
-				break;
-			  	}
-			}
+				}
+			 }
 		break;
 		case eST_User_Task_Stop:
+			memset(UART1_BUFFER_RX,0,i_MAX_UART);  
 			eState_User_Task = eST_User_Task_IDLE;
 			BUFFER_STATEBUTTON.bflag_Stop == 0;
 		break;
-//<<<<<<<<<-------------------SYSTEM WORKS---------------------->>>>>>>>>//
-		case eST_User_Task_LOGGING:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
-		case eST_User_Task_ERROR:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
-		case eST_User_Task_CHECKING_EVENT:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				eState_User_Task = eST_User_Task_IDLE;
-				bFlag_1st_Case = eTRUE;
-			}
-		break;
-		case eST_User_Task_PC_CONNECT:
-			if(bFlag_1st_Case==eTRUE)
-			{
-				bFlag_1st_Case = eFALSE;
-			}
-			else
-			{
-				
-			}
-		break;
 		default:
-			eState_User_Task = eST_User_Task_IDLE ;
+			eState_User_Task = eST_User_Task_INIT;
 			bFlag_1st_Case = eTRUE;
 		break;
 	}

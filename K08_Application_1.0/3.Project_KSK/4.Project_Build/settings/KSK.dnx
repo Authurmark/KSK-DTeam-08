@@ -20,7 +20,7 @@
         <LeaveTargetRunning>_ 0</LeaveTargetRunning>
     </StLinkDriver>
     <DebugChecksum>
-        <Checksum>399436213</Checksum>
+        <Checksum>3790474187</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -30,8 +30,8 @@
         <Enabled>_ 0</Enabled>
     </CodeCoverage>
     <Disassembly>
-        <MixedMode>1</MixedMode>
         <InstrCount>0</InstrCount>
+        <MixedMode>1</MixedMode>
     </Disassembly>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -134,7 +134,11 @@
         <A0>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\main.c" ""</A0>
         <A1>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\2.MainSource\stm32f10x_it.c" ""</A1>
         <A2>_ "C:\Users\KSK\Desktop\TUT2-PWM - ENCODER\1.1.FW_APhi_Navigator\3.Project_KSK\3.ProjectTask\2.Application_Task\1.User\UserTask.c" ""</A2>
-        <Count>3</Count>
-        <SuppressDialog>0</SuppressDialog>
+        <A3>_ "D:\du an R&amp;D1\S2.FLOWCHART\K08_Application_1.0\2.Lib\1.H3ElTeam_Lib\4.UsefulFunction\ringbuf.c" ""</A3>
+        <A4>_ "D:\du an R&amp;D1\S2.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\portable\IAR\ARM_CM3\port.c" ""</A4>
+        <A5>_ "D:\du an R&amp;D1\S2.FLOWCHART\K08_Application_1.0\2.Lib\2.OS\1.FreeRTOS\1.FreeRTOSV10.0.0.0\Source\tasks.c" ""</A5>
+        <A6>_ "D:\du an R&amp;D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\2.MainSource\main.c" ""</A6>
+        <Count>7</Count>
+        <SuppressDialog>1</SuppressDialog>
     </Aliases>
 </settings>

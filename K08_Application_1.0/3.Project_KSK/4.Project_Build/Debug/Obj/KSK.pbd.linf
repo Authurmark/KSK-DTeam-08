@@ -1,52 +1,52 @@
-﻿D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_AppCall_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_Function.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
-D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi
+﻿E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\KSK.pbd
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Hardware_Function_Profile.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Project_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Kernel_Task.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ComFunction.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\UserTask.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\main.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_it.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\IO_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Time_Manage_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Timer_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_AppCall_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART1_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_AppCall_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\USART2_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Watchdog_Function.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\misc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_adc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_bkp.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_can.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_cec.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_crc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dac.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dbgmcu.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_dma.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_exti.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_flash.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_fsmc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_gpio.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_i2c.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_iwdg.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_pwr.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rcc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_rtc.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_sdio.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_spi.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_tim.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_usart.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stm32f10x_wwdg.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\system_stm32f10x.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\Utilities.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\ringbuf.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\port.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\croutine.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\event_groups.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\heap_2.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\list.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\queue.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\stream_buffer.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\tasks.pbi
+E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\Debug\Obj\timers.pbi

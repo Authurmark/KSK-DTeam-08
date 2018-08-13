@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --backend -f "D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --backend -f "E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --debug_file=$debugfile --backend -f "D:\du an R&D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.general.xcl" --debug_file=$debugfile --backend -f "E:\KSK Solution Viet Nam\du an R_D1\S2.FLOWCHART\K08_Application_1.0\3.Project_KSK\4.Project_Build\settings\KSK.Debug.driver.xcl" 
 }

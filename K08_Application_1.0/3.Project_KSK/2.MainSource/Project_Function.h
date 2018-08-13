@@ -46,15 +46,16 @@ void vFLASH_UpdateData(void);
 //--------------DEFINE FOR PROTOTYPE & PWM FUNCTION PROTOTYPE----------------//
 /*--------------------------------------------------------------------------*/
 #define MOTOR_1_DUTY 	vChangeDutyCycleOC1
-#define MOTOR_2_DUTY 	vChangeDutyCycleOC2
+#define MOTOR_2_DUTY 	vChangeDutyCycleOC2 
 
 void vInitPWMFunction(void);
 void vChangeDutyCycleOC1(uint8_t bDutyPercent);
 void vChangeDutyCycleOC2(uint8_t bDutyPercent);
 
 typedef enum {
-    SPINDLE_RORATY = 0x01,
+    SPINDLE_ROTATY = 0x01,
     SPINDLE_RESET  = 0x02,
+    SPINDLE_STOP   = 0x03,
 }state_process;
 
 typedef enum {
@@ -96,7 +97,7 @@ extern IO_Struct pRS485_DIR;
 /* extern adc value */
 extern __IO uint16_t ADCConvertedValue;
 /*--------------------------Error_Process----------------------------------------*/
-void vInit_Error_Process(void);
+void Error_Process(void);
 extern enumbool bFlag_Error_Process;
 
 
@@ -114,8 +115,8 @@ extern enumbool bFlag_Error_Process;
 #define BUTTON_2_STATE		strIO_Button_Value.bButtonState[eButton2]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 
-#define OUT_LED_1			strLED_1
-#define OUT_LED_2           strLED_2
+#define OUT_LED_1	        strLED_1
+#define OUT_LED_2               strLED_2
 
 #define EMERGENCY_BUTTON_1_STATE	BUTTON_1_STATE
 #define EMERGENCY_BUTTON_IO	        pBUT_1.read()
@@ -125,18 +126,18 @@ extern enumbool bFlag_Error_Process;
 
 /* Define function for all function of RFID Bike project */	
 #define LED_USER_ON			pLED1.write(ON);
-#define LED_USER_OFF		pLED1.write(OFF);
-#define LED_USER_TOGGLE		pLED1.write(1-pLED1.writeSta());
-#define KEY_IN_STATE		strIO_Button_Value.bButtonState[eButton1]
-#define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
-#define OUT_IC_FIRE_STR		strRELAY_1
+#define LED_USER_OFF		        pLED1.write(OFF);
+#define LED_USER_TOGGLE		        pLED1.write(1-pLED1.writeSta());
+#define KEY_IN_STATE		        strIO_Button_Value.bButtonState[eButton1]
+#define LEG_BIKE_IN_STATE	        strIO_Button_Value.bButtonState[eButton2]
+#define OUT_IC_FIRE_STR		        strRELAY_1
 #define OUT_KEY_STR			strRELAY_2
-#define OUT_XINHAN_STR		strRELAY_3
+#define OUT_XINHAN_STR		        strRELAY_3
 #define OUT_BELL			strBELL
-#define OUT_LED_SIGNAL		strLED_1
+#define OUT_LED_SIGNAL		        strLED_1
 #define OUT_TRUNK			strTRUNK
-#define RS_485_MODE_RECIEVE 	pRS485_DIR.write(eFALSE)
-#define RS_485_MODE_TRANSMIT 	pRS485_DIR.write(eTRUE)
+#define RS_485_MODE_RECIEVE 	        pRS485_DIR.write(eFALSE)
+#define RS_485_MODE_TRANSMIT 	        pRS485_DIR.write(eTRUE)
 #define TURNOFFBOARD 			pCutOffCircuit.write(eFALSE)
 #define TURNONBOARD 			pCutOffCircuit.write(eTRUE)
 #endif /* _Project_Function__H */

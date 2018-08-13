@@ -85,5 +85,5 @@
 	extern DMA_InitTypeDef DMA_USART1_RX_InitStructure;
 	#endif /* USE_DMA_USART1 */
 #endif /* USE_USART1 */
-#endif/* USART1_Function_Profile */
+#endif /*USART1_Function_Profile */
 /************************************************************************************************************/
