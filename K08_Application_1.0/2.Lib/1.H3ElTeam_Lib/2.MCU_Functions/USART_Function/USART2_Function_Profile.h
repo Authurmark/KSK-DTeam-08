@@ -22,7 +22,7 @@
 #include "Common.h"
 /* Define USART2 Function */ 
 /* Uncomment to use USART2, comment to disable*/
-#define USE_USART2  
+//#define USE_USART2  
 /* Uncomment to use default, comment to use alternative*/
 	#define USE_DEFAULT_USART2_IO
 	/* Uncomment to use USE_CLOCK_USART2, comment to disable*/

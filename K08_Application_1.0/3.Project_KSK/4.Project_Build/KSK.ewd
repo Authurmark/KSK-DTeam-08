@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32F103V8.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32F103C8.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -508,7 +508,7 @@
                 <option>
                     <name>IjetResetList</name>
                     <version>1</version>
-                    <state>10</state>
+                    <state>9</state>
                 </option>
                 <option>
                     <name>IjetHWResetDuration</name>
@@ -536,7 +536,7 @@
                 </option>
                 <option>
                     <name>IjetInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IjetInterfaceCmdLine</name>
@@ -565,7 +565,7 @@
                 </option>
                 <option>
                     <name>IjetProtocolRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IjetSwoPin</name>
@@ -578,7 +578,7 @@
                 <option>
                     <name>IjetSwoPrescalerList</name>
                     <version>1</version>
-                    <state>0</state>
+                    <state>5</state>
                 </option>
                 <option>
                     <name>IjetBreakpointRadio</name>
@@ -678,7 +678,7 @@
                 </option>
                 <option>
                     <name>IjetSelectedCPUBehaviour</name>
-                    <state>0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>ICpuName</name>
@@ -690,17 +690,17 @@
                 </option>
                 <option>
                     <name>IjetPreferETB</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IjetTraceSettingsList</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>IjetTraceSizeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>FlashBoardPathSlave</name>
@@ -1098,7 +1098,7 @@
                 <debug>1</debug>
                 <option>
                     <name>CThirdPartyDriverDll</name>
-                    <state>###Uninitialized###</state>
+                    <state>Browse to your third-party driver</state>
                 </option>
                 <option>
                     <name>CThirdPartyLogFileCheck</name>

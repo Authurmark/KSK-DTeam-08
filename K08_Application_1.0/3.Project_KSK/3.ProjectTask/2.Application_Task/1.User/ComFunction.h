@@ -47,14 +47,6 @@ hardware function.
 #define iUART_PRE_4         3
 #define iUART_PRE_5         4
 #define iUART_PRE_6         5
-
-//#define iUART_CMD           6
-//#define iUART_SIZE_LOW      7
-//#define iUART_SIZE_HIGH     8
-//#define iUART_IDX_LOW       9                           
-//#define iUART_IDX_HIGH      10                          
-//#define iUART_DATA          11
-
 #define iUART_CMD_TYPE      6
 #define iUART_CMD           7
 #define iUART_SIZE_LOW      8
@@ -89,81 +81,95 @@ hardware function.
 
 /* For USART Bootloader */
 typedef enum Cmd_Type {
-    P2TCMD_Control_X_axis     = 0x02,
-    P2TCMD_Control_Y_axis     = 0x03,
-    P2TCMD_Control_Z_axis     = 0x04,
-   	P2TCMD_FEEDBACK		      = 0x41,
+    P2TCMD_Control_X_axis         = 0x02,
+    P2TCMD_Control_Y_axis         = 0x03,
+    P2TCMD_Control_Z_axis         = 0x04,
     P2TCMD_AXIS_PROCESS	  	  = 0x01,
-	P2TCMD_StateButton        = 0x05,
+    P2TCMD_StateStopButton        = 0x05,
+    P2TCMD_StatePauseButton       = 0x06,
   
     /*Common command*/
-    P2TCMD_CLOSE = 0x01,
-    P2TCMD_CONNECT = 0x02,
+    P2TCMD_CLOSE                  = 0x01,
+    P2TCMD_CONNECT                = 0x02,
     
     /* COMMAND FOR RELAY */
-    P2TCMD_SET_RELAY_PARA = 0xC1,
-    P2TCMD_SET_LED_PARA = 0xC2,	
-    P2TCMD_SET_RELAY_DIRECT = 0xC3,
-    P2TCMD_SET_LED_DIRECT = 0xC4,
+    P2TCMD_SET_RELAY_PARA       = 0xC1,
+    P2TCMD_SET_LED_PARA         = 0xC2,	
+    P2TCMD_SET_RELAY_DIRECT     = 0xC3,
+    P2TCMD_SET_LED_DIRECT       = 0xC4,
     
     /* Info */
     P2TCMD_INFO = '?',
 }cmd_type;
 /* stepmotor*/
 typedef enum {
-    ResetHome 	   	= 0x01,
-   	ReleaseCutter   = 0x02,
+        ResetHome 	   	= 0x01,
+   	ReleaseCutter           = 0x02,
 	GetCutter		= 0x03,
 	RunForScan	 	= 0x04,
-	RunToPoint    	= 0x05,
+	RunToPoint    	        = 0x05,
 	Stop		  	= 0x07,
-    Ready         	= 0x06,
-}state_process;
+        Ready         	        = 0x06,
+}State_Axis_Process;
 
 typedef enum {
-    STEP_FORWARD = 0x01,
-    STEP_REVERSE = 0x02,
-    STEP_BREAK   = 0x03,
-    STEP_DISABLE = 0x04,
+    STEP_FORWARD                = 0x01,
+    STEP_REVERSE                = 0x02,
+    STEP_BREAK                  = 0x03,
+    STEP_DISABLE                = 0x04,
 }state_step_motor;
 
 typedef enum{
-	bFlag_EndStop1 	= 0x01,
-	bFlag_EndStop2 	= 0x02,
+	bFlag_EndStop1 	        = 0x01,
+	bFlag_EndStop2 	        = 0x02,
 	None			= 0x03,
 }FlagEndStop;
 
 typedef enum{
 	E_OverLoad		= 0x01,
-	E_OverJourney	= 0x02,
+	E_OverJourney	        = 0x02,
 	E_OverTime		= 0x03,
 }eError_Process;
 
+typedef enum {
+    eAxis_InProcess               = 0x01,
+    eAxis_Finsish_Resethome       = 0x02,
+    eAxis_Finsish_Scanhole        = 0x03,
+    eAxis_Finsish_Runtopoint      = 0x04,
+    eAxis_Finsish_Releasecutter   = 0x05,
+    eAxis_Finsish_Getcutter       = 0x06,      
+}bFeedBackAxis;
+
 typedef struct{
-	state_process		bProcess_Axis;
+	State_Axis_Process      bProcess_Axis;
 	eError_Process		Error_Process;
-	enumbool			bFlag_Process_Update;
-	enumbool       		bFlag_Process_Info;	
-}Buffer_Motor_Control_Process;
-extern Buffer_Motor_Control_Process  BUFFER_MOTOR_CONTROL_PROCESS;
+        bFeedBackAxis           bFeedBackAxis;
+	enumbool		bFlag_Process_Update;
+	enumbool       		bFlag_Process_Info;
+        enumbool                bFlag_Process_Info_FeedBack;
+        enumbool                bFlag_Process_Info_Errors;
+}Buffer_Axis_Process;
+
+extern Buffer_Axis_Process      BUFFER_AXIS_PROCESS;
 
 typedef struct{
 uint16				PositionControl;				                                      	//Recieve from master
 uint16				PositionGet;					                                     	//Send to master
-uint8				Speed;																	//Recieve from master			
-state_step_motor 	bDirection;	
- enumbool       	bFlag_Process_Info;														//Recieve from master
+uint8				Speed;										        //Recieve from master			
+state_step_motor 	        bDirection;	                                                                        //Recieve from master
+enumbool       	                bFlag_Process_Info;
+enumbool                        bFlag_Process_Update_data;                                                                                                            
 }Buffer_Control_Axis;
-extern Buffer_Control_Axis BUFFER_CONTROL_X_AXIS;
-extern Buffer_Control_Axis BUFFER_CONTROL_Y_AXIS;
-extern Buffer_Control_Axis BUFFER_CONTROL_Z_AXIS;
+extern Buffer_Control_Axis      BUFFER_CONTROL_X_AXIS;
+extern Buffer_Control_Axis      BUFFER_CONTROL_Y_AXIS;
+extern Buffer_Control_Axis      BUFFER_CONTROL_Z_AXIS;
 
 /*Receive Status Button From Master*/
 typedef struct{
-uint8 bflag_Stop;                                    										//Receive from master
-uint8 bflag_Pause; 																			//Receive from master	
+uint8 bflag_Stop;                                    									//Receive from master
+uint8 bflag_Pause; 													//Receive from master																	
 }buffer_StateButton;
-extern buffer_StateButton BUFFER_STATEBUTTON ;
+extern buffer_StateButton       BUFFER_STATEBUTTON ;
 
 
 /*--------------------------------------------------------------------*/
@@ -182,14 +188,14 @@ void vFeedBack_info_sys(void);
 
 /* MAKE DATA*/
 
-void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint32 PARA1, uint32 PARA2, uint32 PARA3, uint32 PARA4, uint32 PARA5, uint32 PARA6);
+void UART_MakeData(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE, uint8 CMD,uint16 PARA1, uint16 PARA2, uint16 PARA3, uint16 PARA4, uint16 PARA5, uint16 PARA6);
 void UART_MakeData_Head(uint8 *UART_BUFFER_TX,cmd_type CMD_TYPE);
 void UART_MakeData_8bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint8 DATA);
 void UART_MakeData_16bit(uint8 *UART_BUFFER_TX,uint8 iIndex, uint16 DATA);
 void UART_MakeData_Tail(uint8 *UART_BUFFER_TX);
 /*Detect FeedBack*/
-void vInitFeedBackDetectOverTime(void);
-void vFeedBackDetectOverTime(void);
+void vInitDetectOverTime(void);
+void DetectOverTime(void);
 /* TX BUFFER HANDLE*/
 extern uint8 CntUartBufferTx;
 void vMakeBufferTXTask( void *pvParameters );

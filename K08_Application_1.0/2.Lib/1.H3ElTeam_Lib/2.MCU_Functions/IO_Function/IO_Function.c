@@ -34,11 +34,11 @@
 		GPIO_InitStructure.GPIO_Mode = LED_1_MODE;
 		GPIO_InitStructure.GPIO_Speed = LED_1_SPEED;
 		GPIO_InitStructure.GPIO_Pin = LED_1_PIN;
-    	GPIO_Init(LED_1_PORT,&GPIO_InitStructure);
+                GPIO_Init(LED_1_PORT,&GPIO_InitStructure);
 		/* Init pointer function */
-    	pIO->read = &IO_LED1_Read;
-    	pIO->write = &IO_LED1_Write;
-    	pIO->writeSta = &IO_LED1_WriteStatus;
+                pIO->read = &IO_LED1_Read;
+                pIO->write = &IO_LED1_Write;
+                pIO->writeSta = &IO_LED1_WriteStatus;
 		#endif
 		#ifdef USE_ONLY_REGISTER
 		 

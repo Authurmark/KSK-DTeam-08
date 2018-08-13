@@ -49,18 +49,14 @@ void vFLASH_UpdateData(void);
 /*ENCODER OF AXIS X*/
 void vGetEncoderValue_X(void);
 void EXTI1_IRQHandler(void);
-void EXTI2_IRQHandler(void);
-void EXTILine15_Config(void);
 void EXTILine1_Config(void);
-void EXTILine2_Config(void);
-void EXTI15_10_IRQHandler(void);
+
+
+
+
 /*ENCODER OF AXIS Y*/
 void EXTI3_IRQHandler(void);
-void EXTI4_IRQHandler(void);
 void EXTILine3_Config(void);
-void EXTILine4_Config(void);
-void EXTILine5_Config(void);
-void EXTI9_5_IRQHandler(void);
 void vGetEncoderValue_Y(void);
 
 /*-----------------------------------------------------------------------------*/
@@ -73,13 +69,27 @@ void Generate_Pulse_Y(void);
 void Generate_Pulse_Z(void);
 void Calculate_Pulse(uint8 iIndex_avitme, uint8 iIndex_amicro) ;
 void Control_Pulse (void);
-void vMotorStepControl(void);
+void MotorStep_Control(void);
 void Determined_Position(uint8 iIndex_amicro);
 void Compare_Position(void);
-void Control_Direction_X(void);
-void Control_Direction_Y(void);
-void Control_Direction_Z(void);
-void vMotorStepControl_Status(uint8 bStepMotor,uint8_t bDirection);
+
+extern uint32 bStepMotor;
+extern uint32 Status_StepMotor;
+/*DEFIN PIN FOR STEP MOTOR OF AXIS X*/
+#define pin_X_CCW		 	GPIO_Pin_3
+#define pin_X_DIR			GPIO_Pin_4
+#define pin_X_ENABLE		        GPIO_Pin_5
+/*DEFIN PIN FOR STEP MOTOR OF AXIS Y*/
+#define pin_Y_CCW		 	GPIO_Pin_15
+#define pin_Y_DIR			GPIO_Pin_12
+#define pin_Y_ENABLE		        GPIO_Pin_11
+/*DEFIN PIN FOR STEP MOTOR OF AXIS Z*/
+#define pin_Z_CCW		 	GPIO_Pin_14
+#define pin_Z_DIR			GPIO_Pin_13
+#define pin_Z_ENABLE		        GPIO_Pin_12
+/**********************************************************/
+
+extern int i;
 /*------------------------------------------------------------------------------*/
 //-------------------------------RESET HOME-------------------------------------//
 /*-----------------------------------------------------------------------------*/
@@ -151,39 +161,35 @@ typedef enum sStepMotor
 {
 	StepMotorX        = 0x00,
 	StepMotorY        = 0x01,
-	StepMotorZ		  = 0x02,
+	StepMotorZ         = 0x02,
 }sStepMotor;
 
-extern uint8 Pin_Endstop ;
-extern uint8 Cnt_TimeHold_EndStop_X_1 ;
+
+extern uint32 Cnt_TimeHold_EndStop_X_1 ;
 extern enumbool State_EndStop_X_1 ;
-extern uint8 Cnt_TimeHold_EndStop_X_2 ;
+extern uint32 Cnt_TimeHold_EndStop_X_2 ;
 extern enumbool State_EndStop_X_2 ;
 
-extern uint8 Cnt_TimeHold_EndStop_Y_1 ;
+extern uint32 Cnt_TimeHold_EndStop_Y_1 ;
 extern enumbool State_EndStop_Y_1 ;
-extern uint8 Cnt_TimeHold_EndStop_Y_2 ;
+extern uint32 Cnt_TimeHold_EndStop_Y_2 ;
 extern enumbool State_EndStop_Y_2 ;
 
-extern uint8 Cnt_TimeHold_EndStop_Z_1;
+extern uint32 Cnt_TimeHold_EndStop_Z_1;
 extern enumbool State_EndStop_Z_1;
-extern uint8 Cnt_TimeHold_EndStop_Z_2 ;
+extern uint32 Cnt_TimeHold_EndStop_Z_2 ;
 extern enumbool State_EndStop_Z_2;
 
-#define EndStopX_1		0
-#define EndStopX_2		0
-#define EndStopY_1		0
-#define EndStopY_2		0
-#define EndStopZ_1		0
-#define EndStopZ_2		0
 /******************Detect proximity sensor***********************/
 extern uint8 Cnt_TimeHold_Proximity_Sensor[6];
 extern enumbool State_Proximity_Sensor[6];
 extern uint32 bFlag_Status_Sensor ;
 /***********************Error_Process***************************/
 void vInit_Error_Process(void);
+void vInitDetectOverLoad(void);
 extern enumbool bFlag_Error_Process ;
-
+/*CONTROL MOTOR WHEN HAVE STATUS OF BUTTON*/
+void ControlMotor_Button(void);
 
 
 
@@ -212,17 +218,17 @@ extern enumbool bFlag_Error_Process ;
 
 
 /* Define function for all function of RFID Bike project */	
-#define LED_USER_ON		    pLED1.write(ON);
+#define LED_USER_ON		pLED1.write(ON);
 #define LED_USER_OFF		pLED1.write(OFF);
 #define LED_USER_TOGGLE		pLED1.write(1-pLED1.writeSta());
 #define KEY_IN_STATE		strIO_Button_Value.bButtonState[eButton1]
 #define LEG_BIKE_IN_STATE	strIO_Button_Value.bButtonState[eButton2]
 #define OUT_IC_FIRE_STR		strRELAY_1
-#define OUT_KEY_STR			strRELAY_2
+#define OUT_KEY_STR		strRELAY_2
 #define OUT_XINHAN_STR		strRELAY_3
-#define OUT_BELL			strBELL
+#define OUT_BELL		strBELL
 #define OUT_LED_SIGNAL		strLED_1
-#define OUT_TRUNK			strTRUNK
+#define OUT_TRUNK		strTRUNK
 #define RS_485_MODE_RECIEVE 	pRS485_DIR.write(eFALSE)
 #define RS_485_MODE_TRANSMIT 	pRS485_DIR.write(eTRUE)
 #define TURNOFFBOARD 		pCutOffCircuit.write(eFALSE)

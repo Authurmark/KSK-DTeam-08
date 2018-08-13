@@ -45,14 +45,14 @@ void fIO_BELL_Process( void );
 #define Port_EndStop_Z_1	GPIOA
 #define Port_EndStop_Z_2	GPIOB
 
-#define Pin_EndStop_X_1	GPIO_Pin_6
-#define Pin_EndStop_X_2	GPIO_Pin_7
+#define Pin_EndStop_X_1	        GPIO_Pin_6
+#define Pin_EndStop_X_2	        GPIO_Pin_7
 
-#define Pin_EndStop_Y_1	GPIO_Pin_9
-#define Pin_EndStop_Y_2	GPIO_Pin_8
+#define Pin_EndStop_Y_1	        GPIO_Pin_9
+#define Pin_EndStop_Y_2	        GPIO_Pin_8
 
-#define Pin_EndStop_Z_1	GPIO_Pin_8
-#define Pin_EndStop_Z_2	GPIO_Pin_15
+#define Pin_EndStop_Z_1	        GPIO_Pin_8
+#define Pin_EndStop_Z_2	        GPIO_Pin_15
 
 void Detect_EndStop(void);
 

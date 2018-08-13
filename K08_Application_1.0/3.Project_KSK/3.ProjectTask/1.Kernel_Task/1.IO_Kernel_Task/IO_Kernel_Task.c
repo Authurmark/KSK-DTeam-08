@@ -68,22 +68,22 @@ void vIO_Kernel_Task( void *pvParameters )
 	strIO_Button_Value.bFlagNewButton =  eFALSE;
 	/* Init timer frequency */
 	timer_set(&tIO_Button_Task, 10 ,CLOCK_TYPE_MS);/* 10ms */
-		#ifdef USE_BUTTON_IO_1
-			strIO_Button_Value.bButtonState[eButton1] = eButtonRelease;
-			strOld_IO_Button_Value.bButtonState[eButton1] = eButtonRelease;
-		#endif /* USE_BUTTON_IO_1 */
-		#ifdef USE_BUTTON_IO_2
-			strIO_Button_Value.bButtonState[eButton2] = eButtonRelease;
-			strOld_IO_Button_Value.bButtonState[eButton2] = eButtonRelease;
-		#endif /* USE_BUTTON_IO_2 */
-		#ifdef USE_BUTTON_IO_3
-			strIO_Button_Value.bButtonState[eButton3] = eButtonRelease;
-			strOld_IO_Button_Value.bButtonState[eButton3] = eButtonRelease;
-		#endif /* USE_BUTTON_IO_3 */
-		#ifdef USE_BUTTON_IO_4
-			strIO_Button_Value.bButtonState[eButton4] = eButtonRelease;
-			strOld_IO_Button_Value.bButtonState[eButton4] = eButtonRelease;
-		#endif /* USE_BUTTON_IO_4 */
+        #ifdef USE_BUTTON_IO_1
+                strIO_Button_Value.bButtonState[eButton1] = eButtonRelease;
+                strOld_IO_Button_Value.bButtonState[eButton1] = eButtonRelease;
+        #endif /* USE_BUTTON_IO_1 */
+        #ifdef USE_BUTTON_IO_2
+                strIO_Button_Value.bButtonState[eButton2] = eButtonRelease;
+                strOld_IO_Button_Value.bButtonState[eButton2] = eButtonRelease;
+        #endif /* USE_BUTTON_IO_2 */
+        #ifdef USE_BUTTON_IO_3
+                strIO_Button_Value.bButtonState[eButton3] = eButtonRelease;
+                strOld_IO_Button_Value.bButtonState[eButton3] = eButtonRelease;
+        #endif /* USE_BUTTON_IO_3 */
+        #ifdef USE_BUTTON_IO_4
+                strIO_Button_Value.bButtonState[eButton4] = eButtonRelease;
+                strOld_IO_Button_Value.bButtonState[eButton4] = eButtonRelease;
+        #endif /* USE_BUTTON_IO_4 */
 	#endif /* USE_BUTTON_IO */
 	#ifdef USE_ADC_IO
 	timer_set(&tIO_ADC_But_Task, 10 ,CLOCK_TYPE_MS);/* 10ms, ADC frequency sample */
@@ -136,19 +136,19 @@ void vIO_Kernel_Task( void *pvParameters )
 
 /*--------- DETECT ENDSTOP ---------------*/
 
-uint8 Cnt_TimeHold_EndStop_X_1;
+uint32 Cnt_TimeHold_EndStop_X_1;
 enumbool State_EndStop_X_1 ;
-uint8 Cnt_TimeHold_EndStop_X_2 ;
+uint32 Cnt_TimeHold_EndStop_X_2 ;
 enumbool State_EndStop_X_2 ;
 
-uint8 Cnt_TimeHold_EndStop_Y_1 ;
+uint32 Cnt_TimeHold_EndStop_Y_1 ;
 enumbool State_EndStop_Y_1 ;
-uint8 Cnt_TimeHold_EndStop_Y_2 ;
+uint32 Cnt_TimeHold_EndStop_Y_2 ;
 enumbool State_EndStop_Y_2 ;
 
-uint8 Cnt_TimeHold_EndStop_Z_1 ;
+uint32 Cnt_TimeHold_EndStop_Z_1 ;
 enumbool State_EndStop_Z_1 ;
-uint8 Cnt_TimeHold_EndStop_Z_2 ;
+uint32 Cnt_TimeHold_EndStop_Z_2 ;
 enumbool State_EndStop_Z_2 ;
 
 void Detect_EndStop(void)
@@ -156,33 +156,33 @@ void Detect_EndStop(void)
 	/*----------------------------------------------ENDSTOP AXIS X 1---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eTRUE)					 Cnt_TimeHold_EndStop_X_1++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_X_1, Pin_EndStop_X_1))== eFALSE)					 Cnt_TimeHold_EndStop_X_1=0;
-	if(Cnt_TimeHold_EndStop_X_1>= 2)							 						 	 State_EndStop_X_1 = eTRUE;
-	if(Cnt_TimeHold_EndStop_X_1 < 2)														 State_EndStop_X_1 = eFALSE;
+	if(Cnt_TimeHold_EndStop_X_1>= 2)						                         State_EndStop_X_1 = eTRUE;
+	if(Cnt_TimeHold_EndStop_X_1 < 2)					                                 State_EndStop_X_1 = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS X 2---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_X_2, Pin_EndStop_X_2))== eTRUE)					 Cnt_TimeHold_EndStop_X_2++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_X_2, Pin_EndStop_X_2))== eFALSE)					 Cnt_TimeHold_EndStop_X_2 =0;
-	if(Cnt_TimeHold_EndStop_X_2 >= 2)							 						 	 State_EndStop_X_2 = eTRUE;
-	if(Cnt_TimeHold_EndStop_X_2 < 2)														 State_EndStop_X_2 = eFALSE;
+	if(Cnt_TimeHold_EndStop_X_2 >= 2)							 		 State_EndStop_X_2 = eTRUE;
+	if(Cnt_TimeHold_EndStop_X_2 < 2)									 State_EndStop_X_2 = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eTRUE)					 Cnt_TimeHold_EndStop_Y_1++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_Y_1, Pin_EndStop_Y_1))== eFALSE)					 Cnt_TimeHold_EndStop_Y_1=0;
-	if(Cnt_TimeHold_EndStop_Y_1 >= 2)							 						 	 State_EndStop_Y_1 = eTRUE;
-	if(Cnt_TimeHold_EndStop_Y_1 < 2)														 State_EndStop_Y_1 = eFALSE;	
+	if(Cnt_TimeHold_EndStop_Y_1 >= 2)							 		 State_EndStop_Y_1 = eTRUE;
+	if(Cnt_TimeHold_EndStop_Y_1 < 2)									 State_EndStop_Y_1 = eFALSE;	
 	/*----------------------------------------------ENDSTOP AXIS Y 2---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_Y_2, Pin_EndStop_Y_2))== eTRUE)					 Cnt_TimeHold_EndStop_Y_2 ++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_Y_2, Pin_EndStop_Y_2))== eFALSE)					 Cnt_TimeHold_EndStop_Y_2=0;
-	if(Cnt_TimeHold_EndStop_Y_2 >= 2)							 						 	 State_EndStop_Y_2 = eTRUE;
-	if(Cnt_TimeHold_EndStop_Y_2 < 2)														 State_EndStop_Y_2 = eFALSE;
+	if(Cnt_TimeHold_EndStop_Y_2 >= 2)							 		 State_EndStop_Y_2 = eTRUE;
+	if(Cnt_TimeHold_EndStop_Y_2 < 2)									 State_EndStop_Y_2 = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eTRUE)					 Cnt_TimeHold_EndStop_Z_1 ++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_Z_1, Pin_EndStop_Z_1))== eFALSE)					 Cnt_TimeHold_EndStop_Z_1 =0;
-	if(Cnt_TimeHold_EndStop_Z_1 >= 2)							 						 	 State_EndStop_Z_1 = eTRUE;
-	if(Cnt_TimeHold_EndStop_Z_1 < 2)														 State_EndStop_Z_1 = eFALSE;
+	if(Cnt_TimeHold_EndStop_Z_1 >= 2)							 		 State_EndStop_Z_1 = eTRUE;
+	if(Cnt_TimeHold_EndStop_Z_1 < 2)									 State_EndStop_Z_1 = eFALSE;
 	/*----------------------------------------------ENDSTOP AXIS Y 1---------------------------------------------------*/
 	if((GPIO_ReadInputDataBit(Port_EndStop_Z_2, Pin_EndStop_Z_2))== eTRUE)					 Cnt_TimeHold_EndStop_Z_2 ++;
 	if((GPIO_ReadInputDataBit(Port_EndStop_Z_2, Pin_EndStop_Z_2))== eFALSE)					 Cnt_TimeHold_EndStop_Z_2 =0;
-	if(Cnt_TimeHold_EndStop_Z_2 >= 2)							 						 State_EndStop_Z_2 = eTRUE;
-	if(Cnt_TimeHold_EndStop_Z_2 < 2)														 State_EndStop_Z_2 = eFALSE;	
+	if(Cnt_TimeHold_EndStop_Z_2 >= 2)							 		 State_EndStop_Z_2 = eTRUE;
+	if(Cnt_TimeHold_EndStop_Z_2 < 2)									 State_EndStop_Z_2 = eFALSE;	
 }  
 
 

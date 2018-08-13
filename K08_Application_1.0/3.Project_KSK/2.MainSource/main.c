@@ -22,7 +22,7 @@
 #include "IO_Function.h"
 #include "Time_Manage_Function.h"
 #include "USART1_AppCall_Function.h"
-#include "USART2_AppCall_Function.h"
+//#include "USART2_AppCall_Function.h"
 #include "Project_Function.h"
 #include "ComFunction.h"
 
@@ -63,7 +63,7 @@ extern timer tP_ScanHole;
 	/* Extern prototype function */
 	extern void vIO_Kernel_Task( void *pvParameters );
 	extern void vUserTask( void *pvParameters );
-    extern void vMakeBufferTXTask (void *pvParameters);
+        extern void vMakeBufferTXTask (void *pvParameters);
     
 	/* Variable for Handler */
 	xTaskHandle xIO_Task_Handle;
@@ -112,18 +112,13 @@ extern timer tP_ScanHole;
 
     /*Valiable For Control StepMotor*/
 	extern uint8 X_Axis_Speed;
-	vInit_STEP_MOTOR_Function();
 	//timer_set(&tP_StepA, X_Axis_Speed ,CLOCK_TYPE_US);
-	timer_set(&tP_StepA,10,CLOCK_TYPE_US);
+	timer_set(&tP_StepA,20,CLOCK_TYPE_US);
     /*Valiable For ScanHole*/
-    timer_set (&tP_ScanHole,500,CLOCK_TYPE_MS);
-  
-	#ifdef	USE_DEBUG_TIME_CATCH
- 	timer_set(&tP_catchtime,200,CLOCK_TYPE_US);
-	#endif
-	/* Start the scheduler. */
+        timer_set (&tP_ScanHole,500,CLOCK_TYPE_MS);
+    /* Start the scheduler. */
 	OS_vTaskScheduler();
-    while(1);
+        while(1);
 #else /* Not use OS */
 	while(1)
 	{
@@ -151,12 +146,10 @@ void vApplicationIdleHook(void);
 
 void vApplicationIdleHook(void)
 {
-  vMotorStepControl();
-  vInit_Error_Process();
-  vFeedBackDetectOverTime();
-
-  vComDataProcess_USART1();
-  vComDataProcess_USART2();
+        MotorStep_Control();
+//        DetectOverTime();
+        vComDataProcess_USART1();
+//      vComDataProcess_USART2();
   
 }
 
